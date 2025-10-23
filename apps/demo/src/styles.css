@@ -1,0 +1,120 @@
+:root {
+  color-scheme: light;
+  font-family: "Inter", "Segoe UI", sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: #1f2933;
+  background-color: #f8fafc;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+.app-shell {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 4rem;
+}
+
+header {
+  margin-bottom: 2rem;
+}
+
+header h1 {
+  margin: 0 0 0.75rem 0;
+}
+
+header p {
+  margin: 0;
+  color: #52606d;
+  max-width: 780px;
+}
+
+.tabs {
+  display: flex;
+  gap: 0.75rem;
+  margin: 0 0 1.5rem 0;
+}
+
+.tabs button {
+  appearance: none;
+  border: 1px solid #d0d5dd;
+  background: #ffffff;
+  color: #364152;
+  padding: 0.45rem 1.1rem;
+  border-radius: 999px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.tabs button:hover {
+  border-color: #3182ce;
+  color: #2a4365;
+}
+
+.tabs button.active {
+  background: #3182ce;
+  border-color: #3182ce;
+  color: #ffffff;
+  box-shadow: 0 6px 16px rgba(49, 130, 206, 0.25);
+}
+
+.control-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.control-row label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: #364152;
+}
+
+.control-row select {
+  min-width: 220px;
+  font-size: 0.95rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid #d0d5dd;
+  background: #ffffff;
+  color: #1f2933;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+}
+
+section {
+  background: #ffffff;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+}
+
+section h2 {
+  margin: 0 0 1rem 0;
+}
+
+.panel {
+  background: #ffffff;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+}
+
+.panel-hint {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: #52606d;
+  font-size: 0.9rem;
+}
