@@ -25,7 +25,6 @@ The demo app runs at `http://localhost:5173` and consumes the locally built core
 - `AdaptiveEngine` class generates ordered indicator recommendations honouring dependency chains.
 - Pluggable recommendation algorithms (Simple mastery, IRT, Elo, Bayesian Knowledge Tracing) with a shared strategy interface.
 - `useLearningPath` React hook for directly consuming engine recommendations in UI components.
-- `sampleGrades` and `sampleLearnerProfile` fixtures for prototyping or testing.
 
 ## Demo Application
 
@@ -35,6 +34,7 @@ The demo app renders:
 - A bar chart of learning outcome progress using `recharts`.
 - An algorithm picker that lets you compare Simple, IRT, Elo, and BKT scoring models in real time.
 - A dependency graph view that visualises indicator prerequisites using an interactive node-link diagram.
+- Local fixtures (`apps/demo/src/mock/sampleData.ts`) that seed the demo with grades and learner profiles.
 
 To build the app for production:
 

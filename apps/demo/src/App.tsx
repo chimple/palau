@@ -6,14 +6,13 @@ import {
   SimpleMasteryAlgorithm,
   BayesianKnowledgeTracingAlgorithm,
   type AdaptiveAlgorithmId,
-  sampleGrades,
-  sampleLearnerProfile,
   toOutcomeSeries,
   useLearningPath
 } from "@chimple/palau-core";
 import { OutcomeChart } from "./components/OutcomeChart";
 import { RecommendationList } from "./components/RecommendationList";
 import { IndicatorDependencyGraph } from "./components/IndicatorDependencyGraph";
+import { sampleGrades, sampleLearnerProfile } from "./mock/sampleData";
 
 const grades = sampleGrades;
 const learnerProfile = sampleLearnerProfile;

@@ -1,4 +1,4 @@
-import type { Grade, LearnerProfile } from "../domain/models";
+import type { Grade, LearnerProfile } from "@chimple/palau-core";
 
 export const sampleGrades: Grade[] = [
   {
@@ -87,6 +87,11 @@ export const sampleGrades: Grade[] = [
           {
             sourceIndicatorId: "math-add-carry",
             targetIndicatorId: "math-add-word",
+            type: "prerequisite"
+          },
+          {
+            sourceIndicatorId: "math-add-basics",
+            targetIndicatorId: "math-sub-basics",
             type: "prerequisite"
           },
           {
