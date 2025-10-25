@@ -41,7 +41,8 @@ const App = () => {
     grades,
     learnerProfile,
     options: {
-      limit: 6
+      limit: 6,
+      allowBlocked: true
     },
     algorithm
   });

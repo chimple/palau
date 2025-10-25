@@ -1,0 +1,8 @@
+subjectId,sourceIndicatorId,targetIndicatorId,type
+math,math-add-basics,math-add-carry,prerequisite
+math,math-add-carry,math-add-word,prerequisite
+math,math-add-basics,math-sub-basics,prerequisite
+math,math-sub-basics,math-sub-borrow,prerequisite
+math,math-add-basics,math-sub-borrow,reinforces
+literacy,lit-main-idea,lit-supporting-details,reinforces
+literacy,lit-supporting-details,lit-summarize,prerequisite

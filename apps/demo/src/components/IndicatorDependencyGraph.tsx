@@ -46,14 +46,14 @@ const buildCompetencyPlacements = (grades: Grade[]): PlacementResult => {
         const currentColumn = columnIndex++;
         competencyColumns.push({
           column: currentColumn,
-          competencyName: competency.name
+          competencyName: competency.id
         });
 
         competency.outcomes.forEach(outcome => {
           outcome.indicators.forEach(indicator => {
             indicatorPlacement.set(indicator.id, {
               column: currentColumn,
-              competencyName: competency.name
+              competencyName: competency.id
             });
           });
         });
@@ -114,7 +114,7 @@ const toNodes = (
       return {
         id,
         data: {
-          label: context.indicator.description
+          label: context.indicator.id
         },
         position: {
           x: column * columnSpacing + offset,

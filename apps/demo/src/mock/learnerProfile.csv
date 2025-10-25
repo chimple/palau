@@ -1,0 +1,9 @@
+indicatorId,mastery,probabilityKnown,eloRating,successStreak,failureStreak
+math-add-basics,0.9,0.92,1320,6,0
+math-add-carry,0.4,0.38,1185,0,2
+math-add-word,0.1,0.15,1050,0,3
+math-sub-basics,0.6,0.58,1220,2,0
+math-sub-borrow,0.2,0.22,1100,0,4
+lit-main-idea,0.7,0.68,1280,4,0
+lit-supporting-details,0.45,0.42,1160,0,1
+lit-summarize,0.2,0.25,1090,0,2
