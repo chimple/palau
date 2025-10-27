@@ -118,7 +118,7 @@ const toNodes = (
         },
         position: {
           x: column * columnSpacing + offset,
-          y: depth * rowSpacing + 60 + occupancyIndex * 32
+          y: depth * rowSpacing + 60 + occupancyIndex * 40
         },
         type: "default",
         style: {

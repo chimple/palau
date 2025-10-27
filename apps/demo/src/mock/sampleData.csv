@@ -1,9 +1,357 @@
 gradeId,gradeLabel,subjectId,subjectName,competencyId,competencyName,outcomeId,outcomeName,indicatorId,indicatorName,weight,difficulty
-grade-3,Grade 3,math,Mathematics,number-sense,Number Sense,addition,Addition Fluency,math-add-basics,Add two single-digit numbers,1,-1
-grade-3,Grade 3,math,Mathematics,number-sense,Number Sense,addition,Addition Fluency,math-add-carry,Add two-digit numbers with carrying,1.4,0.1
-grade-3,Grade 3,math,Mathematics,number-sense,Number Sense,addition,Addition Fluency,math-add-word,Solve two-step addition word problems,1.6,0.75
-grade-3,Grade 3,math,Mathematics,number-sense,Number Sense,subtraction,Subtraction Strategies,math-sub-basics,Subtract single-digit numbers without regrouping,1,-0.5
-grade-3,Grade 3,math,Mathematics,number-sense,Number Sense,subtraction,Subtraction Strategies,math-sub-borrow,Subtract two-digit numbers with borrowing,1.3,0.4
-grade-3,Grade 3,literacy,Literacy,reading-comprehension,Reading Comprehension,informational-text,Informational Text,lit-main-idea,Identify the main idea in informational text,1.2,-0.2
-grade-3,Grade 3,literacy,Literacy,reading-comprehension,Reading Comprehension,informational-text,Informational Text,lit-supporting-details,Find supporting details in informational text,1.1,0.3
-grade-3,Grade 3,literacy,Literacy,reading-comprehension,Reading Comprehension,informational-text,Informational Text,lit-summarize,Summarize informational passages in own words,1.5,0.9
+3,3,math,Mathematics,pre-number-concept,Pre-Number Concept,3.4,Places 5-6 objects of two groups in one-to-one correspondence,3.4-shapes-1,Shapes 1,-1.18,-1.18
+3,3,math,Mathematics,pre-number-concept,Pre-Number Concept,3.4,Places 5-6 objects of two groups in one-to-one correspondence,3.4-count-and-match,Count and Match,-1.19,-1.19
+3,3,math,Mathematics,pre-number-concept,Pre-Number Concept,3.4,Places 5-6 objects of two groups in one-to-one correspondence,3.4-count-and-pair,Count and Pair,-1.21,-1.21
+3,3,math,Mathematics,pre-number-concept,Pre-Number Concept,3.4,Places 5-6 objects of two groups in one-to-one correspondence,3.4-how-many?,How Many?,-1.22,-1.22
+3,3,math,Mathematics,pre-number-concept,Pre-Number Concept,3.5,"Compares and classifies objects by three factors like shape, color and size , etc. Correctly uses position words (besides, inside, under) to describe objects",3.5-prepositions,Prepositions,-0.99,-0.99
+3,3,math,Mathematics,pre-number-concept,Pre-Number Concept,3.5,"Compares and classifies objects by three factors like shape, color and size , etc. Correctly uses position words (besides, inside, under) to describe objects",3.5-prepositions-2,Prepositions 2,-0.98,-0.98
+3,3,math,Mathematics,pre-number-concept,Pre-Number Concept,3.5,"Compares and classifies objects by three factors like shape, color and size , etc. Correctly uses position words (besides, inside, under) to describe objects",3.5-prepositions-3,Prepositions 3,-0.97,-0.97
+3,3,math,Mathematics,pre-number-concept,Pre-Number Concept,3.5,"Compares and classifies objects by three factors like shape, color and size , etc. Correctly uses position words (besides, inside, under) to describe objects",3.5-match-coloured-objects,Match Coloured Objects,-0.96,-0.96
+3,3,math,Mathematics,pre-number-concept,Pre-Number Concept,3.5,"Compares and classifies objects by three factors like shape, color and size , etc. Correctly uses position words (besides, inside, under) to describe objects",3.5-match-coloured-objects-2,Match Coloured Objects 2,-0.95,-0.95
+3,3,math,Mathematics,pre-number-concept,Pre-Number Concept,3.5,"Compares and classifies objects by three factors like shape, color and size , etc. Correctly uses position words (besides, inside, under) to describe objects",3.5-match-blue-shadows,Match Blue Shadows,-1.01,-1.01
+3,3,math,Mathematics,pre-number-concept,Pre-Number Concept,3.5,"Compares and classifies objects by three factors like shape, color and size , etc. Correctly uses position words (besides, inside, under) to describe objects",3.5-shapes,Shapes,-1.02,-1.02
+3,3,math,Mathematics,pre-number-concept,Pre-Number Concept,3.5,"Compares and classifies objects by three factors like shape, color and size , etc. Correctly uses position words (besides, inside, under) to describe objects",3.5-shapes-and-objects,Shapes and Objects,-1.03,-1.03
+3,3,math,Mathematics,pre-number-concept,Pre-Number Concept,3.5,"Compares and classifies objects by three factors like shape, color and size , etc. Correctly uses position words (besides, inside, under) to describe objects",3.5-match-figures,Match Figures,-1.04,-1.04
+3,3,math,Mathematics,pre-number-concept,Pre-Number Concept,3.5,"Compares and classifies objects by three factors like shape, color and size , etc. Correctly uses position words (besides, inside, under) to describe objects",3.5-animals-and-babies,Animals and Babies,-1.05,-1.05
+3,3,math,Mathematics,pre-number-concept,Pre-Number Concept,3.6,"Seriates/arranges 4–5 picture cards/ objects in a sequence for example- shape, size, occurrence of events",3.6-shape-sequence,Shape Sequence,-0.9,-0.9
+3,3,math,Mathematics,pre-number-concept,Pre-Number Concept,4.5,Uses some technological tools available around him/her.,4.5-shape-sequence,Shape Sequence,-0.54,-0.54
+3,3,math,Mathematics,pre-number-concept,Pre-Number Concept,4.5,Uses some technological tools available around him/her.,4.5-match-figures,Match Figures,-0.55,-0.55
+3,3,math,Mathematics,pre-number-concept,Pre-Number Concept,4.5,Uses some technological tools available around him/her.,4.5-stringed-objects,Stringed objects,-0.56,-0.56
+3,3,math,Mathematics,pre-number-concept,Pre-Number Concept,4.5,Uses some technological tools available around him/her.,4.5-tiny-objects,Tiny Objects,-0.57,-0.57
+3,3,math,Mathematics,pre-number-concept,Pre-Number Concept,4.5,Uses some technological tools available around him/her.,4.5-3d-shapes,3D Shapes,-0.58,-0.58
+3,3,math,Mathematics,pre-number-concept,Pre-Number Concept,4.5,Uses some technological tools available around him/her.,4.5-shapes-and-objects,Shapes and Objects,-0.59,-0.59
+3,3,math,Mathematics,pre-number-concept,Pre-Number Concept,4.5,Uses some technological tools available around him/her.,4.5-beginner,Beginner,-0.6,-0.6
+3,3,math,Mathematics,pre-number-concept,Pre-Number Concept,4.5,Uses some technological tools available around him/her.,4.5-basic,Basic,-0.61,-0.61
+3,3,math,Mathematics,pre-number-concept,Pre-Number Concept,4.5,Uses some technological tools available around him/her.,4.5-simple,Simple,-0.62,-0.62
+3,3,math,Mathematics,pre-number-concept,Pre-Number Concept,4.5,Uses some technological tools available around him/her.,4.5-easy,Easy,-0.63,-0.63
+3,3,math,Mathematics,pre-number-concept,Pre-Number Concept,4.5,Uses some technological tools available around him/her.,4.5-intermediate,Intermediate,-0.64,-0.64
+3,3,math,Mathematics,pre-number-concept,Pre-Number Concept,4.5,Uses some technological tools available around him/her.,4.5-difficult,Difficult,-0.65,-0.65
+3,3,math,Mathematics,pre-number-concept,Pre-Number Concept,4.5,Uses some technological tools available around him/her.,4.5-hard,Hard,-0.66,-0.66
+3,3,math,Mathematics,pre-number-concept,Pre-Number Concept,4.6,Uses some technological tools available around him/her.,4.6-shape-series,Shape Series,-0.49,-0.49
+3,3,math,Mathematics,pre-number-concept,Pre-Number Concept,4.6,Uses some technological tools available around him/her.,4.6-shape-pattern,Shape Pattern,-0.5,-0.5
+3,3,math,Mathematics,pre-number-concept,Pre-Number Concept,4.6,Uses some technological tools available around him/her.,4.6-succession-in-shapes,Succession in Shapes,-0.51,-0.51
+3,3,math,Mathematics,pre-number-concept,Pre-Number Concept,5.5,Compares and classifies objects/ pictures based on multiple factors and describes them using properties ,5.5-shapes-and-objects,Shapes and Objects,-0.15,-0.15
+3,3,math,Mathematics,pre-number-concept,Pre-Number Concept,5.5,Compares and classifies objects/ pictures based on multiple factors and describes them using properties ,5.5-3d-shapes,3D Shapes,-0.16,-0.16
+3,3,math,Mathematics,pre-number-concept,Pre-Number Concept,5.5,Compares and classifies objects/ pictures based on multiple factors and describes them using properties ,5.5-objects-and-shapes,Objects and Shapes,-0.17,-0.17
+3,3,math,Mathematics,pre-number-concept,Pre-Number Concept,5.5,Compares and classifies objects/ pictures based on multiple factors and describes them using properties ,5.5-beginner,Beginner,-0.18,-0.18
+3,3,math,Mathematics,pre-number-concept,Pre-Number Concept,5.5,Compares and classifies objects/ pictures based on multiple factors and describes them using properties ,5.5-basic,Basic,-0.19,-0.19
+3,3,math,Mathematics,pre-number-concept,Pre-Number Concept,5.5,Compares and classifies objects/ pictures based on multiple factors and describes them using properties ,5.5-simple,Simple,-0.21,-0.21
+3,3,math,Mathematics,pre-number-concept,Pre-Number Concept,5.5,Compares and classifies objects/ pictures based on multiple factors and describes them using properties ,5.5-easy,Easy,-0.22,-0.22
+3,3,math,Mathematics,pre-number-concept,Pre-Number Concept,5.5,Compares and classifies objects/ pictures based on multiple factors and describes them using properties ,5.5-intermediate,Intermediate,-0.23,-0.23
+3,3,math,Mathematics,pre-number-concept,Pre-Number Concept,5.5,Compares and classifies objects/ pictures based on multiple factors and describes them using properties ,5.5-difficult,Difficult,-0.24,-0.24
+3,3,math,Mathematics,pre-number-concept,Pre-Number Concept,5.5,Compares and classifies objects/ pictures based on multiple factors and describes them using properties ,5.5-hard,Hard,-0.25,-0.25
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.9,Counts to 10 objects ,3.9-count-objects-basic,Count Objects Basic,-0.66,-0.66
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.9,Counts to 10 objects ,3.9-count-upto-5,Count Upto 5,-0.67,-0.67
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.9,Counts to 10 objects ,3.9-count-upto-5-1,Count Upto 5 -1,-0.68,-0.68
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.9,Counts to 10 objects ,3.9-count-upto-9,Count Upto 9,-0.7,-0.7
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.9,Counts to 10 objects ,3.9-count-objects,Count Objects,-0.71,-0.71
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.9,Counts to 10 objects ,3.9-how-many?,How many?,-0.72,-0.72
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.9,Counts to 10 objects ,3.9-how-many?-1,How many? 1,-0.76,-0.76
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.1,Can count forward and backward from a particular number up to 9 ,3.1-match-numbers-1,Match Numbers 1,-0.26,-0.26
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.1,Can count forward and backward from a particular number up to 9 ,3.1-match-numbers-2,Match Numbers 2,-0.27,-0.27
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.1,Can count forward and backward from a particular number up to 9 ,3.1-number-series,Number Series ,-0.28,-0.28
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.1,Can count forward and backward from a particular number up to 9 ,3.1-number-order-1-5,Number Order 1- 5,-0.29,-0.29
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.1,Can count forward and backward from a particular number up to 9 ,3.1-number-series-1-8,Number Series 1 - 8,-0.3,-0.3
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.1,Can count forward and backward from a particular number up to 9 ,3.1-number-series-1-9,"Number Series 1 - 9
+",-0.31,-0.31
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.1,Can count forward and backward from a particular number up to 9 ,3.1-number-series-6-9,Number Series 6 - 9,-0.32,-0.32
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.1,Can count forward and backward from a particular number up to 9 ,3.1-big-to-small,Big to Small,-0.33,-0.33
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.1,Can count forward and backward from a particular number up to 9 ,3.1-count-backwards-1,Count Backwards 1,-0.34,-0.34
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.11,Identifies numerals with numbers and writes numerals up to 9 ,3.11-count-objects-basic,"Count Objects Basic
+",-0.41,-0.41
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.11,Identifies numerals with numbers and writes numerals up to 9 ,3.11-count-upto-5,"Count Upto 5
+",-0.42,-0.42
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.11,Identifies numerals with numbers and writes numerals up to 9 ,3.11-count-upto-5-1,Count Upto 5 -1;,-0.43,-0.43
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.11,Identifies numerals with numbers and writes numerals up to 9 ,3.11-1,1,-0.44,-0.44
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.11,Identifies numerals with numbers and writes numerals up to 9 ,3.11-2,2,-0.45,-0.45
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.11,Identifies numerals with numbers and writes numerals up to 9 ,3.11-3,3,-0.46,-0.46
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.11,Identifies numerals with numbers and writes numerals up to 9 ,3.11-4,4,-0.47,-0.47
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.11,Identifies numerals with numbers and writes numerals up to 9 ,3.11-5,5,-0.48,-0.48
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.11,Identifies numerals with numbers and writes numerals up to 9 ,3.11-count-upto-9,Count Upto 9;,-0.49,-0.49
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.11,Identifies numerals with numbers and writes numerals up to 9 ,3.11-count,Count,-0.51,-0.51
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.11,Identifies numerals with numbers and writes numerals up to 9 ,3.11-count-objects,Count Objects,-0.52,-0.52
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.11,Identifies numerals with numbers and writes numerals up to 9 ,3.11-how-many?,How many?,-0.53,-0.53
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.11,Identifies numerals with numbers and writes numerals up to 9 ,3.11-how-many?-1,How many? 1,-0.54,-0.54
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.11,Identifies numerals with numbers and writes numerals up to 9 ,3.11-number-names,Number Names,-0.55,-0.55
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.11,Identifies numerals with numbers and writes numerals up to 9 ,3.11-6,6,-0.56,-0.56
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.11,Identifies numerals with numbers and writes numerals up to 9 ,3.11-7,7,-0.57,-0.57
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.11,Identifies numerals with numbers and writes numerals up to 9 ,3.11-8,8,-0.58,-0.58
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.11,Identifies numerals with numbers and writes numerals up to 9 ,3.11-9,9,-0.59,-0.59
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.12,Demonstrates the awareness that things reduce in number and become nil ,3.12-gap,GAP,-0.2,-0.2
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.13,"Compares two numbers up to 10 and uses vocabulary like more than, less than ",3.13-count,Count ,-0.09,-0.09
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.13,"Compares two numbers up to 10 and uses vocabulary like more than, less than ",3.13-more-or-less,More or Less,-0.1,-0.1
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.13,"Compares two numbers up to 10 and uses vocabulary like more than, less than ",3.13-more-or-less-1,More or Less-1,-0.11,-0.11
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.14,Combines two groups up to 9 objects and recounts,3.14-add-1,Add 1,0.06,0.06
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.14,Combines two groups up to 9 objects and recounts,3.14-add-2,Add 2,0.07,0.07
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.14,Combines two groups up to 9 objects and recounts,3.14-add-3-and-4,Add 3 and 4,0.08,0.08
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.14,Combines two groups up to 9 objects and recounts,3.14-quick-addition-1,Quick  Addition 1,0.09,0.09
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.14,Combines two groups up to 9 objects and recounts,3.14-quick-addition-2,Quick  Addition 2,0.11,0.11
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.14,Combines two groups up to 9 objects and recounts,3.14-quick-addition-3,Quick  Addition 3,0.12,0.12
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.14,Combines two groups up to 9 objects and recounts,3.14-count-and-add-1,Count and Add  1,0.13,0.13
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.14,Combines two groups up to 9 objects and recounts,3.14-count-and-add-2,Count and Add  2,0.14,0.14
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.15,Takes out objects from a collection up to 9 objects and recounts,3.15-subtract-1,Subtract 1,0.26,0.26
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.15,Takes out objects from a collection up to 9 objects and recounts,3.15-subtract-2,Subtract 2,0.27,0.27
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.15,Takes out objects from a collection up to 9 objects and recounts,3.15-subtract-3-&-4,Subtract 3 & 4,0.28,0.28
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.15,Takes out objects from a collection up to 9 objects and recounts,3.15-count-&-subtract-1,Count & Subtract 1,0.29,0.29
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.15,Takes out objects from a collection up to 9 objects and recounts,3.15-count-&-subtract-2,Count & Subtract 2,0.31,0.31
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.15,Takes out objects from a collection up to 9 objects and recounts,3.15-speed-subtraction-1,Speed Subtraction 1,0.32,0.32
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.15,Takes out objects from a collection up to 9 objects and recounts,3.15-speed-subtraction-2,Speed Subtraction 2,0.33,0.33
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.15,Takes out objects from a collection up to 9 objects and recounts,3.15-count-and-subtract,Count and Subtract,0.34,0.34
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.26,"Uses vocabulary like half roti / half glass of water, etc. in daily context ",3.26-half,Half,-0.01,-0.01
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.26,"Uses vocabulary like half roti / half glass of water, etc. in daily context ",3.26-parts-&-whole,Parts & whole,0,0
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,3.26,"Uses vocabulary like half roti / half glass of water, etc. in daily context ",3.26-capacity-of-glass,Capacity of Glass,0.01,0.01
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.9,Uses some technological tools available around him/her.,4.9-how-many?,How many?,-0.31,-0.31
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.9,Uses some technological tools available around him/her.,4.9-how-many?-1,How many? 1,-0.29,-0.29
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.1,Counts to 10 objects ,4.1-puzzle-time,Puzzle Time,0.34,0.34
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.1,Counts to 10 objects ,4.1-number-series,Number Series,0.35,0.35
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.1,Counts to 10 objects ,4.1-number-order,Number Order,0.36,0.36
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.1,Counts to 10 objects ,4.1-match-numbers-1,Match Numbers 1,0.37,0.37
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.1,Counts to 10 objects ,4.1-match-numbers-2,Match Numbers 2,0.38,0.38
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.1,Counts to 10 objects ,4.1-match-numbers-3,Match Numbers 3,0.39,0.39
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.1,Counts to 10 objects ,4.1-match-numbers-4,Match Numbers 4,0.4,0.4
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.1,Counts to 10 objects ,4.1-match-numbers-5,Match Numbers 5,0.41,0.41
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.1,Counts to 10 objects ,4.1-number-series-1-8,Number Series 1 - 8,0.42,0.42
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.1,Counts to 10 objects ,4.1-number-series-6-9,Number Series 6 - 9,0.43,0.43
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.1,Counts to 10 objects ,4.1-number-series-1-9,Number Series 1 - 9,0.44,0.44
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.1,Counts to 10 objects ,4.1-count-backwards-2,"
+Count Backwards 2                                                                                                                                                        ",0.51,0.51
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.11,Identifies numerals with numbers and writes numerals up to 99 ,4.11-how-many?,How many?,-0.16,-0.16
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.11,Identifies numerals with numbers and writes numerals up to 99 ,4.11-how-many?-1,How many? 1,-0.15,-0.15
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.11,Identifies numerals with numbers and writes numerals up to 99 ,4.11-ordinal-counting,Ordinal Counting,-0.14,-0.14
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.11,Identifies numerals with numbers and writes numerals up to 99 ,4.11-ordinal-counting-1,Ordinal Counting-1,-0.13,-0.13
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.11,Identifies numerals with numbers and writes numerals up to 99 ,4.11-ordinal-counting-2,Ordinal Counting-2,-0.12,-0.12
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.11,Identifies numerals with numbers and writes numerals up to 99 ,4.11-number-names-2,Number Names 2,-0.11,-0.11
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.11,Identifies numerals with numbers and writes numerals up to 99 ,4.11-number-names-3,Number Names 3,-0.1,-0.1
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.11,Identifies numerals with numbers and writes numerals up to 99 ,4.11-number-names-4,Number Names 4,-0.09,-0.09
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.11,Identifies numerals with numbers and writes numerals up to 99 ,4.11-number-names-5,Number Names 5,-0.08,-0.08
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.11,Identifies numerals with numbers and writes numerals up to 99 ,4.11-number-names-6,Number Names 6,-0.07,-0.07
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.11,Identifies numerals with numbers and writes numerals up to 99 ,4.11-number-names-7,Number Names 7,-0.06,-0.06
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.11,Identifies numerals with numbers and writes numerals up to 99 ,4.11-number-names-8,Number Names 8,0.01,0.01
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.12,Develops the concept of zero,4.12-0,0,0.2,0.2
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.13,Compares two numbers up to 20 and uses vocabulary like bigger than or smaller than ,4.13-big-&-small-1-20,Big & Small 1-20,0.6,0.6
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.14,Constructs addition facts up to 18 by using concrete objects and applies them in daily life. ,4.14-count-and-add-(1),Count and Add (1),0.47,0.47
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.14,Constructs addition facts up to 18 by using concrete objects and applies them in daily life. ,4.14-count-and-add-(2),Count and Add (2),0.48,0.48
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.14,Constructs addition facts up to 18 by using concrete objects and applies them in daily life. ,4.14-add-1,Add 1,0.49,0.49
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.14,Constructs addition facts up to 18 by using concrete objects and applies them in daily life. ,4.14-add-2,Add 2,0.5,0.5
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.14,Constructs addition facts up to 18 by using concrete objects and applies them in daily life. ,4.14-add-3-and-4,Add 3 and 4,0.51,0.51
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.14,Constructs addition facts up to 18 by using concrete objects and applies them in daily life. ,4.14-statement-sums-1,Statement Sums 1,0.52,0.52
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.14,Constructs addition facts up to 18 by using concrete objects and applies them in daily life. ,4.14-compare-and-add,Compare and Add,0.53,0.53
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.15,Constructs subtraction facts up to 9 by using concrete objects and applies them in daily life. ,4.15-subtract-1,Subtract 1,0.66,0.66
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.15,Constructs subtraction facts up to 9 by using concrete objects and applies them in daily life. ,4.15-subtract-2,Subtract 2,0.67,0.67
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.15,Constructs subtraction facts up to 9 by using concrete objects and applies them in daily life. ,4.15-subtract-3-&-4,Subtract 3 & 4,0.68,0.68
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.15,Constructs subtraction facts up to 9 by using concrete objects and applies them in daily life. ,4.15-count-&-subtract-1,Count & Subtract 1,0.69,0.69
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.15,Constructs subtraction facts up to 9 by using concrete objects and applies them in daily life. ,4.15-count-&-subtract-2,Count & Subtract 2,0.7,0.7
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.15,Constructs subtraction facts up to 9 by using concrete objects and applies them in daily life. ,4.15-subtract-from-10,Subtract From 10,0.71,0.71
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.15,Constructs subtraction facts up to 9 by using concrete objects and applies them in daily life. ,4.15-10s-subtraction,10's Subtraction,0.72,0.72
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.15,Constructs subtraction facts up to 9 by using concrete objects and applies them in daily life. ,4.15-statement-sums-1,Statement Sums 1,0.73,0.73
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.15,Constructs subtraction facts up to 9 by using concrete objects and applies them in daily life. ,4.15-comparison,Comparison,0.74,0.74
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.16,Develops relationship between addition and subtraction of numbers ,4.16-how-many?,How many?,0.79,0.79
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.16,Develops relationship between addition and subtraction of numbers ,4.16-addition-1,Addition 1,0.8,0.8
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.16,Develops relationship between addition and subtraction of numbers ,4.16-subtraction-1,Subtraction 1,0.81,0.81
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.17,"Develops strategies for repeatedly adding numbers up to 10, sum not exceeding 20",4.17-mulitplication-1,Mulitplication 1,0.69,0.69
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.17,"Develops strategies for repeatedly adding numbers up to 10, sum not exceeding 20",4.17-multiplication-2,Multiplication 2,0.71,0.71
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.26,"Identifies the relationship between half and whole using paper folding, daily life context like folding of roti/ sandwich etc.",4.26-parts-&-whole,Parts & Whole,0.38,0.38
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.26,"Identifies the relationship between half and whole using paper folding, daily life context like folding of roti/ sandwich etc.",4.26-parts-&-whole-2,Parts & Whole 2,0.39,0.39
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.26,"Identifies the relationship between half and whole using paper folding, daily life context like folding of roti/ sandwich etc.",4.26-parts-&-whole,Parts & Whole,0.4,0.4
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.26,"Identifies the relationship between half and whole using paper folding, daily life context like folding of roti/ sandwich etc.",4.26-half,Half,0.41,0.41
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,4.26,"Identifies the relationship between half and whole using paper folding, daily life context like folding of roti/ sandwich etc.",4.26-parts-of-whole-1/2,Parts of Whole - 1/2,0.42,0.42
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.9,Counts objects up to 100 in group of tens. ,5.9-1-20,1 - 20,0.15,0.15
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.9,Counts objects up to 100 in group of tens. ,5.9-21-30,21 - 30,0.16,0.16
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.9,Counts objects up to 100 in group of tens. ,5.9-31-40,31 - 40,0.17,0.17
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.9,Counts objects up to 100 in group of tens. ,5.9-41-50,41 - 50,0.18,0.18
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.9,Counts objects up to 100 in group of tens. ,5.9-51-60,51 - 60,0.19,0.19
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.9,Counts objects up to 100 in group of tens. ,5.9-61-70,61 - 70,0.2,0.2
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.9,Counts objects up to 100 in group of tens. ,5.9-71-80,71 - 80,0.21,0.21
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.9,Counts objects up to 100 in group of tens. ,5.9-81-90,81 - 90,0.22,0.22
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.9,Counts objects up to 100 in group of tens. ,5.9-91-100,91 - 100,0.23,0.23
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.9,Counts objects up to 100 in group of tens. ,5.9-20-99,20 - 99,0.29,0.29
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.1,Can count forward and backward from a particular number up to 99 ,5.1-puzzle-time-21-30,Puzzle Time 21 - 30,0.8,0.8
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.1,Can count forward and backward from a particular number up to 99 ,5.1-write-21-30,Write 21 -30,0.81,0.81
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.1,Can count forward and backward from a particular number up to 99 ,5.1-puzzle-time-31-40,Puzzle Time 31 - 40,0.82,0.82
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.1,Can count forward and backward from a particular number up to 99 ,5.1-write-31-40,Write 31 - 40,0.83,0.83
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.1,Can count forward and backward from a particular number up to 99 ,5.1-puzzle-time-41-50,Puzzle Time 41 - 50,0.84,0.84
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.1,Can count forward and backward from a particular number up to 99 ,5.1-write-41-50,Write 41 - 50,0.85,0.85
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.1,Can count forward and backward from a particular number up to 99 ,5.1-puzzle-time-51-60,Puzzle Time 51 - 60,0.86,0.86
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.1,Can count forward and backward from a particular number up to 99 ,5.1-write-51-60,Write 51 - 60,0.87,0.87
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.1,Can count forward and backward from a particular number up to 99 ,5.1-puzzle-time-61-70,Puzzle Time 61 - 70,0.88,0.88
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.1,Can count forward and backward from a particular number up to 99 ,5.1-write-61-70,Write 61 - 70,0.89,0.89
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.1,Can count forward and backward from a particular number up to 99 ,5.1-puzzle-time-71-80,Puzzle Time 71 - 80,0.9,0.9
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.1,Can count forward and backward from a particular number up to 99 ,5.1-write-71-80,Write 71 - 80,0.91,0.91
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.1,Can count forward and backward from a particular number up to 99 ,5.1-puzzle-time-81-90,Puzzle Time 81 - 90,0.92,0.92
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.1,Can count forward and backward from a particular number up to 99 ,5.1-write-81-90,Write 81 - 90,0.93,0.93
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.1,Can count forward and backward from a particular number up to 99 ,5.1-puzzle-time-91-100,Puzzle Time 91 - 100,0.94,0.94
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.1,Can count forward and backward from a particular number up to 99 ,5.1-write-91-100,Write 91 - 100,0.95,0.95
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.1,Can count forward and backward from a particular number up to 99 ,5.1-count-backwards,Count Backwards,0.96,0.96
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.1,Can count forward and backward from a particular number up to 99 ,5.1-big-to-small,Big to Small,0.97,0.97
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.1,Can count forward and backward from a particular number up to 99 ,5.1-small-to-big,Small to Big,0.98,0.98
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.1,Can count forward and backward from a particular number up to 99 ,5.1-arrange-numbers-1-100,Arrange Numbers 1 - 100,1.09,1.09
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.11,Reads and writes number names and numerals for numbers up to 999. ,5.11-counting,Counting,0.39,0.39
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.11,Reads and writes number names and numerals for numbers up to 999. ,5.11-ordinal-counting-3,Ordinal Counting-3,0.41,0.41
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.12,Uses zero in place value system,5.12-place-value-100-300,Place Value 100 - 300,0.54,0.54
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.12,Uses zero in place value system,5.12-place-value-300-500,Place Value 300 - 500,0.55,0.55
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.12,Uses zero in place value system,5.12-100-300,100 300,0.56,0.56
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.12,Uses zero in place value system,5.12-200-300,200 300,0.57,0.57
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.12,Uses zero in place value system,5.12-300-500,300 500,0.58,0.58
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.12,Uses zero in place value system,5.12-300-600,300 600,0.59,0.59
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.12,Uses zero in place value system,5.12-200-700,200 700,0.6,0.6
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.12,Uses zero in place value system,5.12-500-700,500 700,0.61,0.61
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.12,Uses zero in place value system,5.12-500-900,500 900,0.62,0.62
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.12,Uses zero in place value system,5.12-700-900,700 900,0.63,0.63
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.12,Uses zero in place value system,5.12-800-999,800 999,0.64,0.64
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.12,Uses zero in place value system,5.12-100-999,100 999,0.71,0.71
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.13,Compares and forms the greatest and smallest two- digit numbers (with and without repetition of given digits). ,5.13-number-order,Number Order,0.97,0.97
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.13,Compares and forms the greatest and smallest two- digit numbers (with and without repetition of given digits). ,5.13-arrange-numbers-1-100,Arrange Numbers 1 - 100,0.98,0.98
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.13,Compares and forms the greatest and smallest two- digit numbers (with and without repetition of given digits). ,5.13-big-&-small-1-50,Big & Small 1 - 50,0.99,0.99
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.13,Compares and forms the greatest and smallest two- digit numbers (with and without repetition of given digits). ,5.13-more-big-&-small-1-50,More Big & Small 1 - 50,1,1
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.13,Compares and forms the greatest and smallest two- digit numbers (with and without repetition of given digits). ,5.13-less-or-more-50-90,Less or More 50 - 90,1.01,1.01
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.13,Compares and forms the greatest and smallest two- digit numbers (with and without repetition of given digits). ,5.13-less-or-more-1-100,Less or More 1 - 100,1.05,1.05
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.14,Develops their own strategies to add two numbers (sum not exceeding 99) and applies them to solve simple daily life problems/ situations. ,5.14-double-digits-1,Double Digits -1,1.05,1.05
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.14,Develops their own strategies to add two numbers (sum not exceeding 99) and applies them to solve simple daily life problems/ situations. ,5.14-double-digits-2,Double Digits - 2,1.06,1.06
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.14,Develops their own strategies to add two numbers (sum not exceeding 99) and applies them to solve simple daily life problems/ situations. ,5.14-double-digits-3,Double Digits - 3,1.07,1.07
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.14,Develops their own strategies to add two numbers (sum not exceeding 99) and applies them to solve simple daily life problems/ situations. ,5.14-double-digits-4,Double Digits - 4,1.08,1.08
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.14,Develops their own strategies to add two numbers (sum not exceeding 99) and applies them to solve simple daily life problems/ situations. ,5.14-regroup-&-add-1,Regroup & Add 1,1.09,1.09
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.14,Develops their own strategies to add two numbers (sum not exceeding 99) and applies them to solve simple daily life problems/ situations. ,5.14-regroup-&-add-2,Regroup & Add 2,1.1,1.1
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.14,Develops their own strategies to add two numbers (sum not exceeding 99) and applies them to solve simple daily life problems/ situations. ,5.14-regroup-&-add-3,Regroup & Add 3,1.11,1.11
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.14,Develops their own strategies to add two numbers (sum not exceeding 99) and applies them to solve simple daily life problems/ situations. ,5.14-regroup-&-add-4,Regroup & Add 4,1.12,1.12
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.14,Develops their own strategies to add two numbers (sum not exceeding 99) and applies them to solve simple daily life problems/ situations. ,5.14-regroup-&-add-5,Regroup & Add 5,1.13,1.13
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.14,Develops their own strategies to add two numbers (sum not exceeding 99) and applies them to solve simple daily life problems/ situations. ,5.14-statement-sums-1,Statement Sums 1,1.14,1.14
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.14,Develops their own strategies to add two numbers (sum not exceeding 99) and applies them to solve simple daily life problems/ situations. ,5.14-compare-and-add,Compare and Add,1.15,1.15
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.15,Develops her/his own strategies to subtract two numbers upto 99 and applies them to solve simple daily life problems/ situations. ,5.15-count-and-subtract,Count and Subtract,1.02,1.02
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.15,Develops her/his own strategies to subtract two numbers upto 99 and applies them to solve simple daily life problems/ situations. ,5.15-calculator-1,Calculator 1,1.03,1.03
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.15,Develops her/his own strategies to subtract two numbers upto 99 and applies them to solve simple daily life problems/ situations. ,5.15-calculator-2,Calculator 2,1.04,1.04
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.15,Develops her/his own strategies to subtract two numbers upto 99 and applies them to solve simple daily life problems/ situations. ,5.15-subtract-1,Subtract - 1,1.05,1.05
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.15,Develops her/his own strategies to subtract two numbers upto 99 and applies them to solve simple daily life problems/ situations. ,5.15-subtract-2,Subtract - 2,1.06,1.06
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.15,Develops her/his own strategies to subtract two numbers upto 99 and applies them to solve simple daily life problems/ situations. ,5.15-subtract-3,Subtract - 3,1.07,1.07
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.15,Develops her/his own strategies to subtract two numbers upto 99 and applies them to solve simple daily life problems/ situations. ,5.15-subtract-4,Subtract - 4,1.08,1.08
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.15,Develops her/his own strategies to subtract two numbers upto 99 and applies them to solve simple daily life problems/ situations. ,5.15-subtract-5,Subtract - 5,1.09,1.09
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.15,Develops her/his own strategies to subtract two numbers upto 99 and applies them to solve simple daily life problems/ situations. ,5.15-subtract-6,Subtract - 6,1.1,1.1
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.15,Develops her/his own strategies to subtract two numbers upto 99 and applies them to solve simple daily life problems/ situations. ,5.15-subtract-7,Subtract - 7,1.11,1.11
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.15,Develops her/his own strategies to subtract two numbers upto 99 and applies them to solve simple daily life problems/ situations. ,5.15-subtract-8,Subtract - 8,1.12,1.12
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.15,Develops her/his own strategies to subtract two numbers upto 99 and applies them to solve simple daily life problems/ situations. ,5.15-subtract-9,Subtract - 9,1.13,1.13
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.15,Develops her/his own strategies to subtract two numbers upto 99 and applies them to solve simple daily life problems/ situations. ,5.15-practice,Practice,1.14,1.14
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.15,Develops her/his own strategies to subtract two numbers upto 99 and applies them to solve simple daily life problems/ situations. ,5.15-subtract-10-70,Subtract 10 - 70,1.15,1.15
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.15,Develops her/his own strategies to subtract two numbers upto 99 and applies them to solve simple daily life problems/ situations. ,5.15-subtract-20-90,Subtract 20 - 90,1.16,1.16
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.15,Develops her/his own strategies to subtract two numbers upto 99 and applies them to solve simple daily life problems/ situations. ,5.15-statement-sums-1,Statement Sums 1,1.17,1.17
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.15,Develops her/his own strategies to subtract two numbers upto 99 and applies them to solve simple daily life problems/ situations. ,5.15-comparison,Comparison,1.18,1.18
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.16,Appreciates and applies relationship between addition and subtraction of numbers ,5.16-add-&-subtract-1,Add & Subtract - 1,1.16,1.16
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.16,Appreciates and applies relationship between addition and subtraction of numbers ,5.16-add-&-subtract-2,Add & Subtract - 2,1.17,1.17
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.16,Appreciates and applies relationship between addition and subtraction of numbers ,5.16-add-&-subtract-3,Add & Subtract - 3,1.18,1.18
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.16,Appreciates and applies relationship between addition and subtraction of numbers ,5.16-add-&-subtract-4,Add & Subtract - 4,1.19,1.19
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.16,Appreciates and applies relationship between addition and subtraction of numbers ,5.16-add-&-subtract-5,Add & Subtract - 5,1.2,1.2
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.16,Appreciates and applies relationship between addition and subtraction of numbers ,5.16-add-&-subtract-6,Add & Subtract - 6,1.21,1.21
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.16,Appreciates and applies relationship between addition and subtraction of numbers ,5.16-add-&-subtract-7,Add & Subtract - 7,1.22,1.22
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.16,Appreciates and applies relationship between addition and subtraction of numbers ,5.16-add-&-subtract-8,Add & Subtract - 8,1.27,1.27
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.17,"Develops the idea of multiplication of numbers and constructs and applies multiplication facts (tables) of 2, 3 and 4 in daily life situations",5.17-table-of-1,Table of 1,1.1,1.1
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.17,"Develops the idea of multiplication of numbers and constructs and applies multiplication facts (tables) of 2, 3 and 4 in daily life situations",5.17-count-and-multiply-2,Count and Multiply 2,1.11,1.11
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.17,"Develops the idea of multiplication of numbers and constructs and applies multiplication facts (tables) of 2, 3 and 4 in daily life situations",5.17-count-and-multiply-3,Count and Multiply 3,1.12,1.12
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.17,"Develops the idea of multiplication of numbers and constructs and applies multiplication facts (tables) of 2, 3 and 4 in daily life situations",5.17-skip-by-2s,Skip by 2's,1.13,1.13
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.17,"Develops the idea of multiplication of numbers and constructs and applies multiplication facts (tables) of 2, 3 and 4 in daily life situations",5.17-skip-by-3s,Skip by 3's,1.14,1.14
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.17,"Develops the idea of multiplication of numbers and constructs and applies multiplication facts (tables) of 2, 3 and 4 in daily life situations",5.17-table-of-2,Table of 2,1.15,1.15
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.17,"Develops the idea of multiplication of numbers and constructs and applies multiplication facts (tables) of 2, 3 and 4 in daily life situations",5.17-table-of-3,Table of 3,1.16,1.16
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.17,"Develops the idea of multiplication of numbers and constructs and applies multiplication facts (tables) of 2, 3 and 4 in daily life situations",5.17-multiplication-1,Multiplication 1,1.17,1.17
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.17,"Develops the idea of multiplication of numbers and constructs and applies multiplication facts (tables) of 2, 3 and 4 in daily life situations",5.17-multiplication-2,Multiplication 2,1.18,1.18
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.17,"Develops the idea of multiplication of numbers and constructs and applies multiplication facts (tables) of 2, 3 and 4 in daily life situations",5.17-tables-1-10,Tables 1-10,1.19,1.19
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.17,"Develops the idea of multiplication of numbers and constructs and applies multiplication facts (tables) of 2, 3 and 4 in daily life situations",5.17-fast-multiplication-3-10,Fast Multiplication 3-10,1.2,1.2
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.17,"Develops the idea of multiplication of numbers and constructs and applies multiplication facts (tables) of 2, 3 and 4 in daily life situations",5.17-fast-multiplication-3-8,Fast Multiplication 3-8,1.21,1.21
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.17,"Develops the idea of multiplication of numbers and constructs and applies multiplication facts (tables) of 2, 3 and 4 in daily life situations",5.17-table-of-5,Table of 5,1.22,1.22
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.17,"Develops the idea of multiplication of numbers and constructs and applies multiplication facts (tables) of 2, 3 and 4 in daily life situations",5.17-table-of-6,Table of 6,1.23,1.23
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.17,"Develops the idea of multiplication of numbers and constructs and applies multiplication facts (tables) of 2, 3 and 4 in daily life situations",5.17-table-of-7,Table of 7,1.24,1.24
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.17,"Develops the idea of multiplication of numbers and constructs and applies multiplication facts (tables) of 2, 3 and 4 in daily life situations",5.17-table-of-8,Table of 8,1.25,1.25
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.17,"Develops the idea of multiplication of numbers and constructs and applies multiplication facts (tables) of 2, 3 and 4 in daily life situations",5.17-table-of-9,Table of 9,1.26,1.26
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.17,"Develops the idea of multiplication of numbers and constructs and applies multiplication facts (tables) of 2, 3 and 4 in daily life situations",5.17-multiply-2-9,Multiply 2-9,1.27,1.27
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.17,"Develops the idea of multiplication of numbers and constructs and applies multiplication facts (tables) of 2, 3 and 4 in daily life situations",5.17-multiply-3-8,Multiply 3-8,1.28,1.28
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.17,"Develops the idea of multiplication of numbers and constructs and applies multiplication facts (tables) of 2, 3 and 4 in daily life situations",5.17-find-the-product-2-9,Find the product 2-9,1.29,1.29
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.17,"Develops the idea of multiplication of numbers and constructs and applies multiplication facts (tables) of 2, 3 and 4 in daily life situations",5.17-find-the-product-2-8,Find the product 2-8,1.3,1.3
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.18,Develops the idea of division of numbers as equal distribution/ sharing. ,5.18-division-1,Division 1,1.4,1.4
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.19,Identifies appropriate operation (addition or subtraction) to solve problems in a familiar situation/context ,5.19-addition-2,Addition 2,1.36,1.36
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.19,Identifies appropriate operation (addition or subtraction) to solve problems in a familiar situation/context ,5.19-compare-and-add,Compare and Add,1.37,1.37
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.19,Identifies appropriate operation (addition or subtraction) to solve problems in a familiar situation/context ,5.19-subtraction-2,Subtraction 2,1.38,1.38
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.19,Identifies appropriate operation (addition or subtraction) to solve problems in a familiar situation/context ,5.19-comparison-by-subtraction,Comparison by Subtraction,1.39,1.39
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.19,Identifies appropriate operation (addition or subtraction) to solve problems in a familiar situation/context ,5.19-subtract,Subtract,1.4,1.4
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.19,Identifies appropriate operation (addition or subtraction) to solve problems in a familiar situation/context ,5.19-how-many?,How Many?,1.41,1.41
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.19,Identifies appropriate operation (addition or subtraction) to solve problems in a familiar situation/context ,5.19-subtraction-challenge,Subtraction Challenge,1.42,1.42
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.19,Identifies appropriate operation (addition or subtraction) to solve problems in a familiar situation/context ,5.19-subtraction-3,Subtraction 3,1.47,1.47
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.26,"Identifies the relationship between half, quarter and whole using paper folding, daily life context like folding of roti/ sandwich, etc. ",5.26-parts-of-whole-1/2,Parts Of Whole - 1/2,1.58,1.58
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.26,"Identifies the relationship between half, quarter and whole using paper folding, daily life context like folding of roti/ sandwich, etc. ",5.26-parts-of-whole-1/4,Parts Of Whole - 1/4,1.59,1.59
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.26,"Identifies the relationship between half, quarter and whole using paper folding, daily life context like folding of roti/ sandwich, etc. ",5.26-parts-of-whole-3/4,Parts Of Whole - 3/4,1.6,1.6
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.26,"Identifies the relationship between half, quarter and whole using paper folding, daily life context like folding of roti/ sandwich, etc. ",5.26-capacity-of-glass,Capacity of Glass,1.61,1.61
+3,3,math,Mathematics,numbers-and-num-ops,Numbers and NumOps,5.26,"Identifies the relationship between half, quarter and whole using paper folding, daily life context like folding of roti/ sandwich, etc. ",5.26-parts-&-whole,Parts & Whole,1.62,1.62
+3,3,math,Mathematics,shapes&spatial-understanding,Shapes&Spatial Understanding,3.25,Identifies the 2-D shapes by tracing the faces of 3-D shapes on a plane surface ,3.25-na,NA,-0.8,-0.8
+3,3,math,Mathematics,shapes&spatial-understanding,Shapes&Spatial Understanding,4.25,"Identifies and describes 3D shapes with their observable characteristics. For example- a shoe box is a cube and has 6 faces, 8 corners, a ball is sphere with no corner and no flat surface etc.",4.25-objects-and-shapes,Objects and Shapes,-0.42,-0.42
+3,3,math,Mathematics,shapes&spatial-understanding,Shapes&Spatial Understanding,4.25,"Identifies and describes 3D shapes with their observable characteristics. For example- a shoe box is a cube and has 6 faces, 8 corners, a ball is sphere with no corner and no flat surface etc.",4.25-3d-shapes,3D shapes,-0.41,-0.41
+3,3,math,Mathematics,shapes&spatial-understanding,Shapes&Spatial Understanding,4.25,"Identifies and describes 3D shapes with their observable characteristics. For example- a shoe box is a cube and has 6 faces, 8 corners, a ball is sphere with no corner and no flat surface etc.",4.25-shapes-and-solids,Shapes and Solids,-0.4,-0.4
+3,3,math,Mathematics,shapes&spatial-understanding,Shapes&Spatial Understanding,4.25,"Identifies and describes 3D shapes with their observable characteristics. For example- a shoe box is a cube and has 6 faces, 8 corners, a ball is sphere with no corner and no flat surface etc.",4.25-2d-&-3d-shapes-(only-3d-part-of-it),2D & 3D Shapes (only 3D part of it),-0.37,-0.37
+3,3,math,Mathematics,shapes&spatial-understanding,Shapes&Spatial Understanding,5.25,"Identifies and describes basic 2D shapes such as rectangle, triangle, circle, and other shapes around her/ him. For example, the pages of a book are rectangular and has 4 sides, 4 corners.",5.25-shapes-1,Shapes 1,-0.04,-0.04
+3,3,math,Mathematics,shapes&spatial-understanding,Shapes&Spatial Understanding,5.25,"Identifies and describes basic 2D shapes such as rectangle, triangle, circle, and other shapes around her/ him. For example, the pages of a book are rectangular and has 4 sides, 4 corners.",5.25-shapes-2,Shapes 2,-0.03,-0.03
+3,3,math,Mathematics,shapes&spatial-understanding,Shapes&Spatial Understanding,5.25,"Identifies and describes basic 2D shapes such as rectangle, triangle, circle, and other shapes around her/ him. For example, the pages of a book are rectangular and has 4 sides, 4 corners.",5.25-shapes-3,Shapes 3,-0.02,-0.02
+3,3,math,Mathematics,shapes&spatial-understanding,Shapes&Spatial Understanding,5.25,"Identifies and describes basic 2D shapes such as rectangle, triangle, circle, and other shapes around her/ him. For example, the pages of a book are rectangular and has 4 sides, 4 corners.",5.25-shapes-4,Shapes 4,-0.01,-0.01
+3,3,math,Mathematics,shapes&spatial-understanding,Shapes&Spatial Understanding,5.25,"Identifies and describes basic 2D shapes such as rectangle, triangle, circle, and other shapes around her/ him. For example, the pages of a book are rectangular and has 4 sides, 4 corners.",5.25-shapes-advanced,Shapes Advanced,0,0
+3,3,math,Mathematics,shapes&spatial-understanding,Shapes&Spatial Understanding,5.25,"Identifies and describes basic 2D shapes such as rectangle, triangle, circle, and other shapes around her/ him. For example, the pages of a book are rectangular and has 4 sides, 4 corners.",5.25-2d-&-3d-shapes-(only-2d-part-of-it),2D & 3D Shapes (only 2D part of it),0.01,0.01
+3,3,math,Mathematics,shapes&spatial-understanding,Shapes&Spatial Understanding,5.25,"Identifies and describes basic 2D shapes such as rectangle, triangle, circle, and other shapes around her/ him. For example, the pages of a book are rectangular and has 4 sides, 4 corners.",5.25-shapes,Shapes,0.02,0.02
+3,3,math,Mathematics,shapes&spatial-understanding,Shapes&Spatial Understanding,5.25,"Identifies and describes basic 2D shapes such as rectangle, triangle, circle, and other shapes around her/ him. For example, the pages of a book are rectangular and has 4 sides, 4 corners.",5.25-3d-shapes,3D Shapes,0.07,0.07
+3,3,math,Mathematics,measurement,Measurement,3.2,Identify Indian currency notes ,3.2-indian-currency-1,Indian Currency 1,0.19,0.19
+3,3,math,Mathematics,measurement,Measurement,3.2,Identify Indian currency notes ,3.2-indian-currency-2,Indian Currency 2,0.21,0.21
+3,3,math,Mathematics,measurement,Measurement,3.21,Compares three objects in terms of their lengths as longest/shortest tallest/shortest ,"3.21-tall,-long-and-short","Tall, Long and Short",-0.76,-0.76
+3,3,math,Mathematics,measurement,Measurement,3.21,Compares three objects in terms of their lengths as longest/shortest tallest/shortest ,"3.21-tall,-long-and-short-1","Tall, Long and Short 1",-0.77,-0.77
+3,3,math,Mathematics,measurement,Measurement,3.21,Compares three objects in terms of their lengths as longest/shortest tallest/shortest ,"3.21-long,-tall,-short","Long, Tall, Short",-0.78,-0.78
+3,3,math,Mathematics,measurement,Measurement,3.21,Compares three objects in terms of their lengths as longest/shortest tallest/shortest ,"3.21-long,-tall,-short-1","Long, Tall, Short -1",-0.82,-0.82
+3,3,math,Mathematics,measurement,Measurement,3.21,Compares three objects in terms of their lengths as longest/shortest tallest/shortest ,"3.21-longest,-tallest,-shortest","Longest, Tallest, Shortest",-0.83,-0.83
+3,3,math,Mathematics,measurement,Measurement,3.21,Compares three objects in terms of their lengths as longest/shortest tallest/shortest ,"3.21-longest,-tallest,-shortest-1","Longest, Tallest, Shortest - 1",-0.84,-0.84
+3,3,math,Mathematics,measurement,Measurement,3.22,Compares two objects in terms of their weight as heavier than/ lighter than ,3.22-heavy-or-light-1,Heavy or Light 1,-0.82,-0.82
+3,3,math,Mathematics,measurement,Measurement,3.22,Compares two objects in terms of their weight as heavier than/ lighter than ,3.22-heavy-or-light-2,Heavy or Light 2,-0.81,-0.81
+3,3,math,Mathematics,measurement,Measurement,3.22,Compares two objects in terms of their weight as heavier than/ lighter than ,3.22-heavy-or-light-3,Heavy or Light 3,-0.8,-0.8
+3,3,math,Mathematics,measurement,Measurement,3.22,Compares two objects in terms of their weight as heavier than/ lighter than ,3.22-heavy-or-light-4,Heavy or Light 4,-0.77,-0.77
+3,3,math,Mathematics,measurement,Measurement,3.23,"Compares capacities of two capacities of two vessels like bottles, glasses, bucket, etc.",3.23-capacity-of-glass,Capacity of Glass,-0.8,-0.8
+3,3,math,Mathematics,measurement,Measurement,3.29,Recites the names of the days of the week and months of the year ,3.29-days-of-the-week,Days of the week,-0.71,-0.71
+3,3,math,Mathematics,measurement,Measurement,3.29,Recites the names of the days of the week and months of the year ,3.29-days-of-the-week-1,Days of the week-1,-0.7,-0.7
+3,3,math,Mathematics,measurement,Measurement,3.29,Recites the names of the days of the week and months of the year ,3.29-months-of-the-year,Months of the year,-0.69,-0.69
+3,3,math,Mathematics,measurement,Measurement,4.2,Represents an amount up to Rs. 20 using notes/coins ,4.2-indian-currency-3,Indian Currency 3,0.6,0.6
+3,3,math,Mathematics,measurement,Measurement,4.21,"Estimates and measures short lengths using non uniform units like a finger, hand span, length of a forearm, footsteps, etc. ",4.21-basics,Basics,-0.4,-0.4
+3,3,math,Mathematics,measurement,Measurement,4.22,Compares three objects in terms of their weight as heaviest/lightest ,4.22-heaviest-or-lightest?,Heaviest or Lightest?,-0.4,-0.4
+3,3,math,Mathematics,measurement,Measurement,4.23,"Estimates and measures capacities of containers using uniform non- standard units like a cup/ spoon / mug, etc. ",4.23-capacity-of-glass,Capacity of Glass,-0.4,-0.4
+3,3,math,Mathematics,measurement,Measurement,4.24,"Appropriately uses vocabulary like hot or cold about objects, weather, etc.",4.24-gap,GAP,-0.4,-0.4
+3,3,math,Mathematics,measurement,Measurement,4.29,Identifies the names of the days of the week and months of the year for day/ month,4.29-days-of-the-week-2,Days of the week-2,-0.32,-0.32
+3,3,math,Mathematics,measurement,Measurement,4.29,Identifies the names of the days of the week and months of the year for day/ month,4.29-months-of-the-year-1,Months of the year-1,-0.31,-0.31
+3,3,math,Mathematics,measurement,Measurement,4.29,Identifies the names of the days of the week and months of the year for day/ month,4.29-months-of-the-year-2,Months of the year-2,-0.3,-0.3
+3,3,math,Mathematics,measurement,Measurement,4.29,Identifies the names of the days of the week and months of the year for day/ month,4.29-months-of-the-year-3,Months of the year-3,-0.29,-0.29
+3,3,math,Mathematics,measurement,Measurement,4.29,Identifies the names of the days of the week and months of the year for day/ month,4.29-months-of-the-year-4,Months of the year-4,-0.28,-0.28
+3,3,math,Mathematics,measurement,Measurement,5.2,Represents an amount up to Rs. 100 using notes and coins ,5.2-indian-currency-4,Indian Currency 4,1.59,1.59
+3,3,math,Mathematics,measurement,Measurement,5.2,Represents an amount up to Rs. 100 using notes and coins ,5.2-indian-currency-5,Indian Currency 5,1.61,1.61
+3,3,math,Mathematics,measurement,Measurement,5.21,"Estimates and measures length/ distances using uniform non- standard units like a rod/ pencil/ thread, etc. ",5.21-comparison,Comparison,0,0
+3,3,math,Mathematics,measurement,Measurement,5.22,Compares objects as heavier than/ lighter than using simple balance.,5.22-more-comparisons,More comparisons,0,0
+3,3,math,Mathematics,measurement,Measurement,5.23,"Compares the capacity of different containers in terms of non-standard units for example cup/ spoon/ bucket, etc. ",5.23-comparison,Comparison,0,0
+3,3,math,Mathematics,measurement,Measurement,5.24,"Compares objects as hotter than as/ colder than by observable properties like condensation, steaming etc.",5.24-gap,GAP,0,0
+3,3,math,Mathematics,measurement,Measurement,5.29,Identifies the days of the week and months of the year using a calendar in his/her daily life events,5.29-practice,Practice,0.09,0.09
+3,3,math,Mathematics,measurement,Measurement,5.29,Identifies the days of the week and months of the year using a calendar in his/her daily life events,5.29-more-practice,More Practice,0.1,0.1
+3,3,math,Mathematics,measurement,Measurement,5.29,Identifies the days of the week and months of the year using a calendar in his/her daily life events,5.29-days-of-the-week-3,Days of the week-3,0.11,0.11
+3,3,math,Mathematics,measurement,Measurement,5.7,"Sequences the events occurring according to their duration in terms of days; for example, does a child remain in school for a longer period than at home.",5.7-gap,GAP,0.1,0.1
+3,3,math,Mathematics,patterns,Patterns,3.27,"Creates new patterns with leaf printing or thumb printing, etc.",3.27-gap,GAP,0.2,0.2
+3,3,math,Mathematics,patterns,Patterns,4.27,"Observes, extends, and creates patterns of shapes, numbers, and musical/sound patterns. For example, arrangement of shapes/ objects/ numbers, etc.: - For example 1, 2, 3, 4, 5, . . . ",4.27-shape-sequence,Shape Sequence,0.58,0.58
+3,3,math,Mathematics,patterns,Patterns,4.27,"Observes, extends, and creates patterns of shapes, numbers, and musical/sound patterns. For example, arrangement of shapes/ objects/ numbers, etc.: - For example 1, 2, 3, 4, 5, . . . ",4.27-shape-pair,Shape Pair,0.59,0.59
+3,3,math,Mathematics,patterns,Patterns,4.27,"Observes, extends, and creates patterns of shapes, numbers, and musical/sound patterns. For example, arrangement of shapes/ objects/ numbers, etc.: - For example 1, 2, 3, 4, 5, . . . ",4.27-shape-pattern,Shape Pattern,0.6,0.6
+3,3,math,Mathematics,patterns,Patterns,4.27,"Observes, extends, and creates patterns of shapes, numbers, and musical/sound patterns. For example, arrangement of shapes/ objects/ numbers, etc.: - For example 1, 2, 3, 4, 5, . . . ",4.27-shape-order,Shape order,0.61,0.61
+3,3,math,Mathematics,patterns,Patterns,4.27,"Observes, extends, and creates patterns of shapes, numbers, and musical/sound patterns. For example, arrangement of shapes/ objects/ numbers, etc.: - For example 1, 2, 3, 4, 5, . . . ",4.27-succession-in-shapes,Succession in Shapes,0.62,0.62
+3,3,math,Mathematics,patterns,Patterns,5.27,"Observes and generalises the patterns in numbers like in multiplication tables, 1-100 number grid or objects in the environment. ",5.27-skip-by-5s,Skip By 5's,1.31,1.31
+3,3,math,Mathematics,patterns,Patterns,5.27,"Observes and generalises the patterns in numbers like in multiplication tables, 1-100 number grid or objects in the environment. ",5.27-skip-by-10s,Skip By 10's,1.32,1.32
+3,3,math,Mathematics,patterns,Patterns,5.27,"Observes and generalises the patterns in numbers like in multiplication tables, 1-100 number grid or objects in the environment. ",5.27-skip-by-100,Skip By 100,1.33,1.33
+3,3,math,Mathematics,patterns,Patterns,5.27,"Observes and generalises the patterns in numbers like in multiplication tables, 1-100 number grid or objects in the environment. ",5.27-table-of-1,Table of 1,1.34,1.34
+3,3,math,Mathematics,patterns,Patterns,5.27,"Observes and generalises the patterns in numbers like in multiplication tables, 1-100 number grid or objects in the environment. ",5.27-count-and-multiply-2,Count and Multiply 2,1.35,1.35
+3,3,math,Mathematics,patterns,Patterns,5.27,"Observes and generalises the patterns in numbers like in multiplication tables, 1-100 number grid or objects in the environment. ",5.27-table-of-2,Table of 2,1.36,1.36
+3,3,math,Mathematics,patterns,Patterns,5.27,"Observes and generalises the patterns in numbers like in multiplication tables, 1-100 number grid or objects in the environment. ",5.27-skip-by-2s,Skip by 2's,1.37,1.37
+3,3,math,Mathematics,patterns,Patterns,5.27,"Observes and generalises the patterns in numbers like in multiplication tables, 1-100 number grid or objects in the environment. ",5.27-count-and-multiply-3,Count and Multiply 3,1.38,1.38
+3,3,math,Mathematics,patterns,Patterns,5.27,"Observes and generalises the patterns in numbers like in multiplication tables, 1-100 number grid or objects in the environment. ",5.27-table-of-3,Table of 3,1.39,1.39
+3,3,math,Mathematics,patterns,Patterns,5.27,"Observes and generalises the patterns in numbers like in multiplication tables, 1-100 number grid or objects in the environment. ",5.27-skip-by-3s,Skip by 3's,1.4,1.4
+3,3,math,Mathematics,patterns,Patterns,5.27,"Observes and generalises the patterns in numbers like in multiplication tables, 1-100 number grid or objects in the environment. ",5.27-table-of-3,Table of 3,1.41,1.41
+3,3,math,Mathematics,patterns,Patterns,5.27,"Observes and generalises the patterns in numbers like in multiplication tables, 1-100 number grid or objects in the environment. ",5.27-table-of-4,Table of 4,1.42,1.42
+3,3,math,Mathematics,patterns,Patterns,5.27,"Observes and generalises the patterns in numbers like in multiplication tables, 1-100 number grid or objects in the environment. ",5.27-table-1-10,Table 1-10,1.43,1.43
+3,3,math,Mathematics,patterns,Patterns,5.27,"Observes and generalises the patterns in numbers like in multiplication tables, 1-100 number grid or objects in the environment. ",5.27-table-of-5,Table of 5,1.44,1.44
+3,3,math,Mathematics,patterns,Patterns,5.27,"Observes and generalises the patterns in numbers like in multiplication tables, 1-100 number grid or objects in the environment. ",5.27-table-of-6,Table of 6,1.45,1.45
+3,3,math,Mathematics,patterns,Patterns,5.27,"Observes and generalises the patterns in numbers like in multiplication tables, 1-100 number grid or objects in the environment. ",5.27-table-of-7,Table of 7,1.46,1.46
+3,3,math,Mathematics,patterns,Patterns,5.27,"Observes and generalises the patterns in numbers like in multiplication tables, 1-100 number grid or objects in the environment. ",5.27-table-of-8,Table of 8,1.47,1.47
+3,3,math,Mathematics,patterns,Patterns,5.27,"Observes and generalises the patterns in numbers like in multiplication tables, 1-100 number grid or objects in the environment. ",5.27-table-of-9,Table of 9,1.57,1.57
+3,3,math,Mathematics,data-handling,Data Handling,3.28,Draws inferences from situations that surround him/her for example: I have more red pencils than blue. ,3.28-gap,GAP,0.1,0.1
+3,3,math,Mathematics,data-handling,Data Handling,4.28,"Collects, records (using pictures/ numerals) and interprets simple information by looking at visuals. ",4.28-gap,GAP,0.5,0.5
+3,3,math,Mathematics,data-handling,Data Handling,5.28,Draws inference based on the data collected such as the number of vehicles used in Samir's house is more than that of Angelina etc.,5.28-gap,GAP,0.9,0.9
+3,3,math,Mathematics,mathematical-communication,Mathematical Communication,3.3,Describes usage of commonly available technological tools around him/ her. ,3.3-gap,GAP,-0.5,-0.5
+3,3,math,Mathematics,mathematical-communication,Mathematical Communication,4.3,Uses some technological tools available around him/her.,4.3-gap,GAP,0.1,0.1
+3,3,math,Mathematics,mathematical-communication,Mathematical Communication,5.3,Demonstrates interest/curiosity in newer technology as per child's context.,5.3-gap,GAP,0.3,0.3

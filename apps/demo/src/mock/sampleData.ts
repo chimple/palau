@@ -17,6 +17,11 @@ interface CsvRow {
   indicatorName: string;
   weight: string;
   difficulty?: string;
+  progress?: string;
+  estimatedMinutes?: string;
+  discrimination?: string;
+  guessing?: string;
+  slip?: string;
 }
 
 interface SubjectDependencyRow {
@@ -118,9 +123,11 @@ const buildGrades = (): Grade[] => {
       description: row.indicatorName,
       weight: toNumber(row.weight) ?? 1,
       difficulty: toNumber(row.difficulty),
-      discrimination: 1.2,
-      guessing: 0.2,
-      slip: 0.1
+      progress: toNumber(row.progress),
+      estimatedMinutes: row.estimatedMinutes ? Number(row.estimatedMinutes) : undefined,
+      discrimination: toNumber(row.discrimination) ?? 1.0,
+      guessing: toNumber(row.guessing) ?? 0.2,
+      slip: toNumber(row.slip) ?? 0.1
     });
   });
 
