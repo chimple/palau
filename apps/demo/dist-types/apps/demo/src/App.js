@@ -1,9 +1,10 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { useMemo, useState } from "react";
-import { IndicatorProgress, IRTAlgorithm, EloAlgorithm, SimpleMasteryAlgorithm, BayesianKnowledgeTracingAlgorithm, sampleGrades, sampleLearnerProfile, toOutcomeSeries, useLearningPath } from "@chimple/palau-core";
+import { IndicatorProgress, IRTAlgorithm, EloAlgorithm, SimpleMasteryAlgorithm, BayesianKnowledgeTracingAlgorithm, toOutcomeSeries, useLearningPath } from "@chimple/palau-core";
 import { OutcomeChart } from "./components/OutcomeChart";
 import { RecommendationList } from "./components/RecommendationList";
 import { IndicatorDependencyGraph } from "./components/IndicatorDependencyGraph";
+import { sampleGrades, sampleLearnerProfile } from "./mock/sampleData";
 const grades = sampleGrades;
 const learnerProfile = sampleLearnerProfile;
 const App = () => {
@@ -26,7 +27,8 @@ const App = () => {
         grades,
         learnerProfile,
         options: {
-            limit: 6
+            limit: 6,
+            allowBlocked: true
         },
         algorithm
     });

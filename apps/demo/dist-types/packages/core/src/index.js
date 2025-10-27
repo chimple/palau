@@ -6,4 +6,3 @@ export { useLearningPath } from "./hooks/useLearningPath";
 export { IndicatorProgress } from "./components/IndicatorProgress";
 export { toOutcomeSeries } from "./analytics/outcomeSeries";
 export { PersonalizationService } from "./services/personalizationService";
-export { sampleGrades, sampleLearnerProfile } from "./mock/sampleData";
