@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import ReactFlow, {
   Background,
   Controls,
@@ -112,165 +113,222 @@ const IndicatorNodeLabel = ({
       }
     : null;
 
+  const resetDraftMastery = () => {
+    setDraftMastery(
+      masteryValue === undefined || Number.isNaN(masteryValue) ? "0" : masteryValue.toString()
+    );
+  };
+
+  const closeEditor = () => {
+    setIsEditing(false);
+    resetDraftMastery();
+  };
+
+  const tooltip =
+    showPopup && !isEditing && typeof document !== "undefined"
+      ? createPortal(
+          <div
+            style={{
+              position: "fixed",
+              top: 24,
+              left: "50%",
+              transform: "translateX(-50%)",
+              padding: "0.5rem 1rem",
+              borderRadius: 8,
+              background: "rgba(15, 23, 42, 0.92)",
+              color: "#FFFFFF",
+              fontSize: "0.9rem",
+              maxWidth: 360,
+              boxShadow: "0 12px 24px rgba(15, 23, 42, 0.35)",
+              zIndex: 2000,
+              pointerEvents: "none"
+            }}
+          >
+            {indicatorName}
+          </div>,
+          document.body
+        )
+      : null;
+
+  const editor =
+    isEditing && typeof document !== "undefined"
+      ? createPortal(
+          <div
+            role="dialog"
+            aria-modal="true"
+            style={{
+              position: "fixed",
+              inset: 0,
+              zIndex: 2100,
+              background: "rgba(15, 23, 42, 0.45)",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "flex-start",
+              paddingTop: "10vh"
+            }}
+            onClick={closeEditor}
+          >
+            <form
+              style={{
+                background: "#FFFFFF",
+                borderRadius: 12,
+                border: "1px solid #CBD5E1",
+                boxShadow: "0 16px 32px rgba(15, 23, 42, 0.3)",
+                width: 280,
+                padding: "1rem",
+                display: "flex",
+                flexDirection: "column",
+                gap: "0.75rem"
+              }}
+              onClick={event => event.stopPropagation()}
+              onSubmit={event => {
+                event.preventDefault();
+                const parsed = Number(draftMastery);
+                if (Number.isNaN(parsed)) {
+                  return;
+                }
+                const clamped = Math.max(0, Math.min(1, parsed));
+                onSubmitMastery(clamped);
+                setDraftMastery(clamped.toString());
+                setIsEditing(false);
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  gap: "0.5rem"
+                }}
+              >
+                <span style={{ fontWeight: 600, fontSize: "1rem", color: "#0F172A" }}>
+                  {indicatorId}
+                </span>
+                {highlightBadge ? (
+                  <span
+                    style={{
+                      padding: "0.1rem 0.5rem",
+                      borderRadius: 999,
+                      fontSize: "0.75rem",
+                      fontWeight: 600,
+                      ...highlightBadge
+                    }}
+                  >
+                    #{highlight?.rank}
+                  </span>
+                ) : null}
+              </div>
+              <label
+                htmlFor={`indicator-${indicatorId}-mastery`}
+                style={{ fontSize: "0.85rem", fontWeight: 600, color: "#1E293B" }}
+              >
+                Mastery (0-1)
+              </label>
+              <input
+                id={`indicator-${indicatorId}-mastery`}
+                type="number"
+                min={0}
+                max={1}
+                step={0.01}
+                value={draftMastery}
+                onChange={event => setDraftMastery(event.target.value)}
+                style={{
+                  width: "100%",
+                  padding: "0.5rem 0.75rem",
+                  borderRadius: 8,
+                  border: "1px solid #CBD5E1",
+                  fontSize: "0.95rem"
+                }}
+              />
+              <p style={{ fontSize: "0.8rem", color: "#64748B", margin: 0 }}>{indicatorName}</p>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  gap: "0.75rem"
+                }}
+              >
+                <button
+                  type="button"
+                  onClick={closeEditor}
+                  style={{
+                    background: "transparent",
+                    border: "none",
+                    color: "#64748B",
+                    fontSize: "0.85rem",
+                    cursor: "pointer"
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  style={{
+                    background: "#2563EB",
+                    border: "none",
+                    borderRadius: 8,
+                    color: "#FFFFFF",
+                    padding: "0.45rem 0.9rem",
+                    fontSize: "0.9rem",
+                    fontWeight: 600,
+                    cursor: "pointer"
+                  }}
+                >
+                  Submit
+                </button>
+              </div>
+            </form>
+          </div>,
+          document.body
+        )
+      : null;
+
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: "0.25rem",
-        position: "relative",
-        alignItems: "flex-start",
-        cursor: "pointer"
-      }}
-      onMouseEnter={() => setShowPopup(true)}
-      onMouseLeave={() => setShowPopup(false)}
-      onClick={event => {
-        event.stopPropagation();
-        setShowPopup(false);
-        setIsEditing(true);
-      }}
-    >
+    <>
       <div
         style={{
           display: "flex",
-          alignItems: "center",
-          gap: "0.5rem"
+          flexDirection: "column",
+          gap: "0.25rem",
+          position: "relative",
+          alignItems: "flex-start",
+          cursor: "pointer"
+        }}
+        onMouseEnter={() => setShowPopup(true)}
+        onMouseLeave={() => setShowPopup(false)}
+        onClick={event => {
+          event.stopPropagation();
+          setShowPopup(false);
+          setIsEditing(true);
         }}
       >
-        <span style={{ fontWeight: 600 }}>{indicatorId}</span>
-        {highlightBadge ? (
-          <span
-            style={{
-              padding: "0.1rem 0.4rem",
-              borderRadius: 999,
-              fontSize: "0.75rem",
-              fontWeight: 600,
-              ...highlightBadge
-            }}
-          >
-            #{highlight?.rank}
-          </span>
-        ) : null}
-      </div>
-      <span style={{ fontSize: "0.85rem", color: "#475569" }}>{masteryLabel}</span>
-      {showPopup && !isEditing ? (
-        <div
+        <span
           style={{
-            position: "absolute",
-            top: "100%",
-            left: 0,
-            marginTop: "0.5rem",
-            padding: "0.5rem 0.75rem",
-            borderRadius: 8,
-            background: "rgba(15, 23, 42, 0.92)",
-            color: "#FFFFFF",
-            fontSize: "0.85rem",
-            maxWidth: 240,
-            boxShadow: "0 8px 16px rgba(15, 23, 42, 0.25)",
-            zIndex: 10
-          }}
-        >
-          {indicatorName}
-        </div>
-      ) : null}
-      {isEditing ? (
-        <form
-          style={{
-            position: "absolute",
-            top: "100%",
-            left: 0,
-            marginTop: highlight ? "3.5rem" : "2.5rem",
-            padding: "0.75rem",
-            borderRadius: 12,
-            background: "#FFFFFF",
-            boxShadow: "0 12px 24px rgba(15, 23, 42, 0.2)",
-            width: 220,
-            zIndex: 20,
-            border: "1px solid #CBD5E1",
             display: "flex",
-            flexDirection: "column",
+            alignItems: "center",
             gap: "0.5rem"
           }}
-          onClick={event => event.stopPropagation()}
-          onSubmit={event => {
-            event.preventDefault();
-            const parsed = Number(draftMastery);
-            if (Number.isNaN(parsed)) {
-              return;
-            }
-            const clamped = Math.max(0, Math.min(1, parsed));
-            onSubmitMastery(clamped);
-            setIsEditing(false);
-          }}
         >
-          <label
-            htmlFor={`indicator-${indicatorId}-mastery`}
-            style={{ fontSize: "0.8rem", fontWeight: 600, color: "#1E293B" }}
-          >
-            Mastery (0-1)
-          </label>
-          <input
-            id={`indicator-${indicatorId}-mastery`}
-            type="number"
-            min={0}
-            max={1}
-            step={0.01}
-            value={draftMastery}
-            onChange={event => setDraftMastery(event.target.value)}
-            style={{
-              width: "100%",
-              padding: "0.4rem 0.5rem",
-              borderRadius: 8,
-              border: "1px solid #CBD5E1",
-              fontSize: "0.9rem"
-            }}
-          />
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              gap: "0.5rem"
-            }}
-          >
-            <button
-              type="button"
-              onClick={() => {
-                setIsEditing(false);
-                setDraftMastery(
-                  masteryValue === undefined || Number.isNaN(masteryValue)
-                    ? "0"
-                    : masteryValue.toString()
-                );
-              }}
+          <span style={{ fontWeight: 600 }}>{indicatorId}</span>
+          {highlightBadge ? (
+            <span
               style={{
-                background: "transparent",
-                border: "none",
-                color: "#64748B",
-                fontSize: "0.85rem",
-                cursor: "pointer"
-              }}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              style={{
-                background: "#2563EB",
-                border: "none",
-                borderRadius: 8,
-                color: "#FFFFFF",
-                padding: "0.35rem 0.75rem",
-                fontSize: "0.85rem",
+                padding: "0.1rem 0.4rem",
+                borderRadius: 999,
+                fontSize: "0.75rem",
                 fontWeight: 600,
-                cursor: "pointer"
+                ...highlightBadge
               }}
             >
-              Submit
-            </button>
-          </div>
-        </form>
-      ) : null}
-    </div>
+              #{highlight?.rank}
+            </span>
+          ) : null}
+        </span>
+        <span style={{ fontSize: "0.85rem", color: "#475569" }}>{masteryLabel}</span>
+      </div>
+      {tooltip}
+      {editor}
+    </>
   );
 };
 
@@ -337,8 +395,8 @@ const toNodes = (
     const mastery = masteryMap.get(id);
     const masteryLabel =
       mastery === undefined || Number.isNaN(mastery)
-        ? "Mastery: —"
-        : `Mastery: ${(mastery * 100).toFixed(0)}%`;
+        ? "—"
+        : `${(mastery * 100).toFixed(0)}%`;
     const indicatorName = context.indicator.description || context.indicator.id;
 
     const highlight = recommendationHighlights.get(id);
@@ -346,7 +404,7 @@ const toNodes = (
       borderRadius: 12,
       border: "1px solid #CBD5E1",
       padding: "0.5rem 0.75rem",
-      width: 220,
+      width: 110,
       background: "#FFFFFF",
       boxShadow: "0 4px 12px rgba(15, 23, 42, 0.12)",
       cursor: "pointer"
@@ -397,7 +455,7 @@ const toNodes = (
       background: "transparent",
       fontWeight: 700,
       fontSize: "1rem",
-      width: 220,
+      width: 110,
       textAlign: "center",
       pointerEvents: "none"
     }
