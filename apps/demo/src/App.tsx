@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
   IndicatorProgress,
   IRTAlgorithm,
@@ -6,6 +6,7 @@ import {
   SimpleMasteryAlgorithm,
   BayesianKnowledgeTracingAlgorithm,
   type AdaptiveAlgorithmId,
+  type LearnerProfile,
   toOutcomeSeries,
   useLearningPath
 } from "@chimple/palau-core";
@@ -15,11 +16,14 @@ import { IndicatorDependencyGraph } from "./components/IndicatorDependencyGraph"
 import { sampleGrades, sampleLearnerProfile } from "./mock/sampleData";
 
 const grades = sampleGrades;
-const learnerProfile = sampleLearnerProfile;
 
 type ViewMode = "insights" | "graph";
 
 const App = () => {
+  const [profile, setProfile] = useState<LearnerProfile>(() => ({
+    ...sampleLearnerProfile,
+    indicatorStates: sampleLearnerProfile.indicatorStates.map(state => ({ ...state }))
+  }));
   const [algorithmId, setAlgorithmId] = useState<AdaptiveAlgorithmId>("simple");
   const [view, setView] = useState<ViewMode>("insights");
 
@@ -37,12 +41,25 @@ const App = () => {
     }
   }, [algorithmId]);
 
+  const handleUpdateMastery = useCallback((indicatorId: string, mastery: number) => {
+    setProfile(prev => {
+      const existingIndex = prev.indicatorStates.findIndex(state => state.indicatorId === indicatorId);
+      const indicatorStates =
+        existingIndex === -1
+          ? [...prev.indicatorStates, { indicatorId, mastery }]
+          : prev.indicatorStates.map((state, index) =>
+              index === existingIndex ? { ...state, mastery } : state
+            );
+      return { ...prev, indicatorStates };
+    });
+  }, []);
+
   const { recommendations } = useLearningPath({
     grades,
-    learnerProfile,
+    learnerProfile: profile,
     options: {
       limit: 6,
-      allowBlocked: true
+      allowBlocked: false
     },
     algorithm
   });
@@ -113,7 +130,12 @@ const App = () => {
             Nodes represent learning indicators, arrows point to the indicators they unlock.
             Use the controls to explore the prerequisite flow.
           </p>
-          <IndicatorDependencyGraph grades={grades} />
+          <IndicatorDependencyGraph
+            grades={grades}
+            learnerProfile={profile}
+            recommendations={recommendations}
+            onUpdateMastery={handleUpdateMastery}
+          />
         </section>
       )}
     </div>

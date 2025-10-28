@@ -28,7 +28,7 @@ const App = () => {
         learnerProfile,
         options: {
             limit: 6,
-            allowBlocked: true
+            allowBlocked: false
         },
         algorithm
     });
