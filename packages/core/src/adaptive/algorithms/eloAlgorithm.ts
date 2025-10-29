@@ -1,4 +1,9 @@
-import type { AlgorithmContext, AlgorithmResult, RecommendationAlgorithm } from "./types";
+import type {
+  AlgorithmContext,
+  AlgorithmObservation,
+  AlgorithmResult,
+  RecommendationAlgorithm
+} from "./types";
 import { clamp } from "./helpers";
 
 const DEFAULT_LEARNER_RATING = 1200;
@@ -41,5 +46,13 @@ export class EloAlgorithm implements RecommendationAlgorithm {
       return undefined;
     }
     return DEFAULT_INDICATOR_RATING + difficulty * 200;
+  }
+
+  public update(
+    _context: AlgorithmContext,
+    _observation: AlgorithmObservation,
+    _result: AlgorithmResult
+  ): void {
+    // Traditional Elo updates would adjust ratings; this algorithm leaves persistence to other systems.
   }
 }

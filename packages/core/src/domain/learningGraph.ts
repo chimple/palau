@@ -9,6 +9,8 @@ export interface IndicatorContext {
   indicator: LearningIndicator;
   outcome: LearningOutcome;
   dependencies: LearningIndicatorDependency[];
+  competencyId: string;
+  gradeId: string;
 }
 
 export interface IndicatorGraph {
@@ -30,7 +32,9 @@ export const buildIndicatorGraph = (grades: Grade[]): IndicatorGraph => {
             indicators.set(indicator.id, {
               indicator,
               outcome,
-              dependencies: []
+              dependencies: [],
+              competencyId: competency.id,
+              gradeId: grade.id
             });
           });
         });

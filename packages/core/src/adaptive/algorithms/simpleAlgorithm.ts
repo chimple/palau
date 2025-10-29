@@ -1,4 +1,9 @@
-import type { AlgorithmContext, AlgorithmResult, RecommendationAlgorithm } from "./types";
+import type {
+  AlgorithmContext,
+  AlgorithmObservation,
+  AlgorithmResult,
+  RecommendationAlgorithm
+} from "./types";
 
 export class SimpleMasteryAlgorithm implements RecommendationAlgorithm {
   public readonly id = "simple";
@@ -12,5 +17,13 @@ export class SimpleMasteryAlgorithm implements RecommendationAlgorithm {
       score,
       reason: `Mastery at ${(mastery * 100).toFixed(0)}%`
     };
+  }
+
+  public update(
+    _context: AlgorithmContext,
+    _observation: AlgorithmObservation,
+    _result: AlgorithmResult
+  ): void {
+    // No stateful updates required for the simple algorithm.
   }
 }

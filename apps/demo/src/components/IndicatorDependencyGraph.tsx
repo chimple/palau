@@ -21,7 +21,7 @@ export interface IndicatorDependencyGraphProps {
   grades: Grade[];
   learnerProfile: LearnerProfile;
   recommendations: Recommendation[];
-  onUpdateMastery: (indicatorId: string, mastery: number) => void;
+  onSubmitScore: (indicatorId: string, score: number) => void;
 }
 
 const columnSpacing = 260;
@@ -76,10 +76,10 @@ const buildCompetencyPlacements = (grades: Grade[]): PlacementResult => {
 
 interface IndicatorNodeLabelProps {
   indicatorId: string;
-  masteryLabel: string;
-  masteryValue?: number;
   indicatorName: string;
-  onSubmitMastery: (value: number) => void;
+  thetaSummary: string;
+  initialScore?: number;
+  onSubmitScore: (value: number) => void;
   highlight?: {
     color: string;
     rank: number;
@@ -88,23 +88,21 @@ interface IndicatorNodeLabelProps {
 
 const IndicatorNodeLabel = ({
   indicatorId,
-  masteryLabel,
-  masteryValue,
   indicatorName,
-  onSubmitMastery,
+  thetaSummary,
+  initialScore,
+  onSubmitScore,
   highlight
 }: IndicatorNodeLabelProps) => {
   const [showPopup, setShowPopup] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [draftMastery, setDraftMastery] = useState<string>(
-    masteryValue === undefined || Number.isNaN(masteryValue) ? "0" : masteryValue.toString()
+  const [draftScore, setDraftScore] = useState<string>(
+    initialScore === undefined || Number.isNaN(initialScore) ? "0" : initialScore.toString()
   );
 
   useEffect(() => {
-    setDraftMastery(
-      masteryValue === undefined || Number.isNaN(masteryValue) ? "0" : masteryValue.toString()
-    );
-  }, [masteryValue]);
+    setDraftScore(initialScore === undefined || Number.isNaN(initialScore) ? "0" : initialScore.toString());
+  }, [initialScore]);
 
   const highlightBadge = highlight
     ? {
@@ -113,15 +111,9 @@ const IndicatorNodeLabel = ({
       }
     : null;
 
-  const resetDraftMastery = () => {
-    setDraftMastery(
-      masteryValue === undefined || Number.isNaN(masteryValue) ? "0" : masteryValue.toString()
-    );
-  };
-
   const closeEditor = () => {
     setIsEditing(false);
-    resetDraftMastery();
+    setDraftScore(initialScore === undefined || Number.isNaN(initialScore) ? "0" : initialScore.toString());
   };
 
   const tooltip =
@@ -183,13 +175,13 @@ const IndicatorNodeLabel = ({
               onClick={event => event.stopPropagation()}
               onSubmit={event => {
                 event.preventDefault();
-                const parsed = Number(draftMastery);
+                const parsed = Number(draftScore);
                 if (Number.isNaN(parsed)) {
                   return;
                 }
                 const clamped = Math.max(0, Math.min(1, parsed));
-                onSubmitMastery(clamped);
-                setDraftMastery(clamped.toString());
+                onSubmitScore(clamped);
+                setDraftScore(clamped.toString());
                 setIsEditing(false);
               }}
             >
@@ -218,20 +210,17 @@ const IndicatorNodeLabel = ({
                   </span>
                 ) : null}
               </div>
-              <label
-                htmlFor={`indicator-${indicatorId}-mastery`}
-                style={{ fontSize: "0.85rem", fontWeight: 600, color: "#1E293B" }}
-              >
-                Mastery (0-1)
+              <label htmlFor={`indicator-${indicatorId}-score`} style={{ fontSize: "0.85rem", fontWeight: 600, color: "#1E293B" }}>
+                Observed score (0-1)
               </label>
               <input
-                id={`indicator-${indicatorId}-mastery`}
+                id={`indicator-${indicatorId}-score`}
                 type="number"
                 min={0}
                 max={1}
                 step={0.01}
-                value={draftMastery}
-                onChange={event => setDraftMastery(event.target.value)}
+                value={draftScore}
+                onChange={event => setDraftScore(event.target.value)}
                 style={{
                   width: "100%",
                   padding: "0.5rem 0.75rem",
@@ -324,12 +313,51 @@ const IndicatorNodeLabel = ({
             </span>
           ) : null}
         </span>
-        <span style={{ fontSize: "0.85rem", color: "#475569" }}>{masteryLabel}</span>
+        <span style={{ fontSize: "0.78rem", color: "#475569" }}>θ: {thetaSummary}</span>
       </div>
       {tooltip}
       {editor}
     </>
   );
+};
+
+interface AbilitySummaryMaps {
+  indicators: Map<string, number>;
+  outcomes: Map<string, number>;
+  competencies: Map<string, number>;
+  grades: Map<string, number>;
+}
+
+const buildAbilityMaps = (profile: LearnerProfile): AbilitySummaryMaps => {
+  const indicatorMap = new Map<string, number>();
+  profile.indicatorStates.forEach(state => {
+    indicatorMap.set(state.indicatorId, state.theta ?? state.mastery ?? 0);
+  });
+
+  const outcomeMap = new Map<string, number>();
+  profile.outcomeAbilities?.forEach(ability => {
+    outcomeMap.set(ability.outcomeId, ability.theta ?? 0);
+  });
+
+  const competencyMap = new Map<string, number>();
+  profile.competencyAbilities?.forEach(ability => {
+    competencyMap.set(ability.competencyId, ability.theta ?? 0);
+  });
+
+  const gradeMap = new Map<string, number>();
+  profile.gradeAbilities?.forEach(ability => {
+    gradeMap.set(ability.gradeId, ability.theta ?? 0);
+  });
+  if (!gradeMap.has(profile.gradeId)) {
+    gradeMap.set(profile.gradeId, 0);
+  }
+
+  return {
+    indicators: indicatorMap,
+    outcomes: outcomeMap,
+    competencies: competencyMap,
+    grades: gradeMap
+  };
 };
 
 const toNodes = (
@@ -338,7 +366,8 @@ const toNodes = (
   competencyColumns: PlacementResult["competencyColumns"],
   masteryMap: Map<string, number>,
   recommendationHighlights: Map<string, { color: string; rank: number }>,
-  onUpdateMastery: (indicatorId: string, mastery: number) => void
+  abilities: AbilitySummaryMaps,
+  onSubmitScore: (indicatorId: string, score: number) => void
 ): Node[] => {
   const depthCache = new Map<string, number>();
 
@@ -393,18 +422,26 @@ const toNodes = (
 
     const offset = (occupancyIndex * duplicateOffset) / 2;
     const mastery = masteryMap.get(id);
-    const masteryLabel =
-      mastery === undefined || Number.isNaN(mastery)
-        ? "—"
-        : `${(mastery * 100).toFixed(0)}%`;
     const indicatorName = context.indicator.description || context.indicator.id;
+    const indicatorTheta = abilities.indicators.get(id);
+    const outcomeTheta = abilities.outcomes.get(context.outcome.id);
+    const competencyTheta = abilities.competencies.get(context.competencyId);
+    const gradeTheta = abilities.grades.get(context.gradeId);
+    const thetaText = [
+      indicatorTheta,
+      outcomeTheta,
+      competencyTheta,
+      gradeTheta
+    ]
+      .map(value => (value === undefined || Number.isNaN(value) ? "—" : value.toFixed(2)))
+      .join("/");
 
     const highlight = recommendationHighlights.get(id);
     const baseStyle = {
       borderRadius: 12,
       border: "1px solid #CBD5E1",
       padding: "0.5rem 0.75rem",
-      width: 110,
+      width: 140,
       background: "#FFFFFF",
       boxShadow: "0 4px 12px rgba(15, 23, 42, 0.12)",
       cursor: "pointer"
@@ -423,11 +460,11 @@ const toNodes = (
         label: (
           <IndicatorNodeLabel
             indicatorId={context.indicator.id}
-            masteryLabel={masteryLabel}
-            masteryValue={mastery}
+            thetaSummary={thetaText}
+            initialScore={indicatorTheta ?? mastery}
             indicatorName={indicatorName}
             highlight={highlight}
-            onSubmitMastery={value => onUpdateMastery(id, value)}
+            onSubmitScore={value => onSubmitScore(id, value)}
           />
         )
       },
@@ -455,7 +492,7 @@ const toNodes = (
       background: "transparent",
       fontWeight: 700,
       fontSize: "1rem",
-      width: 110,
+      width: 140,
       textAlign: "center",
       pointerEvents: "none"
     }
@@ -490,7 +527,7 @@ export const IndicatorDependencyGraph = ({
   grades,
   learnerProfile,
   recommendations,
-  onUpdateMastery
+  onSubmitScore
 }: IndicatorDependencyGraphProps) => {
   const graph = useMemo(() => buildIndicatorGraph(grades), [grades]);
   const { indicatorPlacement, competencyColumns } = useMemo(
@@ -514,6 +551,7 @@ export const IndicatorDependencyGraph = ({
     });
     return map;
   }, [recommendations]);
+  const abilities = useMemo(() => buildAbilityMaps(learnerProfile), [learnerProfile]);
   const nodes = useMemo(
     () =>
       toNodes(
@@ -522,7 +560,8 @@ export const IndicatorDependencyGraph = ({
         competencyColumns,
         masteryMap,
         recommendationHighlights,
-        onUpdateMastery
+        abilities,
+        onSubmitScore
       ),
     [
       graph,
@@ -530,7 +569,8 @@ export const IndicatorDependencyGraph = ({
       competencyColumns,
       masteryMap,
       recommendationHighlights,
-      onUpdateMastery
+      abilities,
+      onSubmitScore
     ]
   );
   const edges = useMemo(() => toEdges(graph), [graph]);
@@ -539,8 +579,9 @@ export const IndicatorDependencyGraph = ({
     console.log("[IndicatorDependencyGraph] Grades", grades);
     console.log("[IndicatorDependencyGraph] Graph", graph);
     console.log("[IndicatorDependencyGraph] MasteryMap", masteryMap);
+    console.log("[IndicatorDependencyGraph] AbilityMaps", abilities);
     console.log("[IndicatorDependencyGraph] Recommendations", recommendations);
-  }, [grades, graph, masteryMap, recommendations]);
+  }, [grades, graph, masteryMap, abilities, recommendations]);
 
   return (
     <div style={{ height: 480 }}>

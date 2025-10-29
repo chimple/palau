@@ -144,6 +144,7 @@ const learnerStates = Papa.parse<LearnerProfileRow>(learnerProfileCsv.trim(), {
   .map(row => ({
     indicatorId: row.indicatorId,
     mastery: toNumber(row.mastery) ?? 0,
+    theta: toNumber(row.mastery) ?? 0,
     probabilityKnown: toNumber(row.probabilityKnown),
     eloRating: toNumber(row.eloRating),
     successStreak: row.successStreak ? Number(row.successStreak) : undefined,
@@ -152,10 +153,60 @@ const learnerStates = Papa.parse<LearnerProfileRow>(learnerProfileCsv.trim(), {
     attempts: row.attempts ? Number(row.attempts) : undefined
   }));
 
+const indicatorThetaLookup = new Map<string, number>();
+learnerStates.forEach(state => {
+  indicatorThetaLookup.set(state.indicatorId, state.theta ?? state.mastery ?? 0);
+});
+
+const outcomeAbilities = new Map<string, number>();
+const competencyAbilities = new Map<string, number>();
+const gradeAbilities = new Map<string, number>();
+
+sampleGrades.forEach(grade => {
+  let gradeSum = 0;
+  let gradeCount = 0;
+  grade.subjects.forEach(subject => {
+    subject.competencies.forEach(competency => {
+      let competencySum = 0;
+      let competencyCount = 0;
+      competency.outcomes.forEach(outcome => {
+        let outcomeSum = 0;
+        let outcomeCount = 0;
+        outcome.indicators.forEach(indicator => {
+          const theta = indicatorThetaLookup.get(indicator.id);
+          if (theta !== undefined) {
+            outcomeSum += theta;
+            outcomeCount += 1;
+          }
+        });
+        const outcomeTheta = outcomeCount ? outcomeSum / outcomeCount : 0;
+        outcomeAbilities.set(outcome.id, outcomeTheta);
+        competencySum += outcomeTheta;
+        competencyCount += 1;
+      });
+      const competencyTheta = competencyCount ? competencySum / competencyCount : 0;
+      competencyAbilities.set(competency.id, competencyTheta);
+      gradeSum += competencyTheta;
+      gradeCount += 1;
+    });
+  });
+  const gradeTheta = gradeCount ? gradeSum / gradeCount : 0;
+  gradeAbilities.set(grade.id, gradeTheta);
+});
+
+const toAbilityArray = <T extends { theta: number }>(map: Map<string, number>, key: (id: string, theta: number) => T) =>
+  Array.from(map.entries()).map(([id, theta]) => key(id, theta));
+
 export const sampleLearnerProfile: LearnerProfile = {
   id: "learner-1",
   gradeId: "grade-3",
   indicatorStates: learnerStates,
+  outcomeAbilities: toAbilityArray(outcomeAbilities, (outcomeId, theta) => ({ outcomeId, theta })),
+  competencyAbilities: toAbilityArray(
+    competencyAbilities,
+    (competencyId, theta) => ({ competencyId, theta })
+  ),
+  gradeAbilities: toAbilityArray(gradeAbilities, (gradeId, theta) => ({ gradeId, theta })),
   preferences: {
     pace: "standard",
     focusSubjects: ["math", "literacy"]

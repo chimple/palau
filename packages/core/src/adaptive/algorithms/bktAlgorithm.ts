@@ -1,4 +1,9 @@
-import type { AlgorithmContext, AlgorithmResult, RecommendationAlgorithm } from "./types";
+import type {
+  AlgorithmContext,
+  AlgorithmObservation,
+  AlgorithmResult,
+  RecommendationAlgorithm
+} from "./types";
 import { clamp } from "./helpers";
 
 const DEFAULT_PRIOR = 0.4;
@@ -25,5 +30,13 @@ export class BayesianKnowledgeTracingAlgorithm implements RecommendationAlgorith
       score,
       reason: `BKT expected correctness ${(mastery * 100).toFixed(0)}%`
     };
+  }
+
+  public update(
+    _context: AlgorithmContext,
+    _observation: AlgorithmObservation,
+    _result: AlgorithmResult
+  ): void {
+    // Passive algorithm: updates handled externally.
   }
 }

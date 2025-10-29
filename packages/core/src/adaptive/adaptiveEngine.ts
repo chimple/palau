@@ -7,7 +7,7 @@ import {
 } from "../domain/learningGraph";
 import type { Grade, LearnerProfile, Recommendation } from "../domain/models";
 import { SimpleMasteryAlgorithm } from "./algorithms";
-import type { RecommendationAlgorithm, AlgorithmContext } from "./algorithms";
+import type { RecommendationAlgorithm, AlgorithmContext, LearnerAbilityMaps } from "./algorithms";
 
 export interface RecommendationOptions {
   limit?: number;
@@ -52,6 +52,7 @@ export class AdaptiveEngine {
   ): Recommendation[] {
     const { limit = 5, prerequisiteThreshold = 0.7, allowBlocked = false } = options;
     const masteryMap = this.toMasteryMap(learnerProfile);
+    const abilities = this.toAbilityMaps(learnerProfile);
     const recommendations: Recommendation[] = [];
 
     const ids = this.sortedIds.length ? this.sortedIds : topologicalSort(this.graph);
@@ -64,7 +65,8 @@ export class AdaptiveEngine {
       const algorithmContext = this.buildAlgorithmContext({
         context,
         learnerProfile,
-        masteryMap
+        masteryMap,
+        abilities
       });
       const result = this.algorithm.score(algorithmContext);
       const mastery = result.mastery;
@@ -97,16 +99,20 @@ export class AdaptiveEngine {
   private buildAlgorithmContext({
     context,
     learnerProfile,
-    masteryMap
+    masteryMap,
+    abilities
   }: {
     context: IndicatorContext;
     learnerProfile: LearnerProfile;
     masteryMap: Map<string, number>;
+    abilities: LearnerAbilityMaps;
   }): AlgorithmContext {
     return {
       indicator: context,
       learnerProfile,
-      masteryMap
+      masteryMap,
+      graph: this.graph,
+      abilities
     };
   }
 
@@ -116,5 +122,39 @@ export class AdaptiveEngine {
       map.set(state.indicatorId, state.mastery);
     });
     return map;
+  }
+
+  private toAbilityMaps(learnerProfile: LearnerProfile): LearnerAbilityMaps {
+    const indicatorMap = new Map<string, number>();
+    learnerProfile.indicatorStates.forEach(state => {
+      const theta = state.theta ?? state.mastery ?? 0;
+      indicatorMap.set(state.indicatorId, theta);
+    });
+
+    const outcomeMap = new Map<string, number>();
+    learnerProfile.outcomeAbilities?.forEach(ability => {
+      outcomeMap.set(ability.outcomeId, ability.theta);
+    });
+
+    const competencyMap = new Map<string, number>();
+    learnerProfile.competencyAbilities?.forEach(ability => {
+      competencyMap.set(ability.competencyId, ability.theta);
+    });
+
+    const gradeMap = new Map<string, number>();
+    learnerProfile.gradeAbilities?.forEach(ability => {
+      gradeMap.set(ability.gradeId, ability.theta);
+    });
+
+    if (!gradeMap.has(learnerProfile.gradeId)) {
+      gradeMap.set(learnerProfile.gradeId, 0);
+    }
+
+    return {
+      indicators: indicatorMap,
+      outcomes: outcomeMap,
+      competencies: competencyMap,
+      grades: gradeMap
+    };
   }
 }

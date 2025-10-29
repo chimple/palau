@@ -16,12 +16,15 @@ export {
   SimpleMasteryAlgorithm,
   IRTAlgorithm,
   EloAlgorithm,
-  BayesianKnowledgeTracingAlgorithm
+  BayesianKnowledgeTracingAlgorithm,
+  ModifiedEloAlgorithm
 } from "./adaptive/algorithms";
 export type {
   RecommendationAlgorithm,
   AlgorithmContext,
-  AlgorithmResult
+  AlgorithmResult,
+  LearnerAbilityMaps,
+  AlgorithmObservation
 } from "./adaptive/algorithms";
 export { useLearningPath } from "./hooks/useLearningPath";
 export { IndicatorProgress } from "./components/IndicatorProgress";

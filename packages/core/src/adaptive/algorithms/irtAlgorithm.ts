@@ -1,4 +1,9 @@
-import type { AlgorithmContext, AlgorithmResult, RecommendationAlgorithm } from "./types";
+import type {
+  AlgorithmContext,
+  AlgorithmObservation,
+  AlgorithmResult,
+  RecommendationAlgorithm
+} from "./types";
 import { clamp, logistic } from "./helpers";
 
 const DEFAULT_A = 1.0;
@@ -31,5 +36,13 @@ export class IRTAlgorithm implements RecommendationAlgorithm {
     const epsilon = 1e-3;
     const bounded = clamp(mastery, epsilon, 1 - epsilon);
     return Math.log(bounded / (1 - bounded));
+  }
+
+  public update(
+    _context: AlgorithmContext,
+    _observation: AlgorithmObservation,
+    _result: AlgorithmResult
+  ): void {
+    // Passive algorithm: updates handled externally.
   }
 }
