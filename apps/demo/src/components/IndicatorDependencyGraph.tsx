@@ -74,11 +74,15 @@ const buildCompetencyPlacements = (grades: Grade[]): PlacementResult => {
   };
 };
 
+const logistic = (value: number): number => 1 / (1 + Math.exp(-value));
+
 interface IndicatorNodeLabelProps {
   indicatorId: string;
   indicatorName: string;
   thetaSummary: string;
   initialScore?: number;
+  probability?: number;
+  difficulty?: number;
   onSubmitScore: (value: number) => void;
   highlight?: {
     color: string;
@@ -91,6 +95,8 @@ const IndicatorNodeLabel = ({
   indicatorName,
   thetaSummary,
   initialScore,
+  probability,
+  difficulty,
   onSubmitScore,
   highlight
 }: IndicatorNodeLabelProps) => {
@@ -110,6 +116,11 @@ const IndicatorNodeLabel = ({
         color: highlight.color === "#FACC15" ? "#0F172A" : "#FFFFFF"
       }
     : null;
+
+  const probabilityText =
+    probability === undefined || Number.isNaN(probability) ? "—" : probability.toFixed(2);
+  const difficultyText =
+    difficulty === undefined || Number.isNaN(difficulty) ? "—" : difficulty.toFixed(2);
 
   const closeEditor = () => {
     setIsEditing(false);
@@ -313,7 +324,10 @@ const IndicatorNodeLabel = ({
             </span>
           ) : null}
         </span>
-        <span style={{ fontSize: "0.78rem", color: "#475569" }}>θ: {thetaSummary}</span>
+        <span style={{ fontSize: "0.75rem", color: "#475569" }}>θ: {thetaSummary}</span>
+        <span style={{ fontSize: "0.75rem", color: "#475569" }}>
+          p: {probabilityText} / β: {difficultyText}
+        </span>
       </div>
       {tooltip}
       {editor}
@@ -435,13 +449,20 @@ const toNodes = (
     ]
       .map(value => (value === undefined || Number.isNaN(value) ? "—" : value.toFixed(2)))
       .join("/");
+    const beta = context.indicator.difficulty ?? 0;
+    const blended =
+      0.45 * (indicatorTheta ?? 0) +
+      0.35 * (outcomeTheta ?? indicatorTheta ?? 0) +
+      0.15 * (competencyTheta ?? outcomeTheta ?? indicatorTheta ?? 0) +
+      0.05 * (gradeTheta ?? competencyTheta ?? outcomeTheta ?? indicatorTheta ?? 0);
+    const probability = logistic(blended - beta);
 
     const highlight = recommendationHighlights.get(id);
     const baseStyle = {
       borderRadius: 12,
       border: "1px solid #CBD5E1",
       padding: "0.5rem 0.75rem",
-      width: 140,
+      width: 160,
       background: "#FFFFFF",
       boxShadow: "0 4px 12px rgba(15, 23, 42, 0.12)",
       cursor: "pointer"
@@ -463,6 +484,8 @@ const toNodes = (
             thetaSummary={thetaText}
             initialScore={indicatorTheta ?? mastery}
             indicatorName={indicatorName}
+            probability={probability}
+            difficulty={beta}
             highlight={highlight}
             onSubmitScore={value => onSubmitScore(id, value)}
           />
