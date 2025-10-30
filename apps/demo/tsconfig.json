@@ -6,10 +6,7 @@
     "module": "ESNext",
     "moduleResolution": "Node",
     "types": ["vite/client"],
-    "allowSyntheticDefaultImports": true,
-    "paths": {
-      "@pal/core": ["../../packages/pal-core/src"]
-    }
+    "allowSyntheticDefaultImports": true
   },
   "include": [
     "src"
