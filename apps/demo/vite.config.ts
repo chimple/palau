@@ -4,6 +4,7 @@ import path from "path";
 
 export default defineConfig({
   plugins: [react()],
+  base: "./",
   resolve: {
     alias: {
       "@pal/core": path.resolve(__dirname, "../..", "packages", "pal-core", "src"),
