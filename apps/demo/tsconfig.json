@@ -1,0 +1,17 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "lib": ["ES2020", "DOM"],
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "types": ["vite/client"],
+    "allowSyntheticDefaultImports": true,
+    "paths": {
+      "@pal/core": ["../../packages/pal-core/src"]
+    }
+  },
+  "include": [
+    "src"
+  ]
+}

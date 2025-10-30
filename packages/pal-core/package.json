@@ -1,0 +1,32 @@
+{
+  "name": "@pal/core",
+  "version": "0.1.0",
+  "description": "PAL recommendation engine utilities",
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format esm,cjs && tsc --project tsconfig.build.json",
+    "lint": "eslint \"src/**/*.{ts,tsx}\"",
+    "test": "vitest run"
+  },
+  "keywords": [
+    "pal",
+    "adaptive",
+    "assessment",
+    "recommendation"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "eslint": "^8.57.0",
+    "typescript": "^5.5.0",
+    "tsup": "^7.3.0",
+    "vitest": "^1.5.0"
+  }
+}

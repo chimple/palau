@@ -1,0 +1,16 @@
+{
+  "name": "palau",
+  "private": true,
+  "version": "0.1.0",
+  "description": "PAL recommendation engine TypeScript package with demo React app",
+  "scripts": {
+    "build": "pnpm -r run build",
+    "lint": "pnpm -r run lint",
+    "test": "pnpm -r run test --if-present",
+    "dev": "pnpm --filter demo dev"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "MIT"
+}
