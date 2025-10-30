@@ -11,6 +11,8 @@ import "reactflow/dist/style.css";
 import {
   buildIndicatorGraph,
   topologicalSort,
+  ModifiedEloAlgorithm,
+  type AlgorithmContext,
   type Grade,
   type IndicatorGraph,
   type LearnerProfile,
@@ -74,8 +76,6 @@ const buildCompetencyPlacements = (grades: Grade[]): PlacementResult => {
   };
 };
 
-const logistic = (value: number): number => 1 / (1 + Math.exp(-value));
-
 interface IndicatorNodeLabelProps {
   indicatorId: string;
   indicatorName: string;
@@ -83,6 +83,8 @@ interface IndicatorNodeLabelProps {
   initialScore?: number;
   probability?: number;
   difficulty?: number;
+  score?: number;
+  reason?: string;
   onSubmitScore: (value: number) => void;
   highlight?: {
     color: string;
@@ -97,6 +99,8 @@ const IndicatorNodeLabel = ({
   initialScore,
   probability,
   difficulty,
+  score,
+  reason,
   onSubmitScore,
   highlight
 }: IndicatorNodeLabelProps) => {
@@ -121,6 +125,7 @@ const IndicatorNodeLabel = ({
     probability === undefined || Number.isNaN(probability) ? "—" : probability.toFixed(2);
   const difficultyText =
     difficulty === undefined || Number.isNaN(difficulty) ? "—" : difficulty.toFixed(2);
+  const scoreText = score === undefined || Number.isNaN(score) ? "—" : score.toFixed(2);
 
   const closeEditor = () => {
     setIsEditing(false);
@@ -147,7 +152,13 @@ const IndicatorNodeLabel = ({
               pointerEvents: "none"
             }}
           >
-            {indicatorName}
+            <strong style={{ display: "block", marginBottom: "0.35rem" }}>{indicatorName}</strong>
+            <span style={{ fontSize: "0.8rem", color: "#CBD5E1", display: "block" }}>
+              θ: {thetaSummary} | p: {probabilityText} | β: {difficultyText} | score: {scoreText}
+            </span>
+            {reason ? (
+              <p style={{ marginTop: "0.5rem", fontSize: "0.85rem", lineHeight: 1.4 }}>{reason}</p>
+            ) : null}
           </div>,
           document.body
         )
@@ -325,9 +336,8 @@ const IndicatorNodeLabel = ({
           ) : null}
         </span>
         <span style={{ fontSize: "0.75rem", color: "#475569" }}>θ: {thetaSummary}</span>
-        <span style={{ fontSize: "0.75rem", color: "#475569" }}>
-          p: {probabilityText} / β: {difficultyText}
-        </span>
+        <span style={{ fontSize: "0.75rem", color: "#475569" }}>p: {probabilityText} / β: {difficultyText}</span>
+        <span style={{ fontSize: "0.75rem", color: "#475569" }}>score: {scoreText}</span>
       </div>
       {tooltip}
       {editor}
@@ -383,6 +393,7 @@ const toNodes = (
   abilities: AbilitySummaryMaps,
   onSubmitScore: (indicatorId: string, score: number) => void
 ): Node[] => {
+  const algorithm = new ModifiedEloAlgorithm();
   const depthCache = new Map<string, number>();
 
   const resolveDepth = (id: string, stack: Set<string> = new Set()): number => {
@@ -450,12 +461,25 @@ const toNodes = (
       .map(value => (value === undefined || Number.isNaN(value) ? "—" : value.toFixed(2)))
       .join("/");
     const beta = context.indicator.difficulty ?? 0;
-    const blended =
-      0.45 * (indicatorTheta ?? 0) +
-      0.35 * (outcomeTheta ?? indicatorTheta ?? 0) +
-      0.15 * (competencyTheta ?? outcomeTheta ?? indicatorTheta ?? 0) +
-      0.05 * (gradeTheta ?? competencyTheta ?? outcomeTheta ?? indicatorTheta ?? 0);
-    const probability = logistic(blended - beta);
+    const indicatorContext = context;
+    const algorithmContext: AlgorithmContext = {
+      indicator: indicatorContext,
+      learnerProfile: {
+        id: "graph-preview",
+        gradeId: context.gradeId,
+        indicatorStates: [],
+        outcomeAbilities: [],
+        competencyAbilities: [],
+        gradeAbilities: []
+      },
+      masteryMap,
+      graph,
+      abilities
+    };
+    const result = algorithm.score(algorithmContext);
+    const probability = result.probability ?? result.mastery;
+    const scoreValue = result.score;
+    const reason = result.reason;
 
     const highlight = recommendationHighlights.get(id);
     const baseStyle = {
@@ -486,6 +510,8 @@ const toNodes = (
             indicatorName={indicatorName}
             probability={probability}
             difficulty={beta}
+            score={scoreValue}
+            reason={reason}
             highlight={highlight}
             onSubmitScore={value => onSubmitScore(id, value)}
           />

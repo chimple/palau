@@ -41,7 +41,7 @@ export class ModifiedEloAlgorithm implements RecommendationAlgorithm {
     const probability = this.estimateProbability(indicator, abilities);
     const mastery = clamp(probability);
     const unmetPrerequisites = this.collectPrerequisites(indicatorId, graph).filter(
-      prereqId => !this.hasPassport(prereqId, abilities, masteryMap)
+      prereqId => !this.hasPassport(prereqId, graph, abilities, masteryMap)
     );
 
     if (unmetPrerequisites.length > 0) {
@@ -173,12 +173,16 @@ export class ModifiedEloAlgorithm implements RecommendationAlgorithm {
 
   private hasPassport(
     indicatorId: string,
+    graph: AlgorithmContext["graph"],
     abilities: AlgorithmContext["abilities"],
     masteryMap: Map<string, number>
   ): boolean {
-    const theta = this.getAbility(abilities.indicators, indicatorId, undefined);
-    if (theta !== undefined) {
-      return theta >= this.passportThreshold;
+    const context = graph.indicators.get(indicatorId);
+    if (context) {
+      const probability = this.estimateProbability(context, abilities);
+      if (!Number.isNaN(probability)) {
+        return probability >= this.passportThreshold;
+      }
     }
     const mastery = masteryMap.get(indicatorId);
     return (mastery ?? 0) >= this.passportThreshold;
