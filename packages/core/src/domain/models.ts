@@ -46,8 +46,7 @@ export interface Grade {
 
 export interface LearnerIndicatorState {
   indicatorId: string;
-  mastery: number; // 0-1 score for the learner
-  theta?: number; // 0-1 ability for the learner on this indicator
+  mastery: number; // 0-1 score (ability) for the learner
   lastPracticedAt?: string;
   attempts?: number;
   eloRating?: number;
@@ -58,17 +57,17 @@ export interface LearnerIndicatorState {
 
 export interface LearnerOutcomeAbility {
   outcomeId: string;
-  theta: number; // 0-1 ability at learning outcome level
+  mastery: number; // 0-1 ability at learning outcome level
 }
 
 export interface LearnerCompetencyAbility {
   competencyId: string;
-  theta: number; // 0-1 ability at competency/strand level
+  mastery: number; // 0-1 ability at competency/strand level
 }
 
 export interface LearnerGradeAbility {
   gradeId: string;
-  theta: number; // 0-1 ability at grade level (age band)
+  mastery: number; // 0-1 ability at grade level (age band)
 }
 
 export interface LearnerProfile {

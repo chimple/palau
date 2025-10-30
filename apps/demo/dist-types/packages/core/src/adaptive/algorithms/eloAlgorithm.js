@@ -30,4 +30,7 @@ export class EloAlgorithm {
         }
         return DEFAULT_INDICATOR_RATING + difficulty * 200;
     }
+    update(_context, _observation, _result) {
+        // Traditional Elo updates would adjust ratings; this algorithm leaves persistence to other systems.
+    }
 }

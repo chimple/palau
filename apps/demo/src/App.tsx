@@ -35,9 +35,9 @@ const computeAggregatedThetas = (
   indicatorStates: LearnerIndicatorState[],
   gradeData: Grade[]
 ): AggregatedAbilities => {
-  const indicatorTheta = new Map<string, number>();
+  const indicatorMastery = new Map<string, number>();
   indicatorStates.forEach(state => {
-    indicatorTheta.set(state.indicatorId, state.theta ?? state.mastery ?? 0);
+    indicatorMastery.set(state.indicatorId, state.mastery ?? 0);
   });
 
   const outcomeAbilities = new Map<string, number>();
@@ -52,65 +52,72 @@ const computeAggregatedThetas = (
         let competencySum = 0;
         let competencyCount = 0;
         competency.outcomes.forEach(outcome => {
-          let outcomeSum = 0;
-          let outcomeCount = 0;
-          outcome.indicators.forEach(indicator => {
-            const theta = indicatorTheta.get(indicator.id);
-            if (theta !== undefined) {
-              outcomeSum += theta;
-              outcomeCount += 1;
-            }
-          });
-          const outcomeTheta = outcomeCount ? outcomeSum / outcomeCount : 0;
-          outcomeAbilities.set(outcome.id, outcomeTheta);
-          competencySum += outcomeTheta;
+        let outcomeSum = 0;
+        let outcomeCount = 0;
+        outcome.indicators.forEach(indicator => {
+          const masteryValue = indicatorMastery.get(indicator.id);
+          if (masteryValue !== undefined) {
+            outcomeSum += masteryValue;
+            outcomeCount += 1;
+          }
+        });
+        const outcomeMastery = outcomeCount ? outcomeSum / outcomeCount : 0;
+        outcomeAbilities.set(outcome.id, outcomeMastery);
+        competencySum += outcomeMastery;
           competencyCount += 1;
         });
-        const competencyTheta = competencyCount ? competencySum / competencyCount : 0;
-        competencyAbilities.set(competency.id, competencyTheta);
-        gradeSum += competencyTheta;
+      const competencyMastery = competencyCount ? competencySum / competencyCount : 0;
+      competencyAbilities.set(competency.id, competencyMastery);
+      gradeSum += competencyMastery;
         gradeCount += 1;
       });
     });
-    const gradeTheta = gradeCount ? gradeSum / gradeCount : 0;
-    gradeAbilities.set(grade.id, gradeTheta);
+  const gradeMastery = gradeCount ? gradeSum / gradeCount : 0;
+  gradeAbilities.set(grade.id, gradeMastery);
   });
 
-  const mapToArray = <T extends { theta: number }>(
-    map: Map<string, number>,
-    mapFn: (id: string, theta: number) => T
-  ): T[] => Array.from(map.entries()).map(([id, theta]) => mapFn(id, theta));
+const mapToArray = <T extends { mastery: number }>(
+  map: Map<string, number>,
+  mapFn: (id: string, mastery: number) => T
+): T[] => Array.from(map.entries()).map(([id, mastery]) => mapFn(id, mastery));
 
   return {
-    outcomeAbilities: mapToArray(outcomeAbilities, (outcomeId, theta) => ({ outcomeId, theta })),
+    outcomeAbilities: mapToArray(outcomeAbilities, (outcomeId, mastery) => ({ outcomeId, mastery })),
     competencyAbilities: mapToArray(
       competencyAbilities,
-      (competencyId, theta) => ({ competencyId, theta })
+      (competencyId, mastery) => ({ competencyId, mastery })
     ),
-    gradeAbilities: mapToArray(gradeAbilities, (gradeId, theta) => ({ gradeId, theta }))
+    gradeAbilities: mapToArray(gradeAbilities, (gradeId, mastery) => ({ gradeId, mastery }))
   };
 };
 
 const buildAbilityMapsFromProfile = (profile: LearnerProfile): LearnerAbilityMaps => {
   const indicatorMap = new Map<string, number>();
   profile.indicatorStates.forEach(state => {
-    indicatorMap.set(state.indicatorId, state.theta ?? state.mastery ?? 0);
+    indicatorMap.set(state.indicatorId, state.mastery ?? 0);
   });
+  const hasIndicatorMastery = Array.from(indicatorMap.values()).some(value => value > 0);
 
   const outcomeMap = new Map<string, number>();
-  profile.outcomeAbilities?.forEach(ability => {
-    outcomeMap.set(ability.outcomeId, ability.theta ?? 0);
-  });
+  if (!hasIndicatorMastery) {
+    profile.outcomeAbilities?.forEach(ability => {
+      outcomeMap.set(ability.outcomeId, ability.mastery ?? 0);
+    });
+  }
 
   const competencyMap = new Map<string, number>();
-  profile.competencyAbilities?.forEach(ability => {
-    competencyMap.set(ability.competencyId, ability.theta ?? 0);
-  });
+  if (!hasIndicatorMastery) {
+    profile.competencyAbilities?.forEach(ability => {
+      competencyMap.set(ability.competencyId, ability.mastery ?? 0);
+    });
+  }
 
   const gradeMap = new Map<string, number>();
-  profile.gradeAbilities?.forEach(ability => {
-    gradeMap.set(ability.gradeId, ability.theta ?? 0);
-  });
+  if (!hasIndicatorMastery) {
+    profile.gradeAbilities?.forEach(ability => {
+      gradeMap.set(ability.gradeId, ability.mastery ?? 0);
+    });
+  }
   if (!gradeMap.has(profile.gradeId)) {
     gradeMap.set(profile.gradeId, 0);
   }
@@ -204,12 +211,10 @@ const App = () => {
           const state = clonedProfile.indicatorStates.find(entry => entry.indicatorId === indicatorId);
           if (state) {
             state.mastery = clampedScore;
-            state.theta = clampedScore;
           } else {
             clonedProfile.indicatorStates.push({
               indicatorId,
-              mastery: clampedScore,
-              theta: clampedScore
+              mastery: clampedScore
             });
           }
         }

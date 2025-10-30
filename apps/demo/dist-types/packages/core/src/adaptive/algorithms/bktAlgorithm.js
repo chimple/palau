@@ -20,4 +20,7 @@ export class BayesianKnowledgeTracingAlgorithm {
             reason: `BKT expected correctness ${(mastery * 100).toFixed(0)}%`
         };
     }
+    update(_context, _observation, _result) {
+        // Passive algorithm: updates handled externally.
+    }
 }

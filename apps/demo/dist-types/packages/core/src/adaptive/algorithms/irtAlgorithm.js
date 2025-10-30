@@ -27,4 +27,7 @@ export class IRTAlgorithm {
         const bounded = clamp(mastery, epsilon, 1 - epsilon);
         return Math.log(bounded / (1 - bounded));
     }
+    update(_context, _observation, _result) {
+        // Passive algorithm: updates handled externally.
+    }
 }

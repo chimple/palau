@@ -99,10 +99,52 @@ const learnerStates = Papa.parse(learnerProfileCsv.trim(), {
     lastPracticedAt: row.lastPracticedAt,
     attempts: row.attempts ? Number(row.attempts) : undefined
 }));
+const indicatorMasteryLookup = new Map();
+learnerStates.forEach(state => {
+    indicatorMasteryLookup.set(state.indicatorId, state.mastery ?? 0);
+});
+const outcomeAbilities = new Map();
+const competencyAbilities = new Map();
+const gradeAbilities = new Map();
+sampleGrades.forEach(grade => {
+    let gradeSum = 0;
+    let gradeCount = 0;
+    grade.subjects.forEach(subject => {
+        subject.competencies.forEach(competency => {
+            let competencySum = 0;
+            let competencyCount = 0;
+            competency.outcomes.forEach(outcome => {
+                let outcomeSum = 0;
+                let outcomeCount = 0;
+                outcome.indicators.forEach(indicator => {
+                    const mastery = indicatorMasteryLookup.get(indicator.id);
+                    if (mastery !== undefined) {
+                        outcomeSum += mastery;
+                        outcomeCount += 1;
+                    }
+                });
+                const outcomeMastery = outcomeCount ? outcomeSum / outcomeCount : 0;
+                outcomeAbilities.set(outcome.id, outcomeMastery);
+                competencySum += outcomeMastery;
+                competencyCount += 1;
+            });
+            const competencyMastery = competencyCount ? competencySum / competencyCount : 0;
+            competencyAbilities.set(competency.id, competencyMastery);
+            gradeSum += competencyMastery;
+            gradeCount += 1;
+        });
+    });
+    const gradeMastery = gradeCount ? gradeSum / gradeCount : 0;
+    gradeAbilities.set(grade.id, gradeMastery);
+});
+const toAbilityArray = (map, key) => Array.from(map.entries()).map(([id, mastery]) => key(id, mastery));
 export const sampleLearnerProfile = {
     id: "learner-1",
     gradeId: "grade-3",
     indicatorStates: learnerStates,
+    outcomeAbilities: toAbilityArray(outcomeAbilities, (outcomeId, mastery) => ({ outcomeId, mastery })),
+    competencyAbilities: toAbilityArray(competencyAbilities, (competencyId, mastery) => ({ competencyId, mastery })),
+    gradeAbilities: toAbilityArray(gradeAbilities, (gradeId, mastery) => ({ gradeId, mastery })),
     preferences: {
         pace: "standard",
         focusSubjects: ["math", "literacy"]

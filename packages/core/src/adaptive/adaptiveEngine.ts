@@ -127,24 +127,30 @@ export class AdaptiveEngine {
   private toAbilityMaps(learnerProfile: LearnerProfile): LearnerAbilityMaps {
     const indicatorMap = new Map<string, number>();
     learnerProfile.indicatorStates.forEach(state => {
-      const theta = state.theta ?? state.mastery ?? 0;
-      indicatorMap.set(state.indicatorId, theta);
+      indicatorMap.set(state.indicatorId, state.mastery ?? 0);
     });
+    const hasIndicatorMastery = Array.from(indicatorMap.values()).some(value => value > 0);
 
     const outcomeMap = new Map<string, number>();
-    learnerProfile.outcomeAbilities?.forEach(ability => {
-      outcomeMap.set(ability.outcomeId, ability.theta);
-    });
+    if (!hasIndicatorMastery) {
+      learnerProfile.outcomeAbilities?.forEach(ability => {
+        outcomeMap.set(ability.outcomeId, ability.mastery ?? 0);
+      });
+    }
 
     const competencyMap = new Map<string, number>();
-    learnerProfile.competencyAbilities?.forEach(ability => {
-      competencyMap.set(ability.competencyId, ability.theta);
-    });
+    if (!hasIndicatorMastery) {
+      learnerProfile.competencyAbilities?.forEach(ability => {
+        competencyMap.set(ability.competencyId, ability.mastery ?? 0);
+      });
+    }
 
     const gradeMap = new Map<string, number>();
-    learnerProfile.gradeAbilities?.forEach(ability => {
-      gradeMap.set(ability.gradeId, ability.theta);
-    });
+    if (!hasIndicatorMastery) {
+      learnerProfile.gradeAbilities?.forEach(ability => {
+        gradeMap.set(ability.gradeId, ability.mastery ?? 0);
+      });
+    }
 
     if (!gradeMap.has(learnerProfile.gradeId)) {
       gradeMap.set(learnerProfile.gradeId, 0);

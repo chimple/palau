@@ -142,7 +142,7 @@ export class ModifiedEloAlgorithm implements RecommendationAlgorithm {
     abilities.competencies.set(competencyId, updatedCompetencyTheta);
     abilities.grades.set(gradeId, updatedGradeTheta);
 
-    this.upsertIndicatorState(learnerProfile, indicatorId, updatedIndicatorTheta, updatedIndicatorTheta);
+    this.upsertIndicatorState(learnerProfile, indicatorId, updatedIndicatorTheta);
     this.upsertOutcomeAbility(learnerProfile, outcomeId, updatedOutcomeTheta);
     this.upsertCompetencyAbility(learnerProfile, competencyId, updatedCompetencyTheta);
     this.upsertGradeAbility(learnerProfile, gradeId, updatedGradeTheta);
@@ -151,7 +151,7 @@ export class ModifiedEloAlgorithm implements RecommendationAlgorithm {
     result.probability = targetProbability;
 
     if (updatedIndicatorTheta >= this.passportThreshold) {
-      this.upsertIndicatorState(learnerProfile, indicatorId, 1, 1);
+      this.upsertIndicatorState(learnerProfile, indicatorId, 1);
     }
   }
 
@@ -256,18 +256,15 @@ export class ModifiedEloAlgorithm implements RecommendationAlgorithm {
   private upsertIndicatorState(
     profile: AlgorithmContext["learnerProfile"],
     indicatorId: string,
-    theta: number,
     mastery: number
   ): void {
     const state = profile.indicatorStates.find(s => s.indicatorId === indicatorId);
     if (state) {
-      state.theta = theta;
       state.mastery = mastery;
     } else {
       profile.indicatorStates.push({
         indicatorId,
-        mastery,
-        theta
+        mastery
       });
     }
   }
@@ -275,39 +272,39 @@ export class ModifiedEloAlgorithm implements RecommendationAlgorithm {
   private upsertOutcomeAbility(
     profile: AlgorithmContext["learnerProfile"],
     outcomeId: string,
-    theta: number
+    mastery: number
   ): void {
     const ability = profile.outcomeAbilities.find(item => item.outcomeId === outcomeId);
     if (ability) {
-      ability.theta = theta;
+      ability.mastery = mastery;
     } else {
-      profile.outcomeAbilities.push({ outcomeId, theta });
+      profile.outcomeAbilities.push({ outcomeId, mastery });
     }
   }
 
   private upsertCompetencyAbility(
     profile: AlgorithmContext["learnerProfile"],
     competencyId: string,
-    theta: number
+    mastery: number
   ): void {
     const ability = profile.competencyAbilities.find(item => item.competencyId === competencyId);
     if (ability) {
-      ability.theta = theta;
+      ability.mastery = mastery;
     } else {
-      profile.competencyAbilities.push({ competencyId, theta });
+      profile.competencyAbilities.push({ competencyId, mastery });
     }
   }
 
   private upsertGradeAbility(
     profile: AlgorithmContext["learnerProfile"],
     gradeId: string,
-    theta: number
+    mastery: number
   ): void {
     const ability = profile.gradeAbilities.find(item => item.gradeId === gradeId);
     if (ability) {
-      ability.theta = theta;
+      ability.mastery = mastery;
     } else {
-      profile.gradeAbilities.push({ gradeId, theta });
+      profile.gradeAbilities.push({ gradeId, mastery });
     }
   }
 }

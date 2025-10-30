@@ -79,7 +79,7 @@ const buildCompetencyPlacements = (grades: Grade[]): PlacementResult => {
 interface IndicatorNodeLabelProps {
   indicatorId: string;
   indicatorName: string;
-  thetaSummary: string;
+  masterySummary: string;
   initialScore?: number;
   probability?: number;
   difficulty?: number;
@@ -95,7 +95,7 @@ interface IndicatorNodeLabelProps {
 const IndicatorNodeLabel = ({
   indicatorId,
   indicatorName,
-  thetaSummary,
+  masterySummary,
   initialScore,
   probability,
   difficulty,
@@ -154,7 +154,7 @@ const IndicatorNodeLabel = ({
           >
             <strong style={{ display: "block", marginBottom: "0.35rem" }}>{indicatorName}</strong>
             <span style={{ fontSize: "0.8rem", color: "#CBD5E1", display: "block" }}>
-              θ: {thetaSummary} | p: {probabilityText} | β: {difficultyText} | score: {scoreText}
+              mastery: {masterySummary} | p: {probabilityText} | β: {difficultyText} | score: {scoreText}
             </span>
             {reason ? (
               <p style={{ marginTop: "0.5rem", fontSize: "0.85rem", lineHeight: 1.4 }}>{reason}</p>
@@ -335,7 +335,7 @@ const IndicatorNodeLabel = ({
             </span>
           ) : null}
         </span>
-        <span style={{ fontSize: "0.75rem", color: "#475569" }}>θ: {thetaSummary}</span>
+        <span style={{ fontSize: "0.75rem", color: "#475569" }}>mastery: {masterySummary}</span>
         <span style={{ fontSize: "0.75rem", color: "#475569" }}>p: {probabilityText} / β: {difficultyText}</span>
         <span style={{ fontSize: "0.75rem", color: "#475569" }}>score: {scoreText}</span>
       </div>
@@ -355,23 +355,30 @@ interface AbilitySummaryMaps {
 const buildAbilityMaps = (profile: LearnerProfile): AbilitySummaryMaps => {
   const indicatorMap = new Map<string, number>();
   profile.indicatorStates.forEach(state => {
-    indicatorMap.set(state.indicatorId, state.theta ?? state.mastery ?? 0);
+    indicatorMap.set(state.indicatorId, state.mastery ?? 0);
   });
+  const hasIndicatorMastery = Array.from(indicatorMap.values()).some(value => value > 0);
 
   const outcomeMap = new Map<string, number>();
-  profile.outcomeAbilities?.forEach(ability => {
-    outcomeMap.set(ability.outcomeId, ability.theta ?? 0);
-  });
+  if (!hasIndicatorMastery) {
+    profile.outcomeAbilities?.forEach(ability => {
+      outcomeMap.set(ability.outcomeId, ability.mastery ?? 0);
+    });
+  }
 
   const competencyMap = new Map<string, number>();
-  profile.competencyAbilities?.forEach(ability => {
-    competencyMap.set(ability.competencyId, ability.theta ?? 0);
-  });
+  if (!hasIndicatorMastery) {
+    profile.competencyAbilities?.forEach(ability => {
+      competencyMap.set(ability.competencyId, ability.mastery ?? 0);
+    });
+  }
 
   const gradeMap = new Map<string, number>();
-  profile.gradeAbilities?.forEach(ability => {
-    gradeMap.set(ability.gradeId, ability.theta ?? 0);
-  });
+  if (!hasIndicatorMastery) {
+    profile.gradeAbilities?.forEach(ability => {
+      gradeMap.set(ability.gradeId, ability.mastery ?? 0);
+    });
+  }
   if (!gradeMap.has(profile.gradeId)) {
     gradeMap.set(profile.gradeId, 0);
   }
@@ -448,15 +455,15 @@ const toNodes = (
     const offset = (occupancyIndex * duplicateOffset) / 2;
     const mastery = masteryMap.get(id);
     const indicatorName = context.indicator.description || context.indicator.id;
-    const indicatorTheta = abilities.indicators.get(id);
-    const outcomeTheta = abilities.outcomes.get(context.outcome.id);
-    const competencyTheta = abilities.competencies.get(context.competencyId);
-    const gradeTheta = abilities.grades.get(context.gradeId);
-    const thetaText = [
-      indicatorTheta,
-      outcomeTheta,
-      competencyTheta,
-      gradeTheta
+    const indicatorMastery = abilities.indicators.get(id);
+    const outcomeMastery = abilities.outcomes.get(context.outcome.id);
+    const competencyMastery = abilities.competencies.get(context.competencyId);
+    const gradeMastery = abilities.grades.get(context.gradeId);
+    const masterySummary = [
+      indicatorMastery,
+      outcomeMastery,
+      competencyMastery,
+      gradeMastery
     ]
       .map(value => (value === undefined || Number.isNaN(value) ? "—" : value.toFixed(2)))
       .join("/");
@@ -505,8 +512,8 @@ const toNodes = (
         label: (
           <IndicatorNodeLabel
             indicatorId={context.indicator.id}
-            thetaSummary={thetaText}
-            initialScore={indicatorTheta ?? mastery}
+            masterySummary={masterySummary}
+            initialScore={indicatorMastery ?? mastery}
             indicatorName={indicatorName}
             probability={probability}
             difficulty={beta}

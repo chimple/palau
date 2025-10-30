@@ -10,7 +10,9 @@ export const buildIndicatorGraph = (grades) => {
                         indicators.set(indicator.id, {
                             indicator,
                             outcome,
-                            dependencies: []
+                            dependencies: [],
+                            competencyId: competency.id,
+                            gradeId: grade.id
                         });
                     });
                 });
