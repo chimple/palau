@@ -1,7 +1,10 @@
 import { ChangeEvent, useMemo, useRef, useState } from "react";
 import {
+  applyCoreConstantsCsv,
   buildGraphSnapshot,
+  getCoreConstants,
   recommendNextIndicator,
+  resetCoreConstants,
   updateAbilities,
   type AbilityState,
   type DependencyGraph,
@@ -42,6 +45,8 @@ const formatStatusLabel = (
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
 
+const formatConstant = (value: number): string => value.toFixed(2);
+
 const App = () => {
   const defaultDataset = useMemo(() => getDefaultDataset(), []);
   const [graph, setGraph] = useState<DependencyGraph>(defaultDataset.graph);
@@ -61,7 +66,14 @@ const App = () => {
   const [uploadedGraphCsv, setUploadedGraphCsv] = useState<string | null>(null);
   const [uploadedPrereqCsv, setUploadedPrereqCsv] = useState<string | null>(null);
   const [uploadedAbilityCsv, setUploadedAbilityCsv] = useState<string | null>(null);
+  const [uploadedConstantsCsv, setUploadedConstantsCsv] = useState<string | null>(
+    null
+  );
   const [dataError, setDataError] = useState<string | null>(null);
+  const [constantsError, setConstantsError] = useState<string | null>(null);
+  const [constantsSnapshot, setConstantsSnapshot] = useState(() =>
+    getCoreConstants()
+  );
 
   const recommendation: RecommendationContext = useMemo(
     () =>
@@ -70,12 +82,12 @@ const App = () => {
         abilities,
         targetIndicatorId: targetId,
       }),
-    [abilities, graph, targetId]
+    [abilities, graph, targetId, constantsSnapshot]
   );
 
   const snapshot: GraphSnapshot = useMemo(
     () => buildGraphSnapshot(graph, abilities),
-    [abilities, graph]
+    [abilities, graph, constantsSnapshot]
   );
 
   const targetIndicator = useMemo(
@@ -147,6 +159,7 @@ const App = () => {
     setSelectedOutcome("correct");
     const newTarget = selectDefaultTargetIndicator(dataset.graph);
     setTargetId(newTarget);
+    setConstantsSnapshot(getCoreConstants());
   };
 
   const handleRestoreDefault = () => {
@@ -154,7 +167,9 @@ const App = () => {
     setUploadedGraphCsv(null);
     setUploadedPrereqCsv(null);
     setUploadedAbilityCsv(null);
+    setUploadedConstantsCsv(null);
     setDataError(null);
+    setConstantsError(null);
   };
 
   const handleApplyUploaded = () => {
@@ -174,15 +189,41 @@ const App = () => {
       setDataError(
         error instanceof Error
           ? error.message
-          : "Unable to parse the uploaded CSV files."
+      : "Unable to parse the uploaded CSV files."
       );
     }
+  };
+
+  const handleApplyConstants = () => {
+    if (!uploadedConstantsCsv) {
+      setConstantsError("Please upload a constants CSV file to apply.");
+      return;
+    }
+    try {
+      applyCoreConstantsCsv(uploadedConstantsCsv);
+      setConstantsSnapshot(getCoreConstants());
+      setConstantsError(null);
+    } catch (error) {
+      setConstantsError(
+        error instanceof Error
+          ? error.message
+          : "Unable to parse the constants CSV file."
+      );
+    }
+  };
+
+  const handleResetConstants = () => {
+    resetCoreConstants();
+    setConstantsSnapshot(getCoreConstants());
+    setUploadedConstantsCsv(null);
+    setConstantsError(null);
   };
 
   const handleFileUpload =
     (setter: (content: string | null) => void) =>
     async (event: ChangeEvent<HTMLInputElement>) => {
-      const { files } = event.target;
+      const input = event.target;
+      const { files } = input;
       if (!files || files.length === 0) {
         setter(null);
         return;
@@ -190,6 +231,7 @@ const App = () => {
       const file = files[0];
       const text = await file.text();
       setter(text);
+      input.value = "";
     };
 
   const abilityPanel = (() => {
@@ -302,6 +344,75 @@ const App = () => {
             {dataError && (
               <p style={{ fontSize: "0.82rem", color: "#b91c1c" }}>{dataError}</p>
             )}
+          </div>
+        </div>
+
+        <div className="section">
+          <h3>Constants</h3>
+          <div className="input-group" style={{ gap: "0.75rem" }}>
+            <label htmlFor="constants-csv">Core constants CSV</label>
+            <input
+              id="constants-csv"
+              className="select"
+              type="file"
+              accept=".csv,text/csv"
+              onChange={handleFileUpload(setUploadedConstantsCsv)}
+            />
+            <div style={{ display: "flex", gap: "0.5rem" }}>
+              <button
+                type="button"
+                className="btn"
+                onClick={handleApplyConstants}
+              >
+                Apply constants
+              </button>
+              <button
+                type="button"
+                className="btn-ghost"
+                onClick={handleResetConstants}
+              >
+                Reset to defaults
+              </button>
+            </div>
+            <p style={{ fontSize: "0.8rem", color: "#64748b" }}>
+              Expected columns: category,key,value. Categories include
+              blendWeights, learningRates, zpdRange (min/max),
+              masteredThreshold, and scale.
+            </p>
+            {constantsError && (
+              <p style={{ fontSize: "0.82rem", color: "#b91c1c" }}>
+                {constantsError}
+              </p>
+            )}
+            <div
+              style={{
+                fontSize: "0.82rem",
+                color: "#475569",
+                background: "#f8fafc",
+                border: "1px solid #e2e8f0",
+                borderRadius: 8,
+                padding: "0.6rem",
+              }}
+            >
+              <strong>Current constants</strong>
+              <div>
+                Blend weights — indicator {formatConstant(constantsSnapshot.blendWeights.indicator)},
+                outcome {formatConstant(constantsSnapshot.blendWeights.outcome)},
+                competency {formatConstant(constantsSnapshot.blendWeights.competency)},
+                grade {formatConstant(constantsSnapshot.blendWeights.grade)}
+              </div>
+              <div>
+                Learning rates — indicator {formatConstant(constantsSnapshot.learningRates.indicator)},
+                outcome {formatConstant(constantsSnapshot.learningRates.outcome)},
+                competency {formatConstant(constantsSnapshot.learningRates.competency)},
+                grade {formatConstant(constantsSnapshot.learningRates.grade)}
+              </div>
+              <div>
+                ZPD range — {formatConstant(constantsSnapshot.zpdRange[0])} to {formatConstant(constantsSnapshot.zpdRange[1])}
+              </div>
+              <div>Mastered threshold — {formatConstant(constantsSnapshot.masteredThreshold)}</div>
+              <div>Scale — {formatConstant(constantsSnapshot.scale)}</div>
+            </div>
           </div>
         </div>
 

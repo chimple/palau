@@ -1,0 +1,13 @@
+category,key,value
+blendWeights,indicator,0.45
+blendWeights,outcome,0.35
+blendWeights,competency,0.15
+blendWeights,grade,0.05
+learningRates,indicator,0.5
+learningRates,outcome,0.08
+learningRates,competency,0.04
+learningRates,grade,0.03
+zpdRange,min,0.5
+zpdRange,max,0.8
+masteredThreshold,value,0.8
+scale,value,1

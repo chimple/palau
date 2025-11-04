@@ -7,3 +7,5 @@ export {
   buildGraphSnapshot,
 } from "./metrics";
 export type { GraphSnapshot, IndicatorSnapshot } from "./metrics";
+export { parseCsv, trimEmptyRows } from "./csv";
+export type { CsvRow } from "./csv";

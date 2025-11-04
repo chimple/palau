@@ -1,6 +1,10 @@
 import {
   createEmptyAbilityState,
+  applyCoreConstantsCsv,
+  parseCsv,
+  trimEmptyRows,
   type AbilityState,
+  type CsvRow,
   type DependencyGraph,
   type LearningIndicator,
 } from "@pal/core";
@@ -8,65 +12,12 @@ import {
 import sampleGraphCsv from "./sample-graph.csv?raw";
 import samplePrerequisitesCsv from "./sample-prerequisites.csv?raw";
 import sampleAbilitiesCsv from "./sample-abilities.csv?raw";
+import sampleConstantsCsv from "./sample-constants.csv?raw";
 
 export interface DatasetBundle {
   graph: DependencyGraph;
   abilities: AbilityState;
 }
-
-type CsvRow = string[];
-
-const cleanRows = (rows: CsvRow[]): CsvRow[] =>
-  rows.filter((row) => row.some((cell) => cell.trim().length > 0));
-
-export const parseCsv = (text: string): CsvRow[] => {
-  const rows: CsvRow[] = [];
-  let currentRow: string[] = [];
-  let currentCell = "";
-  let inQuotes = false;
-
-  const pushCell = () => {
-    currentRow.push(currentCell.trim());
-    currentCell = "";
-  };
-
-  const pushRow = () => {
-    if (currentRow.length > 0 || currentCell.trim().length > 0) {
-      pushCell();
-      rows.push(currentRow);
-    } else if (currentCell.trim().length > 0) {
-      rows.push([currentCell.trim()]);
-      currentCell = "";
-    }
-    currentRow = [];
-  };
-
-  const characters = Array.from(text.replace(/\r\n/g, "\n"));
-  for (let i = 0; i < characters.length; i += 1) {
-    const char = characters[i];
-    if (char === "\"") {
-      if (inQuotes && characters[i + 1] === "\"") {
-        currentCell += "\"";
-        i += 1;
-      } else {
-        inQuotes = !inQuotes;
-      }
-    } else if (char === "," && !inQuotes) {
-      pushCell();
-    } else if (char === "\n" && !inQuotes) {
-      pushRow();
-    } else {
-      currentCell += char;
-    }
-  }
-
-  if (currentCell.length > 0 || currentRow.length > 0) {
-    pushCell();
-    rows.push(currentRow);
-  }
-
-  return rows;
-};
 
 const createDefaultAbilitiesForGraph = (graph: DependencyGraph): AbilityState => {
   const state = createEmptyAbilityState();
@@ -89,11 +40,12 @@ const parseGraphRows = (
   graphRows: CsvRow[],
   prerequisiteRows: CsvRow[]
 ): DependencyGraph => {
-  if (graphRows.length <= 1) {
+  const filteredRows = trimEmptyRows(graphRows);
+  if (filteredRows.length <= 1) {
     throw new Error("Graph CSV is empty or missing data rows.");
   }
 
-  const [, ...dataRows] = cleanRows(graphRows);
+  const [, ...dataRows] = filteredRows;
   const gradesMap = new Map<string, { id: string; label: string }>();
   const competenciesMap = new Map<
     string,
@@ -177,7 +129,7 @@ const parseGraphRows = (
     indicatorIndex.set(indicatorId, indicator);
   }
 
-  const prereqData = cleanRows(prerequisiteRows);
+  const prereqData = trimEmptyRows(prerequisiteRows);
   if (prereqData.length === 0) {
     throw new Error("Prerequisite CSV must include a header row.");
   }
@@ -254,10 +206,11 @@ const parseAbilityRows = (
   abilityRows: CsvRow[]
 ): AbilityState => {
   const state = createDefaultAbilitiesForGraph(graph);
-  if (abilityRows.length <= 1) {
+  const filteredRows = trimEmptyRows(abilityRows);
+  if (filteredRows.length <= 1) {
     return state;
   }
-  const [, ...dataRows] = cleanRows(abilityRows);
+  const [, ...dataRows] = filteredRows;
   for (const row of dataRows) {
     applyAbilityRow(state, row);
   }
@@ -281,12 +234,18 @@ export const loadDatasetFromCsv = (options: {
   };
 };
 
-export const getDefaultDataset = (): DatasetBundle =>
-  loadDatasetFromCsv({
+export const applyDefaultConstants = () => {
+  applyCoreConstantsCsv(sampleConstantsCsv);
+};
+
+export const getDefaultDataset = (): DatasetBundle => {
+  applyDefaultConstants();
+  return loadDatasetFromCsv({
     graphCsv: sampleGraphCsv,
     prerequisitesCsv: samplePrerequisitesCsv,
     abilityCsv: sampleAbilitiesCsv,
   });
+};
 
 export const cloneAbilities = (abilities: AbilityState): AbilityState => ({
   indicator: { ...abilities.indicator },
