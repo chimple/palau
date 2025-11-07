@@ -1,4 +1,4 @@
-import { ChangeEvent, useMemo, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import {
   applyCoreConstantsCsv,
   buildGraphSnapshot,
@@ -6,6 +6,9 @@ import {
   recommendNextIndicator,
   resetCoreConstants,
   updateAbilities,
+  getIndicatorProbability,
+  DEFAULT_ZPD_RANGE,
+  DEFAULT_MASTERED_THRESHOLD,
   type AbilityState,
   type DependencyGraph,
   type GraphSnapshot,
@@ -56,9 +59,244 @@ const App = () => {
   const baselineAbilitiesRef = useRef<AbilityState>(
     cloneAbilities(defaultDataset.abilities)
   );
+  // Selection policy controls how the demo picks a default target indicator.
+  // Options: difficulty, lowest-probability, start-indicator, custom
+  const [selectionPolicy, setSelectionPolicy] = useState<
+    | "difficulty"
+    | "lowest-probability"
+    | "start-indicator"
+    | "custom"
+    | "zpd-prereq-aware"
+  >("difficulty");
+
+  const computeTargetForPolicy = (
+    graph: DependencyGraph,
+    abilities: AbilityState,
+    policy:
+      | "difficulty"
+      | "lowest-probability"
+      | "start-indicator"
+      | "custom"
+      | "zpd-prereq-aware"
+  ): string => {
+    if (!graph || graph.indicators.length === 0) return "";
+  const zpdRange = DEFAULT_ZPD_RANGE;
+  const masteredThreshold = DEFAULT_MASTERED_THRESHOLD;
+
+  switch (policy) {
+      case "difficulty":
+        return selectDefaultTargetIndicator(graph);
+      case "start-indicator":
+        return graph.startIndicatorId || selectDefaultTargetIndicator(graph);
+      case "lowest-probability": {
+        let bestId = graph.indicators[0].id;
+        let bestProb = Infinity;
+        for (const ind of graph.indicators) {
+          const p = getIndicatorProbability(graph, abilities, ind.id) ?? 0;
+          if (p < bestProb) {
+            bestProb = p;
+            bestId = ind.id;
+          }
+        }
+        return bestId;
+      }
+      case "zpd-prereq-aware": {
+        // Compute probabilities and mastered/zpd status for all indicators.
+        const probs = new Map<string, number>();
+        const mastered = new Map<string, boolean>();
+        const inZpd = new Map<string, boolean>();
+        for (const ind of graph.indicators) {
+          const p = getIndicatorProbability(graph, abilities, ind.id) ?? 0;
+          probs.set(ind.id, p);
+          mastered.set(ind.id, p >= masteredThreshold);
+          inZpd.set(ind.id, p >= zpdRange[0] && p <= zpdRange[1]);
+        }
+
+        // Policy thresholds (uses defaults from core unless overridden)
+
+        // Eligible indicators: all prerequisites mastered.
+        const eligibleAll = graph.indicators.filter((ind) =>
+          ind.prerequisites.every((pre) => mastered.get(pre) === true)
+        );
+        // Prefer eligible indicators that are not yet mastered themselves;
+        // only fall back to already-mastered eligible indicators if there
+        // are no non-mastered eligibles. This avoids repeatedly picking a
+        // target that the student already appears to have mastered.
+        let eligible = eligibleAll.filter((ind) => !mastered.get(ind.id));
+        if (eligible.length === 0) eligible = eligibleAll.slice();
+
+  // (debug logs removed)
+
+        if (eligible.length > 0) {
+          // Prefer those in ZPD and pick the one closest to the mastered
+          // threshold (by absolute probability distance), tie-breaking by
+          // higher probability.
+          const zpdCandidates = eligible.filter((ind) => inZpd.get(ind.id));
+          const chooseClosestToMasteredByProb = (arr: typeof eligible) => {
+            let best = arr[0];
+            const m = masteredThreshold;
+            let bestScore = Math.abs((probs.get(best.id) ?? 0) - m);
+            let bestP = probs.get(best.id) ?? 0;
+            for (const ind of arr) {
+              const p = probs.get(ind.id) ?? 0;
+              const score = Math.abs(p - m);
+              // prefer smaller distance to masteredThreshold; break ties by higher p
+              if (score < bestScore || (score === bestScore && p > bestP)) {
+                bestScore = score;
+                bestP = p;
+                best = ind;
+              }
+            }
+            return best.id;
+          };
+
+          if (zpdCandidates.length > 0) {
+            return chooseClosestToMasteredByProb(zpdCandidates);
+          }
+
+          // If no ZPD candidates, pick the eligible indicator that is
+          // graph-closest to any mastered indicator (fewest forward edges),
+          // tie-breaking by higher probability.
+          const dependents = new Map<string, string[]>();
+          for (const ind of graph.indicators) {
+            for (const pre of ind.prerequisites) {
+              const list = dependents.get(pre) ?? [];
+              list.push(ind.id);
+              dependents.set(pre, list);
+            }
+          }
+
+          const computeDistanceToMastered = (startId: string): number => {
+            const queue: Array<{ id: string; dist: number }> = [];
+            const seen = new Set<string>();
+            const first = dependents.get(startId) ?? [];
+            for (const d of first) {
+              queue.push({ id: d, dist: 1 });
+              seen.add(d);
+            }
+            while (queue.length > 0) {
+              const { id, dist } = queue.shift()!;
+              if (mastered.get(id)) return dist;
+              const next = dependents.get(id) ?? [];
+              for (const n of next) {
+                if (!seen.has(n)) {
+                  seen.add(n);
+                  queue.push({ id: n, dist: dist + 1 });
+                }
+              }
+            }
+            return Number.POSITIVE_INFINITY;
+          };
+
+          eligible.sort((a, b) => {
+            const da = computeDistanceToMastered(a.id);
+            const db = computeDistanceToMastered(b.id);
+            if (da !== db) return da - db;
+            return (probs.get(b.id) ?? 0) - (probs.get(a.id) ?? 0);
+          });
+          return eligible[0].id;
+        }
+
+        // Fallback: if no eligible indicators (some prerequisites not mastered),
+        // suggest unmet prerequisite nodes in this order:
+        //  1) unmet prerequisites that are inside ZPD, ordered by descending
+        //     probability (closest to mastered threshold first)
+        //  2) unmet prerequisites below ZPD, ordered by descending probability
+        //     (nearest remediation with highest chance first)
+        const unmet = new Set<string>();
+        for (const ind of graph.indicators) {
+          for (const pre of ind.prerequisites) {
+            if (!mastered.get(pre)) unmet.add(pre);
+          }
+        }
+
+        if (unmet.size > 0) {
+          const unmetArr = Array.from(unmet);
+          // Build dependents map (prereq -> dependents) for BFS distance calculations
+          const dependents = new Map<string, string[]>();
+          for (const ind of graph.indicators) {
+            for (const pre of ind.prerequisites) {
+              const list = dependents.get(pre) ?? [];
+              list.push(ind.id);
+              dependents.set(pre, list);
+            }
+          }
+
+          const nonMasteredTargets = new Set<string>();
+          for (const ind of graph.indicators) {
+            if (!mastered.get(ind.id)) nonMasteredTargets.add(ind.id);
+          }
+
+          const computeDistanceToNonMastered = (startId: string): number => {
+            const queue: Array<{ id: string; dist: number }> = [];
+            const seen = new Set<string>();
+            const first = dependents.get(startId) ?? [];
+            for (const d of first) {
+              queue.push({ id: d, dist: 1 });
+              seen.add(d);
+            }
+            while (queue.length > 0) {
+              const { id, dist } = queue.shift()!;
+              if (nonMasteredTargets.has(id)) return dist;
+              const next = dependents.get(id) ?? [];
+              for (const n of next) {
+                if (!seen.has(n)) {
+                  seen.add(n);
+                  queue.push({ id: n, dist: dist + 1 });
+                }
+              }
+            }
+            return Number.POSITIVE_INFINITY;
+          };
+
+          const unmetInZpd = unmetArr.filter((id) => inZpd.get(id));
+          if (unmetInZpd.length > 0) {
+            // prefer nearest by graph distance; tie-break by higher probability
+            unmetInZpd.sort((a, b) => {
+              const da = computeDistanceToNonMastered(a);
+              const db = computeDistanceToNonMastered(b);
+              if (da !== db) return da - db;
+              return (probs.get(b) ?? 0) - (probs.get(a) ?? 0);
+            });
+            return unmetInZpd[0];
+          }
+
+          const unmetBelow = unmetArr.filter((id) => !inZpd.get(id));
+          if (unmetBelow.length > 0) {
+            unmetBelow.sort((a, b) => {
+              const da = computeDistanceToNonMastered(a);
+              const db = computeDistanceToNonMastered(b);
+              if (da !== db) return da - db;
+              return (probs.get(b) ?? 0) - (probs.get(a) ?? 0);
+            });
+            return unmetBelow[0];
+          }
+        }
+
+        // As a last resort, fall back to difficulty-based default.
+        return selectDefaultTargetIndicator(graph);
+      }
+      case "custom":
+      default:
+        // Custom leaves existing selection (handled by UI).
+        return selectDefaultTargetIndicator(graph);
+    }
+  };
+
   const [targetId, setTargetId] = useState<string>(() =>
-    selectDefaultTargetIndicator(defaultDataset.graph)
+    computeTargetForPolicy(defaultDataset.graph, baselineAbilitiesRef.current, "difficulty")
   );
+
+  useEffect(() => {
+    // When graph or abilities change and the policy is not custom, recompute the
+    // target to reflect the chosen policy (e.g., lowest-probability should
+    // follow ability updates automatically).
+    if (selectionPolicy !== "custom") {
+      const newTarget = computeTargetForPolicy(graph, abilities, selectionPolicy);
+      setTargetId(newTarget);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectionPolicy, graph, abilities]);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [selectedOutcome, setSelectedOutcome] = useState<"correct" | "incorrect">(
     "correct"
@@ -101,9 +339,11 @@ const App = () => {
     [graph, recommendation.candidateId]
   );
 
-  const canRecord =
-    recommendation.status === "recommended" ||
-    recommendation.status === "needs-remediation";
+  // Allow recording outcomes whenever there is a candidate ID available.
+  // Previously recording was restricted to `recommended` or `needs-remediation`.
+  // Keeping recording available is useful for logging teacher-led attempts,
+  // manual checks, or exploratory testing of the engine.
+  const canRecord = Boolean(recommendation.candidateId);
 
   const resetAbilitiesToBaseline = () => {
     const clone = cloneAbilities(baselineAbilitiesRef.current);
@@ -111,7 +351,8 @@ const App = () => {
   };
 
   const handleRecordOutcome = () => {
-    if (!candidateIndicator || !recommendation.candidateId || !canRecord) {
+    // If there is no candidate id we cannot record an outcome.
+    if (!recommendation.candidateId) {
       return;
     }
     const timestamp = Date.now();
@@ -126,10 +367,11 @@ const App = () => {
           timestamp,
         },
       });
+      const label = candidateIndicator?.label ?? recommendation.candidateId;
       setHistory((prevHistory) => [
         {
           indicatorId: recommendation.candidateId,
-          label: candidateIndicator.label,
+          label,
           correct,
           probabilityBefore: result.probabilityBefore,
           probabilityAfter: result.probabilityAfter,
@@ -157,7 +399,11 @@ const App = () => {
     baselineAbilitiesRef.current = cloneAbilities(dataset.abilities);
     setHistory([]);
     setSelectedOutcome("correct");
-    const newTarget = selectDefaultTargetIndicator(dataset.graph);
+    const newTarget = computeTargetForPolicy(
+      dataset.graph,
+      baselineAbilitiesRef.current,
+      selectionPolicy
+    );
     setTargetId(newTarget);
     setConstantsSnapshot(getCoreConstants());
   };
@@ -418,6 +664,32 @@ const App = () => {
 
         <div className="section">
           <div className="input-group">
+            <label htmlFor="policy-select">Selection policy</label>
+            <select
+              id="policy-select"
+              className="select"
+              value={selectionPolicy}
+              onChange={(event) => {
+                const policy = event.target.value as
+                  | "difficulty"
+                  | "lowest-probability"
+                  | "start-indicator"
+                  | "custom"
+                  | "zpd-prereq-aware";
+                setSelectionPolicy(policy);
+                if (policy !== "custom") {
+                  const newTarget = computeTargetForPolicy(graph, abilities, policy);
+                  setTargetId(newTarget);
+                }
+              }}
+            >
+              <option value="difficulty">Difficulty (hardest)</option>
+              <option value="lowest-probability">Lowest probability (history)</option>
+              <option value="zpd-prereq-aware">ZPD (prereqs mastered, high success)</option>
+              <option value="start-indicator">Start indicator (roots)</option>
+              <option value="custom">Custom (manual)</option>
+            </select>
+
             <label htmlFor="target-select">Target Learning Indicator</label>
             <select
               id="target-select"
@@ -521,8 +793,9 @@ const App = () => {
                 color: "#94a3b8",
               }}
             >
-              Outcome logging is enabled when a recommendation is available or
-              remediation is requested.
+              Outcome logging is currently disabled because there is no candidate
+              indicator available. Try selecting a different target indicator or
+              upload graph/ability CSVs to generate recommendations.
             </p>
           )}
           <button
