@@ -1,4 +1,11 @@
-import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
+import {
+  ChangeEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   applyCoreConstantsCsv,
   buildGraphSnapshot,
@@ -13,14 +20,21 @@ import {
   type DependencyGraph,
   type GraphSnapshot,
   type RecommendationContext,
+  type LearningIndicator,
 } from "@pal/core";
 import GraphDiagram from "./components/GraphDiagram";
 import {
   cloneAbilities,
   getDefaultDataset,
   loadDatasetFromCsv,
-  selectDefaultTargetIndicator,
 } from "./data/loaders";
+
+interface AbilityVector {
+  indicator: number;
+  outcome: number;
+  competency: number;
+  grade: number;
+}
 
 interface HistoryEntry {
   indicatorId: string;
@@ -29,6 +43,8 @@ interface HistoryEntry {
   probabilityBefore: number;
   probabilityAfter: number;
   timestamp: number;
+  thetaBefore: AbilityVector;
+  thetaAfter: AbilityVector;
 }
 
 const getIndicatorLabel = (graph: DependencyGraph, id: string) =>
@@ -40,6 +56,20 @@ const formatAbility = (value: number | undefined) =>
 const formatProbability = (value: number | undefined) =>
   ((value ?? 0) * 100).toFixed(1);
 
+const formatPercentChange = (before: number, after: number): string => {
+  const base = Math.abs(before);
+  const delta = after - before;
+  if (base < 1e-6) {
+    if (Math.abs(delta) < 1e-6) {
+      return "+0.0%";
+    }
+    return "n/a";
+  }
+  const percent = (delta / base) * 100;
+  const sign = percent >= 0 ? "+" : "";
+  return `${sign}${percent.toFixed(1)}%`;
+};
+
 const formatStatusLabel = (
   status: RecommendationContext["status"]
 ): string =>
@@ -49,6 +79,9 @@ const formatStatusLabel = (
     .join(" ");
 
 const formatConstant = (value: number): string => value.toFixed(2);
+
+const ASSESSMENT_MASTERY_THETA = 3;
+const ASSESSMENT_NON_MASTERY_THETA = -3;
 
 const App = () => {
   const defaultDataset = useMemo(() => getDefaultDataset(), []);
@@ -67,7 +100,7 @@ const App = () => {
     | "start-indicator"
     | "custom"
     | "zpd-prereq-aware"
-  >("difficulty");
+  >("zpd-prereq-aware");
 
   const computeTargetForPolicy = (
     graph: DependencyGraph,
@@ -78,20 +111,51 @@ const App = () => {
       | "start-indicator"
       | "custom"
       | "zpd-prereq-aware"
+    ,
+    filters?: { gradeId?: string; competencyId?: string }
   ): string => {
     if (!graph || graph.indicators.length === 0) return "";
-  const zpdRange = DEFAULT_ZPD_RANGE;
-  const masteredThreshold = DEFAULT_MASTERED_THRESHOLD;
+    const matchesFilter = (indicator: LearningIndicator) => {
+      if (filters?.gradeId && indicator.gradeId !== filters.gradeId) {
+        return false;
+      }
+      if (
+        filters?.competencyId &&
+        indicator.competencyId !== filters.competencyId
+      ) {
+        return false;
+      }
+      return true;
+    };
+    const filtered = graph.indicators.filter(matchesFilter);
+    const indicatorPool =
+      filtered.length > 0 ? filtered : graph.indicators.slice();
+    if (indicatorPool.length === 0) {
+      return "";
+    }
+    const selectByDifficulty = (pool: LearningIndicator[]): string => {
+      if (pool.length === 0) return "";
+      const sorted = [...pool].sort(
+        (a, b) => (b.difficulty ?? 0) - (a.difficulty ?? 0)
+      );
+      return sorted[0]?.id ?? pool[0].id;
+    };
+    const zpdRange = DEFAULT_ZPD_RANGE;
+    const masteredThreshold = DEFAULT_MASTERED_THRESHOLD;
 
-  switch (policy) {
+    switch (policy) {
       case "difficulty":
-        return selectDefaultTargetIndicator(graph);
-      case "start-indicator":
-        return graph.startIndicatorId || selectDefaultTargetIndicator(graph);
+        return selectByDifficulty(indicatorPool);
+      case "start-indicator": {
+        const start =
+          indicatorPool.find((indicator) => indicator.prerequisites.length === 0) ??
+          indicatorPool[0];
+        return start?.id ?? "";
+      }
       case "lowest-probability": {
-        let bestId = graph.indicators[0].id;
+        let bestId = indicatorPool[0].id;
         let bestProb = Infinity;
-        for (const ind of graph.indicators) {
+        for (const ind of indicatorPool) {
           const p = getIndicatorProbability(graph, abilities, ind.id) ?? 0;
           if (p < bestProb) {
             bestProb = p;
@@ -111,11 +175,10 @@ const App = () => {
           mastered.set(ind.id, p >= masteredThreshold);
           inZpd.set(ind.id, p >= zpdRange[0] && p <= zpdRange[1]);
         }
-
+        const indicatorSet = new Set(indicatorPool.map((ind) => ind.id));
         // Policy thresholds (uses defaults from core unless overridden)
-
         // Eligible indicators: all prerequisites mastered.
-        const eligibleAll = graph.indicators.filter((ind) =>
+        const eligibleAll = indicatorPool.filter((ind) =>
           ind.prerequisites.every((pre) => mastered.get(pre) === true)
         );
         // Prefer eligible indicators that are not yet mastered themselves;
@@ -158,8 +221,11 @@ const App = () => {
           // graph-closest to any mastered indicator (fewest forward edges),
           // tie-breaking by higher probability.
           const dependents = new Map<string, string[]>();
-          for (const ind of graph.indicators) {
+          for (const ind of indicatorPool) {
             for (const pre of ind.prerequisites) {
+              if (!indicatorSet.has(pre)) {
+                continue;
+              }
               const list = dependents.get(pre) ?? [];
               list.push(ind.id);
               dependents.set(pre, list);
@@ -204,23 +270,25 @@ const App = () => {
         //  2) unmet prerequisites below ZPD, ordered by descending probability
         //     (nearest remediation with highest chance first)
         const unmet = new Set<string>();
-        for (const ind of graph.indicators) {
+        for (const ind of indicatorPool) {
           for (const pre of ind.prerequisites) {
+            if (!indicatorSet.has(pre)) continue;
             if (!mastered.get(pre)) unmet.add(pre);
           }
         }
 
         if (unmet.size > 0) {
-          const unmetArr = Array.from(unmet);
-          // Build dependents map (prereq -> dependents) for BFS distance calculations
-          const dependents = new Map<string, string[]>();
-          for (const ind of graph.indicators) {
-            for (const pre of ind.prerequisites) {
-              const list = dependents.get(pre) ?? [];
-              list.push(ind.id);
-              dependents.set(pre, list);
-            }
+        const unmetArr = Array.from(unmet);
+        // Build dependents map (prereq -> dependents) for BFS distance calculations
+        const dependents = new Map<string, string[]>();
+        for (const ind of indicatorPool) {
+          for (const pre of ind.prerequisites) {
+            if (!indicatorSet.has(pre)) continue;
+            const list = dependents.get(pre) ?? [];
+            list.push(ind.id);
+            dependents.set(pre, list);
           }
+        }
 
           const nonMasteredTargets = new Set<string>();
           for (const ind of graph.indicators) {
@@ -274,17 +342,29 @@ const App = () => {
         }
 
         // As a last resort, fall back to difficulty-based default.
-        return selectDefaultTargetIndicator(graph);
+        return selectByDifficulty(indicatorPool);
       }
       case "custom":
       default:
         // Custom leaves existing selection (handled by UI).
-        return selectDefaultTargetIndicator(graph);
+        return selectByDifficulty(indicatorPool);
     }
   };
 
+  const [graphGradeFilterId, setGraphGradeFilterId] = useState<string>("");
+  const [graphCompetencyFilterId, setGraphCompetencyFilterId] =
+    useState<string>("");
+
   const [targetId, setTargetId] = useState<string>(() =>
-    computeTargetForPolicy(defaultDataset.graph, baselineAbilitiesRef.current, "difficulty")
+    computeTargetForPolicy(
+      defaultDataset.graph,
+      baselineAbilitiesRef.current,
+      "zpd-prereq-aware",
+      {
+        gradeId: graphGradeFilterId,
+        competencyId: graphCompetencyFilterId,
+      }
+    )
   );
 
   useEffect(() => {
@@ -292,15 +372,46 @@ const App = () => {
     // target to reflect the chosen policy (e.g., lowest-probability should
     // follow ability updates automatically).
     if (selectionPolicy !== "custom") {
-      const newTarget = computeTargetForPolicy(graph, abilities, selectionPolicy);
+      const newTarget = computeTargetForPolicy(
+        graph,
+        abilities,
+        selectionPolicy,
+        {
+          gradeId: graphGradeFilterId,
+          competencyId: graphCompetencyFilterId,
+        }
+      );
       setTargetId(newTarget);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectionPolicy, graph, abilities]);
+  }, [
+    selectionPolicy,
+    graph,
+    abilities,
+    graphGradeFilterId,
+    graphCompetencyFilterId,
+  ]);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [selectedOutcome, setSelectedOutcome] = useState<"correct" | "incorrect">(
     "correct"
   );
+  const [manualOutcomeIndicatorId, setManualOutcomeIndicatorId] =
+    useState<string>("");
+  const [assessmentGradeId, setAssessmentGradeId] = useState<string>("");
+  const [assessmentCompetencyId, setAssessmentCompetencyId] =
+    useState<string>("");
+  const [assessmentOutcomeValues, setAssessmentOutcomeValues] = useState<
+    Record<string, "" | "0" | "1">
+  >({});
+  const [assessmentError, setAssessmentError] = useState<string | null>(null);
+  const [assessmentMessage, setAssessmentMessage] = useState<string | null>(null);
+  const [assessmentRecommendations, setAssessmentRecommendations] = useState<
+    Array<{
+      competencyId: string;
+      competencyLabel: string;
+      indicators: LearningIndicator[];
+    }>
+  >([]);
   const [uploadedGraphCsv, setUploadedGraphCsv] = useState<string | null>(null);
   const [uploadedPrereqCsv, setUploadedPrereqCsv] = useState<string | null>(null);
   const [uploadedAbilityCsv, setUploadedAbilityCsv] = useState<string | null>(null);
@@ -313,14 +424,63 @@ const App = () => {
     getCoreConstants()
   );
 
+  const recommendationGraph = useMemo(() => {
+    if (!graphGradeFilterId && !graphCompetencyFilterId) {
+      return graph;
+    }
+    const filteredIndicators = graph.indicators.filter((indicator) => {
+      if (graphGradeFilterId && indicator.gradeId !== graphGradeFilterId) {
+        return false;
+      }
+      if (
+        graphCompetencyFilterId &&
+        indicator.competencyId !== graphCompetencyFilterId
+      ) {
+        return false;
+      }
+      return true;
+    });
+    if (filteredIndicators.length === 0) {
+      return graph;
+    }
+    const allowedIds = new Set(filteredIndicators.map((indicator) => indicator.id));
+    const trimmedIndicators = filteredIndicators.map((indicator) => ({
+      ...indicator,
+      prerequisites: indicator.prerequisites.filter((pre) =>
+        allowedIds.has(pre)
+      ),
+    }));
+    const allowedGradeIds = new Set(trimmedIndicators.map((indicator) => indicator.gradeId));
+    const allowedCompetencyIds = new Set(
+      trimmedIndicators.map((indicator) => indicator.competencyId)
+    );
+    const allowedOutcomeIds = new Set(
+      trimmedIndicators.map((indicator) => indicator.learningOutcomeId)
+    );
+    const filteredGraph: DependencyGraph = {
+      startIndicatorId:
+        trimmedIndicators.find((indicator) => indicator.prerequisites.length === 0)?.id ??
+        trimmedIndicators[0].id,
+      indicators: trimmedIndicators,
+      grades: graph.grades.filter((grade) => allowedGradeIds.has(grade.id)),
+      competencies: graph.competencies.filter((competency) =>
+        allowedCompetencyIds.has(competency.id)
+      ),
+      learningOutcomes: graph.learningOutcomes.filter((outcome) =>
+        allowedOutcomeIds.has(outcome.id)
+      ),
+    };
+    return filteredGraph;
+  }, [graph, graphGradeFilterId, graphCompetencyFilterId]);
+
   const recommendation: RecommendationContext = useMemo(
     () =>
       recommendNextIndicator({
-        graph,
+        graph: recommendationGraph,
         abilities,
         targetIndicatorId: targetId,
       }),
-    [abilities, graph, targetId, constantsSnapshot]
+    [abilities, recommendationGraph, targetId, constantsSnapshot]
   );
 
   const snapshot: GraphSnapshot = useMemo(
@@ -333,17 +493,260 @@ const App = () => {
     [graph, targetId]
   );
 
-  const candidateIndicator = useMemo(
+  const manualIndicator = useMemo(
     () =>
-      graph.indicators.find((li) => li.id === recommendation.candidateId),
-    [graph, recommendation.candidateId]
+      graph.indicators.find((li) => li.id === manualOutcomeIndicatorId),
+    [graph, manualOutcomeIndicatorId]
   );
 
-  // Allow recording outcomes whenever there is a candidate ID available.
-  // Previously recording was restricted to `recommended` or `needs-remediation`.
-  // Keeping recording available is useful for logging teacher-led attempts,
-  // manual checks, or exploratory testing of the engine.
-  const canRecord = Boolean(recommendation.candidateId);
+  const indicatorsByOutcome = useMemo(() => {
+    const map = new Map<string, LearningIndicator[]>();
+    for (const indicator of graph.indicators) {
+      const list = map.get(indicator.learningOutcomeId) ?? [];
+      list.push(indicator);
+      map.set(indicator.learningOutcomeId, list);
+    }
+    return map;
+  }, [graph]);
+
+  const competenciesByGrade = useMemo(() => {
+    // Build grade → competencies index using indicator grade IDs so we capture
+    // competencies that span multiple grades in the CSV.
+    const interim = new Map<string, Set<string>>();
+    for (const indicator of graph.indicators) {
+      const list = interim.get(indicator.gradeId) ?? new Set<string>();
+      list.add(indicator.competencyId);
+      interim.set(indicator.gradeId, list);
+    }
+    const normalized = new Map<string, string[]>();
+    for (const [gradeId, set] of interim.entries()) {
+      normalized.set(gradeId, Array.from(set));
+    }
+    return normalized;
+  }, [graph]);
+
+  const outcomesByGrade = useMemo(() => {
+    const interim = new Map<string, Set<string>>();
+    for (const indicator of graph.indicators) {
+      const list = interim.get(indicator.gradeId) ?? new Set<string>();
+      list.add(indicator.learningOutcomeId);
+      interim.set(indicator.gradeId, list);
+    }
+    const normalized = new Map<string, string[]>();
+    for (const [gradeId, set] of interim.entries()) {
+      normalized.set(gradeId, Array.from(set));
+    }
+    return normalized;
+  }, [graph]);
+
+  const assessmentCompetencyOptions = useMemo(() => {
+    if (!assessmentGradeId) {
+      return graph.competencies;
+    }
+    const allowed = new Set(competenciesByGrade.get(assessmentGradeId) ?? []);
+    return graph.competencies.filter((competency) =>
+      allowed.has(competency.id)
+    );
+  }, [graph, assessmentGradeId, competenciesByGrade]);
+
+  const assessmentOutcomeOptions = useMemo(() => {
+    let filtered = graph.learningOutcomes;
+    if (assessmentCompetencyId) {
+      filtered = filtered.filter(
+        (outcome) => outcome.competencyId === assessmentCompetencyId
+      );
+    }
+    if (assessmentGradeId) {
+      const allowedOutcomeIds = new Set(
+        outcomesByGrade.get(assessmentGradeId) ?? []
+      );
+      filtered = filtered.filter((outcome) =>
+        allowedOutcomeIds.has(outcome.id)
+      );
+    }
+    return filtered;
+  }, [
+    graph,
+    assessmentCompetencyId,
+    assessmentGradeId,
+    outcomesByGrade,
+  ]);
+
+  useEffect(() => {
+    setAssessmentCompetencyId("");
+    setAssessmentOutcomeValues({});
+  }, [assessmentGradeId]);
+
+  useEffect(() => {
+    setAssessmentOutcomeValues({});
+  }, [assessmentCompetencyId]);
+
+
+  const applyAssessmentOutcomes = useCallback(
+    (updates: { mastered: string[]; notMastered: string[] }): AbilityState => {
+      const updated = cloneAbilities(abilities);
+      const visited = new Set<string>();
+      const indicatorIndex = new Map(
+        graph.indicators.map((indicator) => [indicator.id, indicator])
+      );
+      const competencyStatus = new Map<
+        string,
+        { mastered: boolean; notMastered: boolean }
+      >();
+      const gradeStatus = new Map<
+        string,
+        { mastered: boolean; notMastered: boolean }
+      >();
+
+      const noteStatus = (
+        indicator: LearningIndicator,
+        mastered: boolean
+      ) => {
+        const competencyEntry =
+          competencyStatus.get(indicator.competencyId) ?? {
+            mastered: false,
+            notMastered: false,
+          };
+        if (mastered) {
+          competencyEntry.mastered = true;
+        } else {
+          competencyEntry.notMastered = true;
+        }
+        competencyStatus.set(indicator.competencyId, competencyEntry);
+
+        const gradeEntry = gradeStatus.get(indicator.gradeId) ?? {
+          mastered: false,
+          notMastered: false,
+        };
+        if (mastered) {
+          gradeEntry.mastered = true;
+        } else {
+          gradeEntry.notMastered = true;
+        }
+        gradeStatus.set(indicator.gradeId, gradeEntry);
+      };
+
+      const markMasteredIndicator = (indicatorId: string) => {
+        const indicator = indicatorIndex.get(indicatorId);
+        if (!indicator) {
+          return;
+        }
+        if (visited.has(indicatorId)) {
+          return;
+        }
+        visited.add(indicatorId);
+        updated.indicator[indicatorId] = ASSESSMENT_MASTERY_THETA;
+        updated.outcome[indicator.learningOutcomeId] = ASSESSMENT_MASTERY_THETA;
+        noteStatus(indicator, true);
+        for (const prereq of indicator.prerequisites) {
+          markMasteredIndicator(prereq);
+        }
+      };
+
+      const markNotMasteredIndicator = (indicatorId: string) => {
+        const indicator = indicatorIndex.get(indicatorId);
+        if (!indicator) {
+          return;
+        }
+        updated.indicator[indicatorId] = ASSESSMENT_NON_MASTERY_THETA;
+        updated.outcome[indicator.learningOutcomeId] =
+          ASSESSMENT_NON_MASTERY_THETA;
+        noteStatus(indicator, false);
+      };
+
+      for (const outcomeId of updates.notMastered) {
+        const indicators = indicatorsByOutcome.get(outcomeId) ?? [];
+        if (indicators.length === 0) {
+          updated.outcome[outcomeId] = ASSESSMENT_NON_MASTERY_THETA;
+        }
+        for (const indicator of indicators) {
+          markNotMasteredIndicator(indicator.id);
+        }
+      }
+
+      for (const outcomeId of updates.mastered) {
+        updated.outcome[outcomeId] = ASSESSMENT_MASTERY_THETA;
+        const indicators = indicatorsByOutcome.get(outcomeId) ?? [];
+        for (const indicator of indicators) {
+          markMasteredIndicator(indicator.id);
+        }
+      }
+
+      for (const [competencyId, status] of competencyStatus.entries()) {
+        if (status.notMastered) {
+          updated.competency[competencyId] = ASSESSMENT_NON_MASTERY_THETA;
+        } else if (status.mastered) {
+          updated.competency[competencyId] = ASSESSMENT_MASTERY_THETA;
+        }
+      }
+
+      for (const [gradeId, status] of gradeStatus.entries()) {
+        if (status.notMastered) {
+          updated.grade[gradeId] = ASSESSMENT_NON_MASTERY_THETA;
+        } else if (status.mastered) {
+          updated.grade[gradeId] = ASSESSMENT_MASTERY_THETA;
+        }
+      }
+
+      return updated;
+    },
+    [abilities, graph, indicatorsByOutcome]
+  );
+
+  const computeCompetencyAdvancement = useCallback(
+    (currentAbilities: AbilityState, competencyFilter?: string) => {
+      const results = new Map<
+        string,
+        { competencyId: string; competencyLabel: string; indicators: LearningIndicator[] }
+      >();
+      for (const indicator of graph.indicators) {
+        if (competencyFilter && indicator.competencyId !== competencyFilter) {
+          continue;
+        }
+        const prerequisitesMastered = indicator.prerequisites.every((pre) => {
+          const prob =
+            getIndicatorProbability(graph, currentAbilities, pre) ?? 0;
+          return prob >= DEFAULT_MASTERED_THRESHOLD;
+        });
+        const indicatorMastered =
+          (getIndicatorProbability(graph, currentAbilities, indicator.id) ?? 0) >=
+          DEFAULT_MASTERED_THRESHOLD;
+        if (prerequisitesMastered && !indicatorMastered) {
+          const competency =
+            graph.competencies.find((comp) => comp.id === indicator.competencyId)
+              ?.label ?? indicator.competencyId;
+          const entry =
+            results.get(indicator.competencyId) ??
+            {
+              competencyId: indicator.competencyId,
+              competencyLabel: competency,
+              indicators: [],
+            };
+          entry.indicators.push(indicator);
+          results.set(indicator.competencyId, entry);
+        }
+      }
+      const sorted = Array.from(results.values()).map((entry) => ({
+        ...entry,
+        indicators: [...entry.indicators].sort(
+          (a, b) => (a.difficulty ?? 0) - (b.difficulty ?? 0)
+        ),
+      }));
+      sorted.sort((a, b) => a.competencyLabel.localeCompare(b.competencyLabel));
+      return sorted;
+    },
+    [graph]
+  );
+
+  // Allow recording when we have a recommendation candidate or the user
+  // explicitly picks a manual indicator override.
+  const canRecord = Boolean(recommendation.candidateId || manualIndicator);
+
+  const activeLoggingIndicatorId =
+    manualIndicator?.id ?? recommendation.candidateId ?? "";
+  const activeLoggingIndicatorLabel = activeLoggingIndicatorId
+    ? `${getIndicatorLabel(graph, activeLoggingIndicatorId)} (${activeLoggingIndicatorId})`
+    : "None selected";
 
   const resetAbilitiesToBaseline = () => {
     const clone = cloneAbilities(baselineAbilitiesRef.current);
@@ -351,35 +754,110 @@ const App = () => {
   };
 
   const handleRecordOutcome = () => {
-    // If there is no candidate id we cannot record an outcome.
-    if (!recommendation.candidateId) {
+    const indicatorId =
+      manualIndicator?.id ?? recommendation.candidateId;
+    if (!indicatorId) {
       return;
     }
     const timestamp = Date.now();
     const correct = selectedOutcome === "correct";
-    setAbilities((prev) => {
-      const result = updateAbilities({
-        graph,
-        abilities: prev,
-        event: {
-          indicatorId: recommendation.candidateId,
-          correct,
-          timestamp,
-        },
-      });
-      const label = candidateIndicator?.label ?? recommendation.candidateId;
-      setHistory((prevHistory) => [
-        {
-          indicatorId: recommendation.candidateId,
-          label,
-          correct,
-          probabilityBefore: result.probabilityBefore,
-          probabilityAfter: result.probabilityAfter,
-          timestamp,
-        },
-        ...prevHistory,
-      ]);
-      return result.abilities;
+    const resolvedIndicator =
+      manualIndicator ??
+      graph.indicators.find((li) => li.id === indicatorId);
+    if (!resolvedIndicator) {
+      return;
+    }
+    const outcomeId = resolvedIndicator.learningOutcomeId;
+    const competencyId = resolvedIndicator.competencyId;
+    const gradeId = resolvedIndicator.gradeId;
+    const label = resolvedIndicator.label ?? indicatorId;
+    const result = updateAbilities({
+      graph,
+      abilities,
+      event: {
+        indicatorId,
+        correct,
+        timestamp,
+      },
+    });
+    const thetaBefore: AbilityVector = {
+      indicator: abilities.indicator[indicatorId] ?? 0,
+      outcome: abilities.outcome[outcomeId] ?? 0,
+      competency: abilities.competency[competencyId] ?? 0,
+      grade: abilities.grade[gradeId] ?? 0,
+    };
+    const thetaAfter: AbilityVector = {
+      indicator: result.abilities.indicator[indicatorId] ?? 0,
+      outcome: result.abilities.outcome[outcomeId] ?? 0,
+      competency: result.abilities.competency[competencyId] ?? 0,
+      grade: result.abilities.grade[gradeId] ?? 0,
+    };
+    setAbilities(result.abilities);
+    setHistory((prevHistory) => [
+      {
+        indicatorId,
+        label,
+        correct,
+        probabilityBefore: result.probabilityBefore,
+        probabilityAfter: result.probabilityAfter,
+        timestamp,
+        thetaBefore,
+        thetaAfter,
+      },
+      ...prevHistory,
+    ]);
+  };
+
+  const handleApplyAssessment = () => {
+    const entries = Object.entries(assessmentOutcomeValues);
+    if (entries.length === 0) {
+      setAssessmentError("Enter 0 or 1 for at least one learning outcome.");
+      setAssessmentMessage(null);
+      return;
+    }
+    const mastered = entries
+      .filter(([, value]) => value === "1")
+      .map(([id]) => id);
+    const notMastered = entries
+      .filter(([, value]) => value === "0")
+      .map(([id]) => id);
+    if (mastered.length === 0 && notMastered.length === 0) {
+      setAssessmentError("Enter 0 or 1 for at least one learning outcome.");
+      setAssessmentMessage(null);
+      return;
+    }
+
+    const updatedAbilities = applyAssessmentOutcomes({
+      mastered,
+      notMastered,
+    });
+    setAbilities(updatedAbilities);
+    const forwardTargets = computeCompetencyAdvancement(
+      updatedAbilities,
+      assessmentCompetencyId || undefined
+    );
+    setAssessmentRecommendations(forwardTargets);
+    setAssessmentError(null);
+    setAssessmentMessage(
+      `Assessment applied to ${entries.length} learning outcome${
+        entries.length === 1 ? "" : "s"
+      } (${mastered.length} mastered, ${notMastered.length} not mastered).`
+    );
+    setAssessmentOutcomeValues({});
+  };
+
+  const setAssessmentOutcomeValue = (
+    outcomeId: string,
+    value: "" | "0" | "1"
+  ) => {
+    setAssessmentOutcomeValues((prev) => {
+      const next = { ...prev };
+      if (value === "") {
+        delete next[outcomeId];
+      } else {
+        next[outcomeId] = value;
+      }
+      return next;
     });
   };
 
@@ -387,6 +865,7 @@ const App = () => {
     resetAbilitiesToBaseline();
     setHistory([]);
     setSelectedOutcome("correct");
+    setManualOutcomeIndicatorId("");
   };
 
   const applyDataset = (dataset: {
@@ -399,10 +878,17 @@ const App = () => {
     baselineAbilitiesRef.current = cloneAbilities(dataset.abilities);
     setHistory([]);
     setSelectedOutcome("correct");
+    setManualOutcomeIndicatorId("");
+    setGraphGradeFilterId("");
+    setGraphCompetencyFilterId("");
     const newTarget = computeTargetForPolicy(
       dataset.graph,
       baselineAbilitiesRef.current,
-      selectionPolicy
+      selectionPolicy,
+      {
+        gradeId: "",
+        competencyId: "",
+      }
     );
     setTargetId(newTarget);
     setConstantsSnapshot(getCoreConstants());
@@ -416,6 +902,7 @@ const App = () => {
     setUploadedConstantsCsv(null);
     setDataError(null);
     setConstantsError(null);
+    setManualOutcomeIndicatorId("");
   };
 
   const handleApplyUploaded = () => {
@@ -480,57 +967,94 @@ const App = () => {
       input.value = "";
     };
 
-  const abilityPanel = (() => {
-    if (!targetIndicator) {
-      return null;
-    }
+  const computeThetaBlend = (
+    indicator: (typeof graph.indicators)[number],
+    abilityState: AbilityState
+  ): number => {
+    const weights = constantsSnapshot.blendWeights;
+    const thetaIndicator = abilityState.indicator[indicator.id] ?? 0;
+    const thetaOutcome =
+      abilityState.outcome[indicator.learningOutcomeId] ?? 0;
+    const thetaCompetency =
+      abilityState.competency[indicator.competencyId] ?? 0;
+    const thetaGrade = abilityState.grade[indicator.gradeId] ?? 0;
+    return (
+      thetaIndicator * weights.indicator +
+      thetaOutcome * weights.outcome +
+      thetaCompetency * weights.competency +
+      thetaGrade * weights.grade
+    );
+  };
+
+  const renderAbilitySnapshot = (
+    indicator: (typeof graph.indicators)[number] | undefined,
+    heading: string,
+    size: "default" | "compact" = "default"
+  ) => {
+    if (!indicator) return null;
     const learningOutcome = graph.learningOutcomes.find(
-      (lo) => lo.id === targetIndicator.learningOutcomeId
+      (lo) => lo.id === indicator.learningOutcomeId
     );
     const competency = graph.competencies.find(
-      (comp) => comp.id === targetIndicator.competencyId
+      (comp) => comp.id === indicator.competencyId
     );
-    const grade = graph.grades.find((item) => item.id === targetIndicator.gradeId);
+    const grade = graph.grades.find((item) => item.id === indicator.gradeId);
+    const fontSize = size === "compact" ? "0.85rem" : "0.9rem";
+    const thetaBlend = computeThetaBlend(indicator, abilities);
+    const probability = getIndicatorProbability(
+      graph,
+      abilities,
+      indicator.id,
+      constantsSnapshot.blendWeights
+    );
     return (
-      <div className="section">
-        <h3>Ability Snapshot</h3>
-        <div style={{ display: "grid", gap: "0.4rem", fontSize: "0.9rem" }}>
+      <div
+        className={size === "default" ? "section" : ""}
+        style={size === "compact" ? { marginTop: "0.5rem" } : undefined}
+      >
+        <h3>{heading}</h3>
+        <div style={{ display: "grid", gap: "0.4rem", fontSize }}>
           <div>
-            <strong>Target Indicator</strong>
+            <strong>Indicator</strong>
             <div>
-              {targetIndicator.label} ({targetIndicator.id}) — θ=
-              {formatAbility(abilities.indicator[targetIndicator.id])}
+              {indicator.label} ({indicator.id}) — θ=
+              {formatAbility(abilities.indicator[indicator.id])}
             </div>
           </div>
           <div>
             <strong>Learning Outcome</strong>
             <div>
-              {learningOutcome?.label ?? targetIndicator.learningOutcomeId} — θ=
-              {formatAbility(
-                abilities.outcome[targetIndicator.learningOutcomeId]
-              )}
+              {learningOutcome?.label ?? indicator.learningOutcomeId} — θ=
+              {formatAbility(abilities.outcome[indicator.learningOutcomeId])}
             </div>
           </div>
           <div>
             <strong>Competency</strong>
             <div>
-              {competency?.label ?? targetIndicator.competencyId} — θ=
-              {formatAbility(
-                abilities.competency[targetIndicator.competencyId]
-              )}
+              {competency?.label ?? indicator.competencyId} — θ=
+              {formatAbility(abilities.competency[indicator.competencyId])}
             </div>
           </div>
           <div>
             <strong>Grade Prior</strong>
             <div>
-              {grade?.label ?? targetIndicator.gradeId} — θ=
-              {formatAbility(abilities.grade[targetIndicator.gradeId])}
+              {grade?.label ?? indicator.gradeId} — θ=
+              {formatAbility(abilities.grade[indicator.gradeId])}
             </div>
+          </div>
+          <div>
+            <strong>θ blend</strong>
+            <div>{formatAbility(thetaBlend)}</div>
+          </div>
+          <div>
+            <strong>Probability</strong>
+            <div>{formatProbability(probability)}%</div>
           </div>
         </div>
       </div>
     );
-  })();
+  };
+  const abilityPanel = renderAbilitySnapshot(targetIndicator, "Ability Snapshot");
 
   return (
     <div className="app-shell">
@@ -591,6 +1115,146 @@ const App = () => {
               <p style={{ fontSize: "0.82rem", color: "#b91c1c" }}>{dataError}</p>
             )}
           </div>
+        </div>
+
+        <div className="section">
+          <h3>Assessment Module</h3>
+          <p style={{ marginTop: 0, fontSize: "0.85rem", color: "#475569" }}>
+            Mark learning outcomes as mastered after an assessment. All prerequisite indicators
+            and outcomes will be considered mastered, and new targets are surfaced per competency.
+          </p>
+          <div className="input-group">
+            <label htmlFor="assessment-grade">Grade</label>
+            <select
+              id="assessment-grade"
+              className="select"
+              value={assessmentGradeId}
+              onChange={(event) => setAssessmentGradeId(event.target.value)}
+            >
+              <option value="">All grades</option>
+              {graph.grades.map((grade) => (
+                <option key={grade.id} value={grade.id}>
+                  {grade.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="input-group">
+            <label htmlFor="assessment-competency">Competency</label>
+            <select
+              id="assessment-competency"
+              className="select"
+              value={assessmentCompetencyId}
+              onChange={(event) => setAssessmentCompetencyId(event.target.value)}
+            >
+              <option value="">All competencies</option>
+              {assessmentCompetencyOptions.map((competency) => (
+                <option key={competency.id} value={competency.id}>
+                  {competency.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="input-group" style={{ flexDirection: "column" }}>
+            <label>Learning outcomes to snap as mastered</label>
+            <div
+              style={{
+                maxHeight: 180,
+                overflowY: "auto",
+                border: "1px solid #e2e8f0",
+                borderRadius: 8,
+                padding: "0.75rem",
+                display: "grid",
+                gap: "0.5rem",
+              }}
+            >
+              {assessmentOutcomeOptions.length === 0 ? (
+                <p style={{ fontSize: "0.8rem", color: "#94a3b8", margin: 0 }}>
+                  No learning outcomes available for the selected competency.
+                </p>
+              ) : (
+                assessmentOutcomeOptions.map((outcome) => (
+                  <div
+                    key={outcome.id}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      gap: "0.75rem",
+                    }}
+                  >
+                    <div style={{ fontSize: "0.85rem" }}>
+                      <div style={{ fontWeight: 500 }}>{outcome.label}</div>
+                      <div style={{ fontSize: "0.75rem", color: "#94a3b8" }}>
+                        {outcome.id}
+                      </div>
+                    </div>
+                    <select
+                      className="select"
+                      style={{ width: "90px" }}
+                      value={assessmentOutcomeValues[outcome.id] ?? ""}
+                      onChange={(event) =>
+                        setAssessmentOutcomeValue(
+                          outcome.id,
+                          event.target.value as "" | "0" | "1"
+                        )
+                      }
+                    >
+                      <option value="">--</option>
+                      <option value="1">1 (Mastered)</option>
+                      <option value="0">0 (Not mastered)</option>
+                    </select>
+                  </div>
+                ))
+              )}
+            </div>
+            <p style={{ fontSize: "0.75rem", color: "#94a3b8", marginTop: "0.4rem" }}>
+              Use 1 for mastered and 0 for not mastered. Leave blank to skip an outcome.
+            </p>
+          </div>
+          <button
+            className="btn"
+            type="button"
+            style={{ width: "100%" }}
+            onClick={handleApplyAssessment}
+          >
+            Apply assessment snapshot
+          </button>
+          {assessmentError && (
+            <p style={{ fontSize: "0.8rem", color: "#b91c1c", marginTop: "0.5rem" }}>
+              {assessmentError}
+            </p>
+          )}
+          {assessmentMessage && (
+            <p style={{ fontSize: "0.8rem", color: "#15803d", marginTop: "0.5rem" }}>
+              {assessmentMessage}
+            </p>
+          )}
+          {assessmentRecommendations.length > 0 && (
+            <div style={{ marginTop: "0.75rem" }}>
+              <strong>Next targets per competency</strong>
+              <ul style={{ marginTop: "0.5rem", paddingLeft: "1rem", color: "#475569" }}>
+                {assessmentRecommendations.map((entry) => (
+                  <li key={entry.competencyId} style={{ marginBottom: "0.5rem" }}>
+                    <div style={{ fontWeight: 600 }}>{entry.competencyLabel}</div>
+                    {entry.indicators.length === 0 ? (
+                      <div style={{ fontSize: "0.8rem", color: "#94a3b8" }}>
+                        All indicators mastered.
+                      </div>
+                    ) : (
+                      <ul style={{ margin: "0.25rem 0 0 1rem" }}>
+                        {entry.indicators.map((indicator) => (
+                          <li key={indicator.id} style={{ fontSize: "0.8rem" }}>
+                            {indicator.label} ({indicator.id})
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
 
         <div className="section">
@@ -678,7 +1342,15 @@ const App = () => {
                   | "zpd-prereq-aware";
                 setSelectionPolicy(policy);
                 if (policy !== "custom") {
-                  const newTarget = computeTargetForPolicy(graph, abilities, policy);
+                  const newTarget = computeTargetForPolicy(
+                    graph,
+                    abilities,
+                    policy,
+                    {
+                      gradeId: graphGradeFilterId,
+                      competencyId: graphCompetencyFilterId,
+                    }
+                  );
                   setTargetId(newTarget);
                 }
               }}
@@ -759,6 +1431,21 @@ const App = () => {
         <div className="section">
           <h3>Log Outcome</h3>
           <div className="input-group">
+            <p style={{ fontSize: "0.82rem", color: "#475569" }}>
+              Choose an indicator override directly from the Dependency Graph panel. The
+              selection there powers the manual override shown below.
+            </p>
+            {manualOutcomeIndicatorId ? (
+              <p style={{ fontSize: "0.8rem", color: "#0f172a" }}>
+                Active override: <strong>{getIndicatorLabel(graph, manualOutcomeIndicatorId)}</strong> ({manualOutcomeIndicatorId})
+              </p>
+            ) : (
+              <p style={{ fontSize: "0.8rem", color: "#94a3b8" }}>
+                No manual override selected. The recommendation engine choice will be used.
+              </p>
+            )}
+          </div>
+          <div className="input-group">
             <label>Outcome for candidate</label>
             <div style={{ display: "flex", gap: "0.5rem" }}>
               <button
@@ -794,10 +1481,14 @@ const App = () => {
               }}
             >
               Outcome logging is currently disabled because there is no candidate
-              indicator available. Try selecting a different target indicator or
-              upload graph/ability CSVs to generate recommendations.
+              indicator available and no manual override selected. Try choosing
+              an indicator from the dropdown or upload data to get
+              recommendations.
             </p>
           )}
+          <p style={{ marginTop: "0.5rem", fontSize: "0.8rem", color: "#475569" }}>
+            Logging outcome for: <strong>{activeLoggingIndicatorLabel}</strong>
+          </p>
           <button
             className="btn-ghost"
             style={{ marginTop: "0.75rem", width: "100%" }}
@@ -830,6 +1521,42 @@ const App = () => {
                     p̂ before: {formatProbability(entry.probabilityBefore)}% → after:{" "}
                     {formatProbability(entry.probabilityAfter)}%
                   </div>
+                  <div className="history-meta">
+                    θ indicator: {formatAbility(entry.thetaBefore.indicator)} →{" "}
+                    {formatAbility(entry.thetaAfter.indicator)} (
+                    {formatPercentChange(
+                      entry.thetaBefore.indicator,
+                      entry.thetaAfter.indicator
+                    )}
+                    )
+                  </div>
+                  <div className="history-meta">
+                    θ outcome: {formatAbility(entry.thetaBefore.outcome)} →{" "}
+                    {formatAbility(entry.thetaAfter.outcome)} (
+                    {formatPercentChange(
+                      entry.thetaBefore.outcome,
+                      entry.thetaAfter.outcome
+                    )}
+                    )
+                  </div>
+                  <div className="history-meta">
+                    θ competency: {formatAbility(entry.thetaBefore.competency)} →{" "}
+                    {formatAbility(entry.thetaAfter.competency)} (
+                    {formatPercentChange(
+                      entry.thetaBefore.competency,
+                      entry.thetaAfter.competency
+                    )}
+                    )
+                  </div>
+                  <div className="history-meta">
+                    θ grade: {formatAbility(entry.thetaBefore.grade)} →{" "}
+                    {formatAbility(entry.thetaAfter.grade)} (
+                    {formatPercentChange(
+                      entry.thetaBefore.grade,
+                      entry.thetaAfter.grade
+                    )}
+                    )
+                  </div>
                 </li>
               ))}
             </ul>
@@ -848,6 +1575,14 @@ const App = () => {
           snapshot={snapshot}
           recommendation={recommendation}
           targetId={targetId}
+          abilities={abilities}
+          blendWeights={constantsSnapshot.blendWeights}
+          gradeFilterId={graphGradeFilterId}
+          competencyFilterId={graphCompetencyFilterId}
+          onGradeFilterChange={setGraphGradeFilterId}
+          onCompetencyFilterChange={setGraphCompetencyFilterId}
+          overrideIndicatorId={manualOutcomeIndicatorId}
+          onOverrideIndicatorChange={setManualOutcomeIndicatorId}
         />
       </div>
     </div>

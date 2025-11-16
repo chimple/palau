@@ -1,5 +1,6 @@
 import {
   useCallback,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -15,6 +16,8 @@ interface GraphDiagramProps {
   snapshot: GraphSnapshot;
   recommendation: RecommendationContext;
   targetId: string;
+  selectedGradeId?: string;
+  selectedCompetencyId?: string;
 }
 
 interface Position {
@@ -31,14 +34,25 @@ const ZOOM_MIN = 0.4;
 const ZOOM_MAX = 2.6;
 
 const buildDependents = (
-  graph: DependencyGraph
+  graph: DependencyGraph,
+  allowed?: Set<string>
 ): Map<string, string[]> => {
   const map = new Map<string, string[]>();
+  const shouldInclude = (id: string) => !allowed || allowed.has(id);
+
   for (const indicator of graph.indicators) {
+    if (!shouldInclude(indicator.id)) {
+      continue;
+    }
+
     if (!map.has(indicator.id)) {
       map.set(indicator.id, []);
     }
+
     for (const prereq of indicator.prerequisites) {
+      if (!shouldInclude(prereq)) {
+        continue;
+      }
       const dependents = map.get(prereq) ?? [];
       dependents.push(indicator.id);
       map.set(prereq, dependents);
@@ -47,15 +61,27 @@ const buildDependents = (
   return map;
 };
 
-const computeLevels = (graph: DependencyGraph): Map<string, number> => {
-  const dependents = buildDependents(graph);
+const computeLevels = (
+  graph: DependencyGraph,
+  allowed?: Set<string>
+): Map<string, number> => {
+  const dependents = buildDependents(graph, allowed);
   const levels = new Map<string, number>();
   const indegree = new Map<string, number>();
   const queue: string[] = [];
+  const shouldInclude = (id: string) => !allowed || allowed.has(id);
 
   for (const indicator of graph.indicators) {
-    indegree.set(indicator.id, indicator.prerequisites.length);
-    if (indicator.prerequisites.length === 0) {
+    if (!shouldInclude(indicator.id)) {
+      continue;
+    }
+
+    const prereqs = indicator.prerequisites.filter((pre) =>
+      shouldInclude(pre)
+    );
+
+    indegree.set(indicator.id, prereqs.length);
+    if (prereqs.length === 0) {
       queue.push(indicator.id);
       levels.set(indicator.id, 0);
     }
@@ -81,6 +107,9 @@ const computeLevels = (graph: DependencyGraph): Map<string, number> => {
 
   // Fallback for any nodes left unattached (e.g. cycles)
   for (const indicator of graph.indicators) {
+    if (!shouldInclude(indicator.id)) {
+      continue;
+    }
     if (!levels.has(indicator.id)) {
       levels.set(indicator.id, 0);
     }
@@ -89,8 +118,11 @@ const computeLevels = (graph: DependencyGraph): Map<string, number> => {
   return levels;
 };
 
-const computeLayout = (graph: DependencyGraph): Map<string, Position> => {
-  const levels = computeLevels(graph);
+const computeLayout = (
+  graph: DependencyGraph,
+  allowed?: Set<string>
+): Map<string, Position> => {
+  const levels = computeLevels(graph, allowed);
   const layout = new Map<string, Position>();
   const groups = new Map<number, string[]>();
 
@@ -178,8 +210,141 @@ const GraphDiagram = ({
   snapshot,
   recommendation,
   targetId,
+  selectedGradeId,
+  selectedCompetencyId,
 }: GraphDiagramProps) => {
-  const layout = useMemo(() => computeLayout(graph), [graph]);
+  const [gradeFilterId, setGradeFilterId] = useState("");
+  const [competencyFilterId, setCompetencyFilterId] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchIndicatorId, setSearchIndicatorId] = useState("");
+  const [searchError, setSearchError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!gradeFilterId) {
+      return;
+    }
+    const hasGrade = graph.grades.some((grade) => grade.id === gradeFilterId);
+    if (!hasGrade) {
+      setGradeFilterId("");
+    }
+  }, [graph, gradeFilterId]);
+
+  useEffect(() => {
+    if (!selectedGradeId) {
+      return;
+    }
+    setGradeFilterId(selectedGradeId);
+  }, [selectedGradeId]);
+
+  const gradeOptions = useMemo(
+    () => [...graph.grades].sort((a, b) => a.label.localeCompare(b.label)),
+    [graph]
+  );
+
+  const competencyIndex = useMemo(() => {
+    const map = new Map(graph.competencies.map((item) => [item.id, item]));
+    return map;
+  }, [graph]);
+
+  const gradeCompetencyIds = useMemo(() => {
+    if (!gradeFilterId) {
+      return graph.competencies.map((competency) => competency.id);
+    }
+    const ids = new Set<string>();
+    for (const indicator of graph.indicators) {
+      if (indicator.gradeId === gradeFilterId) {
+        ids.add(indicator.competencyId);
+      }
+    }
+    return Array.from(ids);
+  }, [graph, gradeFilterId]);
+
+  const competencyOptions = useMemo(() => {
+    const options = gradeCompetencyIds
+      .map((id) => competencyIndex.get(id))
+      .filter((entry): entry is NonNullable<typeof entry> => Boolean(entry));
+    return options.sort((a, b) => a.label.localeCompare(b.label));
+  }, [gradeCompetencyIds, competencyIndex]);
+
+  useEffect(() => {
+    if (!competencyFilterId) {
+      return;
+    }
+    if (!gradeCompetencyIds.includes(competencyFilterId)) {
+      setCompetencyFilterId("");
+    }
+  }, [competencyFilterId, gradeCompetencyIds]);
+
+  useEffect(() => {
+    if (!selectedCompetencyId) {
+      return;
+    }
+    setCompetencyFilterId(selectedCompetencyId);
+  }, [selectedCompetencyId]);
+
+  const indicatorIndex = useMemo(() => {
+    const map = new Map(graph.indicators.map((indicator) => [indicator.id, indicator]));
+    return map;
+  }, [graph]);
+
+  useEffect(() => {
+    if (searchIndicatorId && !indicatorIndex.has(searchIndicatorId)) {
+      setSearchIndicatorId("");
+    }
+  }, [indicatorIndex, searchIndicatorId]);
+
+  const globalDependents = useMemo(() => buildDependents(graph), [graph]);
+
+  const searchConnectedFilter = useMemo(() => {
+    if (!searchIndicatorId) {
+      return undefined;
+    }
+    const indicator = indicatorIndex.get(searchIndicatorId);
+    if (!indicator) {
+      return undefined;
+    }
+    const connected = new Set<string>();
+    connected.add(searchIndicatorId);
+    for (const prereq of indicator.prerequisites) {
+      connected.add(prereq);
+    }
+    const dependents = globalDependents.get(searchIndicatorId) ?? [];
+    for (const dep of dependents) {
+      connected.add(dep);
+    }
+    return connected;
+  }, [searchIndicatorId, indicatorIndex, globalDependents]);
+
+  const indicatorFilter = useMemo<Set<string> | undefined>(() => {
+    if (searchConnectedFilter) {
+      return searchConnectedFilter;
+    }
+    if (!gradeFilterId && !competencyFilterId) {
+      return undefined;
+    }
+    const allowed = new Set(
+      graph.indicators
+        .filter((indicator) => {
+          if (gradeFilterId && indicator.gradeId !== gradeFilterId) {
+            return false;
+          }
+          if (
+            competencyFilterId &&
+            indicator.competencyId !== competencyFilterId
+          ) {
+            return false;
+          }
+          return true;
+        })
+        .map((indicator) => indicator.id)
+    );
+    return allowed;
+  }, [graph, gradeFilterId, competencyFilterId, searchConnectedFilter]);
+
+  const layout = useMemo(
+    () => computeLayout(graph, indicatorFilter),
+    [graph, indicatorFilter]
+  );
   const positions = useMemo(
     () =>
       Array.from(layout.entries()).map(([id, pos]) => ({
@@ -188,17 +353,33 @@ const GraphDiagram = ({
       })),
     [layout]
   );
-  const dependents = useMemo(() => buildDependents(graph), [graph]);
+  const dependents = useMemo(
+    () => buildDependents(graph, indicatorFilter),
+    [graph, indicatorFilter]
+  );
 
-  const maxXBase = positions.length
-    ? Math.max(...positions.map((pos) => pos.x)) + NODE_RADIUS
+  const width = positions.length
+    ? Math.max(...positions.map((pos) => pos.x)) + NODE_RADIUS + MARGIN
     : 400;
-  const maxYBase = positions.length
-    ? Math.max(...positions.map((pos) => pos.y)) + NODE_RADIUS
+  const height = positions.length
+    ? Math.max(...positions.map((pos) => pos.y)) + NODE_RADIUS + MARGIN
     : 400;
 
-  const width = maxXBase + MARGIN;
-  const height = maxYBase + MARGIN;
+  const handleGradeFilterChange = useCallback(
+    (event: React.ChangeEvent<HTMLSelectElement>) => {
+      setGradeFilterId(event.target.value);
+    },
+    []
+  );
+
+  const handleCompetencyFilterChange = useCallback(
+    (event: React.ChangeEvent<HTMLSelectElement>) => {
+      setCompetencyFilterId(event.target.value);
+    },
+    []
+  );
+
+  const noResults = indicatorFilter !== undefined && positions.length === 0;
 
   const [scale, setScale] = useState(1);
   const [translate, setTranslate] = useState({ x: 0, y: 0 });
@@ -219,6 +400,29 @@ const GraphDiagram = ({
       return nextScale;
     });
   }, []);
+
+  const focusOnIndicator = useCallback(
+    (indicatorId: string) => {
+      const position = layout.get(indicatorId);
+      if (!position) {
+        return;
+      }
+      const centerX = width / 2;
+      const centerY = height / 2;
+      setScale(1);
+      setTranslate({
+        x: centerX - position.x,
+        y: centerY - position.y,
+      });
+    },
+    [layout, width, height]
+  );
+
+  useEffect(() => {
+    if (searchIndicatorId) {
+      focusOnIndicator(searchIndicatorId);
+    }
+  }, [searchIndicatorId, focusOnIndicator]);
 
   const handleWheel = useCallback(
     (event: React.WheelEvent<HTMLDivElement>) => {
@@ -279,6 +483,60 @@ const GraphDiagram = ({
     setTranslate({ x: 0, y: 0 });
   }, []);
 
+  const resolveSearchIndicator = useCallback(
+    (query: string) => {
+      const trimmed = query.trim();
+      if (!trimmed) {
+        return null;
+      }
+      const directMatch = indicatorIndex.get(trimmed);
+      if (directMatch) {
+        return directMatch.id;
+      }
+      const normalized = trimmed.toLowerCase();
+      const idMatch = graph.indicators.find(
+        (indicator) => indicator.id.toLowerCase() === normalized
+      );
+      if (idMatch) {
+        return idMatch.id;
+      }
+      const labelMatch = graph.indicators.find((indicator) =>
+        indicator.label.toLowerCase().includes(normalized)
+      );
+      return labelMatch?.id ?? null;
+    },
+    [graph, indicatorIndex]
+  );
+
+  const handleSearchSubmit = useCallback(
+    (event?: React.FormEvent<HTMLFormElement>) => {
+      if (event) {
+        event.preventDefault();
+      }
+      const trimmed = searchQuery.trim();
+      if (!trimmed) {
+        setSearchIndicatorId("");
+        setSearchError(null);
+        return;
+      }
+      const resolved = resolveSearchIndicator(trimmed);
+      if (resolved) {
+        setSearchIndicatorId(resolved);
+        setSearchError(null);
+      } else {
+        setSearchIndicatorId("");
+        setSearchError("No learning indicator matches that search.");
+      }
+    },
+    [resolveSearchIndicator, searchQuery]
+  );
+
+  const clearSearch = useCallback(() => {
+    setSearchQuery("");
+    setSearchIndicatorId("");
+    setSearchError(null);
+  }, []);
+
   return (
     <div>
       <div className="graph-legend section">
@@ -298,6 +556,87 @@ const GraphDiagram = ({
           <span className="legend-swatch" style={{ background: "#c7d2fe" }} />
           Recommended action
         </span>
+      </div>
+      <div className="graph-search section">
+        <form
+          onSubmit={handleSearchSubmit}
+          style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}
+        >
+          <label htmlFor="graph-search-input" style={{ fontSize: "0.95rem" }}>
+            Search learning indicator
+          </label>
+          <div style={{ display: "flex", gap: "0.4rem" }}>
+            <input
+              id="graph-search-input"
+              className="select"
+              type="search"
+              list="graph-indicator-options"
+              value={searchQuery}
+              placeholder="e.g. 5.19 or Addition Facts"
+              onChange={(event) => setSearchQuery(event.target.value)}
+            />
+            <button type="submit" className="btn">
+              Search
+            </button>
+            <button type="button" className="btn-ghost" onClick={clearSearch}>
+              Clear
+            </button>
+          </div>
+        </form>
+        <datalist id="graph-indicator-options">
+          {graph.indicators.map((indicator) => (
+            <option key={indicator.id} value={indicator.id}>
+              {indicator.label}
+            </option>
+          ))}
+        </datalist>
+        {searchIndicatorId && (
+          <p style={{ fontSize: "0.8rem", color: "#475569", marginTop: "0.35rem" }}>
+            Showing network for{" "}
+            <strong>
+              {indicatorIndex.get(searchIndicatorId)?.label ?? searchIndicatorId} (
+              {searchIndicatorId})
+            </strong>
+            .
+          </p>
+        )}
+        {searchError && (
+          <p style={{ fontSize: "0.8rem", color: "#b91c1c", marginTop: "0.35rem" }}>
+            {searchError}
+          </p>
+        )}
+      </div>
+      <div className="graph-filters">
+        <label className="graph-filter-field">
+          <span>Grade label</span>
+          <select
+            className="select"
+            value={gradeFilterId}
+            onChange={handleGradeFilterChange}
+          >
+            <option value="">All grades</option>
+            {gradeOptions.map((grade) => (
+              <option key={grade.id} value={grade.id}>
+                {grade.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="graph-filter-field">
+          <span>Competency label</span>
+          <select
+            className="select"
+            value={competencyFilterId}
+            onChange={handleCompetencyFilterChange}
+          >
+            <option value="">All competencies</option>
+            {competencyOptions.map((competency) => (
+              <option key={competency.id} value={competency.id}>
+                {competency.label}
+              </option>
+            ))}
+          </select>
+        </label>
       </div>
       <div className="graph-toolbar">
         <button
@@ -325,6 +664,11 @@ const GraphDiagram = ({
           zoom {(scale * 100).toFixed(0)}%
         </span>
       </div>
+      {noResults ? (
+        <p className="graph-empty-state">
+          No learning indicators match the selected filters.
+        </p>
+      ) : null}
       <div
         className="graph-canvas"
         onWheel={handleWheel}
@@ -389,6 +733,10 @@ const GraphDiagram = ({
               const probability =
                 snapshot.snapshot.find((entry) => entry.indicatorId === pos.id)
                   ?.probability ?? 0;
+              const difficulty = indicator?.difficulty ?? 0;
+              const isSearchFocus = searchIndicatorId === pos.id;
+              const circleStroke = isSearchFocus ? "#f97316" : palette.stroke;
+              const strokeWidth = pos.id === targetId || isSearchFocus ? 3 : 2;
 
               return (
                 <g key={pos.id}>
@@ -397,8 +745,8 @@ const GraphDiagram = ({
                     cy={pos.y}
                     r={NODE_RADIUS}
                     fill={palette.fill}
-                    stroke={palette.stroke}
-                    strokeWidth={pos.id === targetId ? 3 : 2}
+                    stroke={circleStroke}
+                    strokeWidth={strokeWidth}
                   />
                   <text
                     x={pos.x}
@@ -427,6 +775,15 @@ const GraphDiagram = ({
                     fill="#0f172a"
                   >
                     {(probability * 100).toFixed(0)}%
+                  </text>
+                  <text
+                    x={pos.x}
+                    y={pos.y + 42}
+                    textAnchor="middle"
+                    fontSize="10"
+                    fill="#64748b"
+                  >
+                    diff {difficulty.toFixed(2)}
                   </text>
                 </g>
               );
