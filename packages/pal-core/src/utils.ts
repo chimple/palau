@@ -18,6 +18,8 @@ export const cloneAbilityState = (state: AbilityState): AbilityState => ({
   indicator: { ...state.indicator },
   outcome: { ...state.outcome },
   competency: { ...state.competency },
+  domain: { ...state.domain },
+  subject: { ...state.subject },
   grade: { ...state.grade },
 });
 
@@ -35,12 +37,16 @@ export const blendAbility = (
     abilities.competency,
     indicator.competencyId
   );
+  const thetaDomain = getAbilityValue(abilities.domain, indicator.domainId);
+  const thetaSubject = getAbilityValue(abilities.subject, indicator.subjectId);
   const thetaGrade = getAbilityValue(abilities.grade, indicator.gradeId);
 
   return (
     thetaLi * weights.indicator +
     thetaLO * weights.outcome +
     thetaCompetency * weights.competency +
+    thetaDomain * weights.domain +
+    thetaSubject * weights.subject +
     thetaGrade * weights.grade
   );
 };

@@ -1,67 +1,233 @@
-gradeId,gradeLabel,competencyId,competencyName,outcomeId,outcomeName,indicatorId,indicatorName,difficulty
-3,3,pre-number-concept,Pre-Number Concept,3.4,Places 5-6 objects of two groups in one-to-one correspondence,3.4,Places 5-6 objects of two groups in one-to-one correspondence,-1.2
-3,3,pre-number-concept,Pre-Number Concept,3.5,"Compares and classifies objects by three factors like shape, color and size , etc. Correctly uses position words (besides, inside, under) to describe objects",3.5,"Compares and classifies objects by three factors like shape, color and size , etc. Correctly uses position words (besides, inside, under) to describe objects",-1
-3,3,pre-number-concept,Pre-Number Concept,3.6,"Seriates/arranges 4–5 picture cards/ objects in a sequence for example- shape, size, occurrence of events",3.6,"Seriates/arranges 4–5 picture cards/ objects in a sequence for example- shape, size, occurrence of events",-0.9
-3,3,pre-number-concept,Pre-Number Concept,4.5,Uses some technological tools available around him/her.,4.5,Uses some technological tools available around him/her.,-0.6
-3,3,pre-number-concept,Pre-Number Concept,4.6,Uses some technological tools available around him/her.,4.6,Uses some technological tools available around him/her.,-0.5
-3,3,pre-number-concept,Pre-Number Concept,5.5,Compares and classifies objects/ pictures based on multiple factors and describes them using properties,5.5,Compares and classifies objects/ pictures based on multiple factors and describes them using properties,-0.2
-3,3,numbers-and-num-ops,Numbers and NumOps,3.9,Counts to 10 objects,3.9,Counts to 10 objects,-0.7
-3,3,numbers-and-num-ops,Numbers and NumOps,3.1,Can count forward and backward from a particular number up to 9,3.1,Can count forward and backward from a particular number up to 9,-0.3
-3,3,numbers-and-num-ops,Numbers and NumOps,3.11,Identifies numerals with numbers and writes numerals up to 9,3.11,Identifies numerals with numbers and writes numerals up to 9,-0.5
-3,3,numbers-and-num-ops,Numbers and NumOps,3.12,Demonstrates the awareness that things reduce in number and become nil,3.12,Demonstrates the awareness that things reduce in number and become nil,-0.2
-3,3,numbers-and-num-ops,Numbers and NumOps,3.13,"Compares two numbers up to 10 and uses vocabulary like more than, less than",3.13,"Compares two numbers up to 10 and uses vocabulary like more than, less than",-0.1
-3,3,numbers-and-num-ops,Numbers and NumOps,3.14,Combines two groups up to 9 objects and recounts,3.14,Combines two groups up to 9 objects and recounts,0.1
-3,3,numbers-and-num-ops,Numbers and NumOps,3.15,Takes out objects from a collection up to 9 objects and recounts,3.15,Takes out objects from a collection up to 9 objects and recounts,0.3
-3,3,numbers-and-num-ops,Numbers and NumOps,3.26,"Uses vocabulary like half roti / half glass of water, etc. in daily context",3.26,"Uses vocabulary like half roti / half glass of water, etc. in daily context",0
-3,3,numbers-and-num-ops,Numbers and NumOps,4.9,Uses some technological tools available around him/her.,4.9,Uses some technological tools available around him/her.,-0.3
-3,3,numbers-and-num-ops,Numbers and NumOps,4.1,Counts to 10 objects,4.1,Counts to 10 objects,0.4
-3,3,numbers-and-num-ops,Numbers and NumOps,4.11,Identifies numerals with numbers and writes numerals up to 99,4.11,Identifies numerals with numbers and writes numerals up to 99,-0.1
-3,3,numbers-and-num-ops,Numbers and NumOps,4.12,Develops the concept of zero,4.12,Develops the concept of zero,0.2
-3,3,numbers-and-num-ops,Numbers and NumOps,4.13,Compares two numbers up to 20 and uses vocabulary like bigger than or smaller than,4.13,Compares two numbers up to 20 and uses vocabulary like bigger than or smaller than,0.6
-3,3,numbers-and-num-ops,Numbers and NumOps,4.14,Constructs addition facts up to 18 by using concrete objects and applies them in daily life.,4.14,Constructs addition facts up to 18 by using concrete objects and applies them in daily life.,0.5
-3,3,numbers-and-num-ops,Numbers and NumOps,4.15,Constructs subtraction facts up to 9 by using concrete objects and applies them in daily life.,4.15,Constructs subtraction facts up to 9 by using concrete objects and applies them in daily life.,0.7
-3,3,numbers-and-num-ops,Numbers and NumOps,4.16,Develops relationship between addition and subtraction of numbers,4.16,Develops relationship between addition and subtraction of numbers,0.8
-3,3,numbers-and-num-ops,Numbers and NumOps,4.17,"Develops strategies for repeatedly adding numbers up to 10, sum not exceeding 20",4.17,"Develops strategies for repeatedly adding numbers up to 10, sum not exceeding 20",0.7
-3,3,numbers-and-num-ops,Numbers and NumOps,4.26,"Identifies the relationship between half and whole using paper folding, daily life context like folding of roti/ sandwich etc.",4.26,"Identifies the relationship between half and whole using paper folding, daily life context like folding of roti/ sandwich etc.",0.4
-3,3,numbers-and-num-ops,Numbers and NumOps,5.9,Counts objects up to 100 in group of tens.,5.9,Counts objects up to 100 in group of tens.,0.2
-3,3,numbers-and-num-ops,Numbers and NumOps,5.1,Can count forward and backward from a particular number up to 99,5.1,Can count forward and backward from a particular number up to 99,0.9
-3,3,numbers-and-num-ops,Numbers and NumOps,5.11,Reads and writes number names and numerals for numbers up to 999.,5.11,Reads and writes number names and numerals for numbers up to 999.,0.4
-3,3,numbers-and-num-ops,Numbers and NumOps,5.12,Uses zero in place value system,5.12,Uses zero in place value system,0.6
-3,3,numbers-and-num-ops,Numbers and NumOps,5.13,Compares and forms the greatest and smallest two- digit numbers (with and without repetition of given digits).,5.13,Compares and forms the greatest and smallest two- digit numbers (with and without repetition of given digits).,1
-3,3,numbers-and-num-ops,Numbers and NumOps,5.14,Develops their own strategies to add two numbers (sum not exceeding 99) and applies them to solve simple daily life problems/ situations.,5.14,Develops their own strategies to add two numbers (sum not exceeding 99) and applies them to solve simple daily life problems/ situations.,1.1
-3,3,numbers-and-num-ops,Numbers and NumOps,5.15,Develops her/his own strategies to subtract two numbers upto 99 and applies them to solve simple daily life problems/ situations.,5.15,Develops her/his own strategies to subtract two numbers upto 99 and applies them to solve simple daily life problems/ situations.,1.1
-3,3,numbers-and-num-ops,Numbers and NumOps,5.16,Appreciates and applies relationship between addition and subtraction of numbers,5.16,Appreciates and applies relationship between addition and subtraction of numbers,1.2
-3,3,numbers-and-num-ops,Numbers and NumOps,5.17,"Develops the idea of multiplication of numbers and constructs and applies multiplication facts (tables) of 2, 3 and 4 in daily life situations",5.17,"Develops the idea of multiplication of numbers and constructs and applies multiplication facts (tables) of 2, 3 and 4 in daily life situations",1.2
-3,3,numbers-and-num-ops,Numbers and NumOps,5.18,Develops the idea of division of numbers as equal distribution/ sharing.,5.18,Develops the idea of division of numbers as equal distribution/ sharing.,1.4
-3,3,numbers-and-num-ops,Numbers and NumOps,5.19,Identifies appropriate operation (addition or subtraction) to solve problems in a familiar situation/context,5.19,Identifies appropriate operation (addition or subtraction) to solve problems in a familiar situation/context,1.4
-3,3,numbers-and-num-ops,Numbers and NumOps,5.26,"Identifies the relationship between half, quarter and whole using paper folding, daily life context like folding of roti/ sandwich, etc.",5.26,"Identifies the relationship between half, quarter and whole using paper folding, daily life context like folding of roti/ sandwich, etc.",1.6
-3,3,shapes&spatial-understanding,Shapes&Spatial Understanding,3.25,Identifies the 2-D shapes by tracing the faces of 3-D shapes on a plane surface,3.25,Identifies the 2-D shapes by tracing the faces of 3-D shapes on a plane surface,-0.8
-3,3,shapes&spatial-understanding,Shapes&Spatial Understanding,4.25,"Identifies and describes 3D shapes with their observable characteristics. For example- a shoe box is a cube and has 6 faces, 8 corners, a ball is sphere with no corner and no flat surface etc.",4.25,"Identifies and describes 3D shapes with their observable characteristics. For example- a shoe box is a cube and has 6 faces, 8 corners, a ball is sphere with no corner and no flat surface etc.",-0.4
-3,3,shapes&spatial-understanding,Shapes&Spatial Understanding,5.25,"Identifies and describes basic 2D shapes such as rectangle, triangle, circle, and other shapes around her/ him. For example, the pages of a book are rectangular and has 4 sides, 4 corners.",5.25,"Identifies and describes basic 2D shapes such as rectangle, triangle, circle, and other shapes around her/ him. For example, the pages of a book are rectangular and has 4 sides, 4 corners.",0
-3,3,measurement,Measurement,3.2,Identify Indian currency notes,3.2,Identify Indian currency notes,0.2
-3,3,measurement,Measurement,3.21,Compares three objects in terms of their lengths as longest/shortest tallest/shortest,3.21,Compares three objects in terms of their lengths as longest/shortest tallest/shortest,-0.8
-3,3,measurement,Measurement,3.22,Compares two objects in terms of their weight as heavier than/ lighter than,3.22,Compares two objects in terms of their weight as heavier than/ lighter than,-0.8
-3,3,measurement,Measurement,3.23,"Compares capacities of two capacities of two vessels like bottles, glasses, bucket, etc.",3.23,"Compares capacities of two capacities of two vessels like bottles, glasses, bucket, etc.",-0.8
-3,3,measurement,Measurement,3.29,Recites the names of the days of the week and months of the year,3.29,Recites the names of the days of the week and months of the year,-0.7
-3,3,measurement,Measurement,4.2,Represents an amount up to Rs. 20 using notes/coins,4.2,Represents an amount up to Rs. 20 using notes/coins,0.6
-3,3,measurement,Measurement,4.21,"Estimates and measures short lengths using non uniform units like a finger, hand span, length of a forearm, footsteps, etc.",4.21,"Estimates and measures short lengths using non uniform units like a finger, hand span, length of a forearm, footsteps, etc.",-0.4
-3,3,measurement,Measurement,4.22,Compares three objects in terms of their weight as heaviest/lightest,4.22,Compares three objects in terms of their weight as heaviest/lightest,-0.4
-3,3,measurement,Measurement,4.23,"Estimates and measures capacities of containers using uniform non- standard units like a cup/ spoon / mug, etc.",4.23,"Estimates and measures capacities of containers using uniform non- standard units like a cup/ spoon / mug, etc.",-0.4
-3,3,measurement,Measurement,4.24,"Appropriately uses vocabulary like hot or cold about objects, weather, etc.",4.24,"Appropriately uses vocabulary like hot or cold about objects, weather, etc.",-0.4
-3,3,measurement,Measurement,4.29,Identifies the names of the days of the week and months of the year for day/ month,4.29,Identifies the names of the days of the week and months of the year for day/ month,-0.3
-3,3,measurement,Measurement,5.2,Represents an amount up to Rs. 100 using notes and coins,5.2,Represents an amount up to Rs. 100 using notes and coins,1.6
-3,3,measurement,Measurement,5.21,"Estimates and measures length/ distances using uniform non- standard units like a rod/ pencil/ thread, etc.",5.21,"Estimates and measures length/ distances using uniform non- standard units like a rod/ pencil/ thread, etc.",0
-3,3,measurement,Measurement,5.22,Compares objects as heavier than/ lighter than using simple balance.,5.22,Compares objects as heavier than/ lighter than using simple balance.,0
-3,3,measurement,Measurement,5.23,"Compares the capacity of different containers in terms of non-standard units for example cup/ spoon/ bucket, etc.",5.23,"Compares the capacity of different containers in terms of non-standard units for example cup/ spoon/ bucket, etc.",0
-3,3,measurement,Measurement,5.24,"Compares objects as hotter than as/ colder than by observable properties like condensation, steaming etc.",5.24,"Compares objects as hotter than as/ colder than by observable properties like condensation, steaming etc.",0
-3,3,measurement,Measurement,5.29,Identifies the days of the week and months of the year using a calendar in his/her daily life events,5.29,Identifies the days of the week and months of the year using a calendar in his/her daily life events,0.1
-3,3,measurement,Measurement,5.7,"Sequences the events occurring according to their duration in terms of days; for example, does a child remain in school for a longer period than at home.",5.7,"Sequences the events occurring according to their duration in terms of days; for example, does a child remain in school for a longer period than at home.",0.1
-3,3,patterns,Patterns,3.27,"Creates new patterns with leaf printing or thumb printing, etc.",3.27,"Creates new patterns with leaf printing or thumb printing, etc.",0.2
-3,3,patterns,Patterns,4.27,"Observes, extends, and creates patterns of shapes, numbers, and musical/sound patterns. For example, arrangement of shapes/ objects/ numbers, etc.: - For example 1, 2, 3, 4, 5, . . .",4.27,"Observes, extends, and creates patterns of shapes, numbers, and musical/sound patterns. For example, arrangement of shapes/ objects/ numbers, etc.: - For example 1, 2, 3, 4, 5, . . .",0.6
-3,3,patterns,Patterns,5.27,"Observes and generalises the patterns in numbers like in multiplication tables, 1-100 number grid or objects in the environment.",5.27,"Observes and generalises the patterns in numbers like in multiplication tables, 1-100 number grid or objects in the environment.",1.4
-3,3,data-handling,Data Handling,3.28,Draws inferences from situations that surround him/her for example: I have more red pencils than blue.,3.28,Draws inferences from situations that surround him/her for example: I have more red pencils than blue.,0.1
-3,3,data-handling,Data Handling,4.28,"Collects, records (using pictures/ numerals) and interprets simple information by looking at visuals.",4.28,"Collects, records (using pictures/ numerals) and interprets simple information by looking at visuals.",0.5
-3,3,data-handling,Data Handling,5.28,Draws inference based on the data collected such as the number of vehicles used in Samir's house is more than that of Angelina etc.,5.28,Draws inference based on the data collected such as the number of vehicles used in Samir's house is more than that of Angelina etc.,0.9
-3,3,mathematical-communication,Mathematical Communication,3.3,Describes usage of commonly available technological tools around him/ her.,3.3,Describes usage of commonly available technological tools around him/ her.,-0.5
-3,3,mathematical-communication,Mathematical Communication,4.3,Uses some technological tools available around him/her.,4.3,Uses some technological tools available around him/her.,0.1
-3,3,mathematical-communication,Mathematical Communication,5.3,Demonstrates interest/curiosity in newer technology as per child's context.,5.3,Demonstrates interest/curiosity in newer technology as per child's context.,0.3
+gradeId,gradeLabel,subjectId,subjectName,domainId,domainName,competencyId,competencyName,outcomeId,outcomeName,indicatorId,indicatorName,difficulty
+3,Grade 3,math,Mathematics,math-foundations,Mathematics Foundations,calendar-activity,Calendar Activity,6.29,6.29,6.29,6.29,0.9257142857
+Preschool 1,Preschool 1,math,Mathematics,math-foundations,Mathematics Foundations,calendar-activity,Calendar Activity,1.29,1.29,1.29,1.29,0.1028571429
+Preschool 2,Preschool 2,math,Mathematics,math-foundations,Mathematics Foundations,calendar-activity,Calendar Activity,2.29,2.29,2.29,2.29,0.08571428571
+1,Grade 1,math,Mathematics,math-foundations,Mathematics Foundations,cognitive-skills,Cognitive Skills,4.1,4.1,4.1,4.1,0.3828571429
+1,Grade 1,math,Mathematics,math-foundations,Mathematics Foundations,cognitive-skills,Cognitive Skills,4.3a,4.3a,4.3a,4.3a,0.3771428571
+1,Grade 1,math,Mathematics,math-foundations,Mathematics Foundations,cognitive-skills,Cognitive Skills,4.3b,4.3b,4.3b,4.3b,0.4342857143
+1,Grade 1,math,Mathematics,math-foundations,Mathematics Foundations,cognitive-skills,Cognitive Skills,4.8a,4.8a,4.8a,4.8a,0.2342857143
+1,Grade 1,math,Mathematics,math-foundations,Mathematics Foundations,cognitive-skills,Cognitive Skills,4.8b,4.8b,4.8b,4.8b,0.3485714286
+2,Grade 2,math,Mathematics,math-foundations,Mathematics Foundations,cognitive-skills,Cognitive Skills,5.1,5.1,5.1,5.1,0.4571428571
+2,Grade 2,math,Mathematics,math-foundations,Mathematics Foundations,cognitive-skills,Cognitive Skills,5.3b,5.3b,5.3b,5.3b,0.5028571429
+2,Grade 2,math,Mathematics,math-foundations,Mathematics Foundations,cognitive-skills,Cognitive Skills,5.8a,5.8a,5.8a,5.8a,0.3142857143
+2,Grade 2,math,Mathematics,math-foundations,Mathematics Foundations,cognitive-skills,Cognitive Skills,5.8b,5.8b,5.8b,5.8b,0.4228571429
+Preschool 1,Preschool 1,math,Mathematics,math-foundations,Mathematics Foundations,cognitive-skills,Cognitive Skills,1.8b,1.8b,1.8b,1.8b,0.01714285714
+1,Grade 1,math,Mathematics,math-foundations,Mathematics Foundations,cognitive-skills,Cognitive Skills,4.2a,4.2a,4.2a,4.2a,0.4
+3,Grade 3,math,Mathematics,math-foundations,Mathematics Foundations,cognitive-skills,Cognitive Skills,6.5,6.5,6.5,6.5,0.56
+3,Grade 3,math,Mathematics,math-foundations,Mathematics Foundations,cognitive-skills,Cognitive Skills,6.6,6.6,6.6,6.6,0.8685714286
+3,Grade 3,math,Mathematics,math-foundations,Mathematics Foundations,cognitive-skills,Cognitive Skills,6.3b,6.3b,6.3b,6.3b,0.5428571429
+3,Grade 3,math,Mathematics,math-foundations,Mathematics Foundations,cognitive-skills,Cognitive Skills,6.8a,6.8a,6.8a,6.8a,0.3885714286
+3,Grade 3,math,Mathematics,math-foundations,Mathematics Foundations,cognitive-skills,Cognitive Skills,6.8b,6.8b,6.8b,6.8b,0.4914285714
+balvatika,balvatika,math,Mathematics,math-foundations,Mathematics Foundations,cognitive-skills,Cognitive Skills,3.2,3.2,3.2,3.2,0.3257142857
+balvatika,balvatika,math,Mathematics,math-foundations,Mathematics Foundations,cognitive-skills,Cognitive Skills,3.7,3.7,3.7,3.7,0.3314285714
+balvatika,balvatika,math,Mathematics,math-foundations,Mathematics Foundations,cognitive-skills,Cognitive Skills,3.3a,3.3a,3.3a,3.3a,0.2857142857
+balvatika,balvatika,math,Mathematics,math-foundations,Mathematics Foundations,cognitive-skills,Cognitive Skills,3.3b,3.3b,3.3b,3.3b,0.3028571429
+balvatika,balvatika,math,Mathematics,math-foundations,Mathematics Foundations,cognitive-skills,Cognitive Skills,3.8a,3.8a,3.8a,3.8a,0.09142857143
+balvatika,balvatika,math,Mathematics,math-foundations,Mathematics Foundations,cognitive-skills,Cognitive Skills,3.8b,3.8b,3.8b,3.8b,0.28
+Preschool 1,Preschool 1,math,Mathematics,math-foundations,Mathematics Foundations,cognitive-skills,Cognitive Skills,1.2,1.2,1.2,1.2,0.1371428571
+Preschool 1,Preschool 1,math,Mathematics,math-foundations,Mathematics Foundations,cognitive-skills,Cognitive Skills,1.6,1.6,1.6,1.6,0.3714285714
+Preschool 1,Preschool 1,math,Mathematics,math-foundations,Mathematics Foundations,cognitive-skills,Cognitive Skills,1.7,1.7,1.7,1.7,0.1714285714
+Preschool 1,Preschool 1,math,Mathematics,math-foundations,Mathematics Foundations,cognitive-skills,Cognitive Skills,1.3a,1.3a,1.3a,1.3a,0.05142857143
+Preschool 1,Preschool 1,math,Mathematics,math-foundations,Mathematics Foundations,cognitive-skills,Cognitive Skills,1.3b,1.3b,1.3b,1.3b,0.05714285714
+Preschool 1,Preschool 1,math,Mathematics,math-foundations,Mathematics Foundations,cognitive-skills,Cognitive Skills,1.8a,1.8a,1.8a,1.8a,0.1657142857
+Preschool 2,Preschool 2,math,Mathematics,math-foundations,Mathematics Foundations,cognitive-skills,Cognitive Skills,2.2,2.2,2.2,2.2,0.2457142857
+Preschool 2,Preschool 2,math,Mathematics,math-foundations,Mathematics Foundations,cognitive-skills,Cognitive Skills,2.5,2.5,2.5,2.5,0.3657142857
+Preschool 2,Preschool 2,math,Mathematics,math-foundations,Mathematics Foundations,cognitive-skills,Cognitive Skills,2.6,2.6,2.6,2.6,0.5657142857
+Preschool 2,Preschool 2,math,Mathematics,math-foundations,Mathematics Foundations,cognitive-skills,Cognitive Skills,2.7,2.7,2.7,2.7,0.2571428571
+Preschool 2,Preschool 2,math,Mathematics,math-foundations,Mathematics Foundations,cognitive-skills,Cognitive Skills,2.3a,2.3a,2.3a,2.3a,0.2114285714
+Preschool 2,Preschool 2,math,Mathematics,math-foundations,Mathematics Foundations,cognitive-skills,Cognitive Skills,2.3b,2.3b,2.3b,2.3b,0.2228571429
+Preschool 2,Preschool 2,math,Mathematics,math-foundations,Mathematics Foundations,cognitive-skills,Cognitive Skills,2.8a,2.8a,2.8a,2.8a,0.2514285714
+Preschool 2,Preschool 2,math,Mathematics,math-foundations,Mathematics Foundations,cognitive-skills,Cognitive Skills,2.8b,2.8b,2.8b,2.8b,0.2057142857
+3,Grade 3,math,Mathematics,math-foundations,Mathematics Foundations,concept-formation,Concept Formation,6.2b,6.2b,6.2b,6.2b,0.4971428571
+Preschool 1,Preschool 1,math,Mathematics,math-foundations,Mathematics Foundations,concept-formation,Concept Formation,1.21,1.21,1.21,1.21,0.09714285714
+Preschool 1,Preschool 1,math,Mathematics,math-foundations,Mathematics Foundations,concept-formation,Concept Formation,1.22,1.22,1.22,1.22,0.1885714286
+Preschool 1,Preschool 1,math,Mathematics,math-foundations,Mathematics Foundations,concept-formation,Concept Formation,1.4,1.4,1.4,1.4,0.2171428571
+Preschool 1,Preschool 1,math,Mathematics,math-foundations,Mathematics Foundations,concept-formation,Concept Formation,1.5,1.5,1.5,1.5,0.2971428571
+Preschool 2,Preschool 2,math,Mathematics,math-foundations,Mathematics Foundations,concept-formation,Concept Formation,2.4,2.4,2.4,2.4,0.2914285714
+2,Grade 2,math,Mathematics,math-foundations,Mathematics Foundations,concept-formation,Concept Formation,5.3,5.3,5.3,5.3,0.02857142857
+2,Grade 2,math,Mathematics,math-foundations,Mathematics Foundations,concept-formation,Concept Formation,5.2b,5.2b,5.2b,5.2b,0.4285714286
+3,Grade 3,math,Mathematics,math-foundations,Mathematics Foundations,concept-formation,Concept Formation,6.7,6.7,6.7,6.7,0.5314285714
+1,Grade 1,math,Mathematics,math-foundations,Mathematics Foundations,concepts-related-to-environment,Concepts related to environment,4.8c,4.8c,4.8c,4.8c,0.3428571429
+2,Grade 2,math,Mathematics,math-foundations,Mathematics Foundations,concepts-related-to-environment,Concepts related to environment,5.2a,5.2a,5.2a,5.2a,0.4685714286
+3,Grade 3,math,Mathematics,math-foundations,Mathematics Foundations,concepts-related-to-environment,Concepts related to environment,6.1,6.1,6.1,6.1,0.5142857143
+3,Grade 3,math,Mathematics,math-foundations,Mathematics Foundations,concepts-related-to-environment,Concepts related to environment,6.2a,6.2a,6.2a,6.2a,0.5257142857
+3,Grade 3,math,Mathematics,math-foundations,Mathematics Foundations,concepts-related-to-environment,Concepts related to environment,6.8c,6.8c,6.8c,6.8c,0.4857142857
+balvatika,balvatika,math,Mathematics,math-foundations,Mathematics Foundations,concepts-related-to-environment,Concepts related to environment,3.8c,3.8c,3.8c,3.8c,0.2742857143
+Preschool 1,Preschool 1,math,Mathematics,math-foundations,Mathematics Foundations,concepts-related-to-environment,Concepts related to environment,1.8c,1.8c,1.8c,1.8c,0.005714285714
+Preschool 2,Preschool 2,math,Mathematics,math-foundations,Mathematics Foundations,concepts-related-to-environment,Concepts related to environment,2.8c,2.8c,2.8c,2.8c,0.2
+2,Grade 2,math,Mathematics,math-foundations,Mathematics Foundations,concepts-related-to-environment,Concepts related to environment,5.8c,5.8c,5.8c,5.8c,0.4171428571
+1,Grade 1,math,Mathematics,math-foundations,Mathematics Foundations,data-handling,Data Handling,4.28,4.28,4.28,4.28,0.1314285714
+2,Grade 2,math,Mathematics,math-foundations,Mathematics Foundations,data-handling,Data Handling,5.28,5.28,5.28,5.28,0.1428571429
+balvatika,balvatika,math,Mathematics,math-foundations,Mathematics Foundations,data-handling,Data Handling,3.28,3.28,3.28,3.28,0.1542857143
+Preschool 1,Preschool 1,math,Mathematics,math-foundations,Mathematics Foundations,data-handling,Data Handling,1.28,1.28,1.28,1.28,0.1085714286
+Preschool 2,Preschool 2,math,Mathematics,math-foundations,Mathematics Foundations,data-handling,Data Handling,2.28,2.28,2.28,2.28,0.02285714286
+3,Grade 3,math,Mathematics,math-foundations,Mathematics Foundations,data-handling,Data Handling,6.28,6.28,6.28,6.28,0.9142857143
+1,Grade 1,math,Mathematics,math-foundations,Mathematics Foundations,mathematical-communication,Mathematical Communication,4.30,4.30,4.30,4.30,0.4114285714
+2,Grade 2,math,Mathematics,math-foundations,Mathematics Foundations,mathematical-communication,Mathematical Communication,5.30,5.30,5.30,5.30,0.48
+balvatika,balvatika,math,Mathematics,math-foundations,Mathematics Foundations,mathematical-communication,Mathematical Communication,3.30,3.30,3.30,3.30,0.3371428571
+1,Grade 1,math,Mathematics,math-foundations,Mathematics Foundations,"measurement
+","Measurement
+",4.21,4.21,4.21,4.21,0.6285714286
+1,Grade 1,math,Mathematics,math-foundations,Mathematics Foundations,"measurement
+","Measurement
+",4.22,4.22,4.22,4.22,0.6342857143
+1,Grade 1,math,Mathematics,math-foundations,Mathematics Foundations,"measurement
+","Measurement
+",4.23,4.23,4.23,4.23,0.64
+1,Grade 1,math,Mathematics,math-foundations,Mathematics Foundations,"measurement
+","Measurement
+",4.24,4.24,4.24,4.24,0.07428571429
+1,Grade 1,math,Mathematics,math-foundations,Mathematics Foundations,"measurement
+","Measurement
+",4.29,4.29,4.29,4.29,0.1771428571
+1,Grade 1,math,Mathematics,math-foundations,Mathematics Foundations,"measurement
+","Measurement
+",4.20,4.20,4.20,4.20,0.9085714286
+2,Grade 2,math,Mathematics,math-foundations,Mathematics Foundations,"measurement
+","Measurement
+",5.21,5.21,5.21,5.21,0.6628571429
+2,Grade 2,math,Mathematics,math-foundations,Mathematics Foundations,"measurement
+","Measurement
+",5.22,5.22,5.22,5.22,0.6685714286
+2,Grade 2,math,Mathematics,math-foundations,Mathematics Foundations,"measurement
+","Measurement
+",5.23,5.23,5.23,5.23,0.6742857143
+2,Grade 2,math,Mathematics,math-foundations,Mathematics Foundations,"measurement
+","Measurement
+",5.24,5.24,5.24,5.24,0.6
+2,Grade 2,math,Mathematics,math-foundations,Mathematics Foundations,"measurement
+","Measurement
+",5.29,5.29,5.29,5.29,0.12
+2,Grade 2,math,Mathematics,math-foundations,Mathematics Foundations,"measurement
+","Measurement
+",5.7,5.7,5.7,5.7,0.4742857143
+2,Grade 2,math,Mathematics,math-foundations,Mathematics Foundations,"measurement
+","Measurement
+",5.20,5.20,5.20,5.20,0.9657142857
+3,Grade 3,math,Mathematics,math-foundations,Mathematics Foundations,"measurement
+","Measurement
+",6.20,6.20,6.20,6.20,0.9942857143
+balvatika,balvatika,math,Mathematics,math-foundations,Mathematics Foundations,"measurement
+","Measurement
+",3.21,3.21,3.21,3.21,0.5828571429
+balvatika,balvatika,math,Mathematics,math-foundations,Mathematics Foundations,"measurement
+","Measurement
+",3.22,3.22,3.22,3.22,0.5885714286
+balvatika,balvatika,math,Mathematics,math-foundations,Mathematics Foundations,"measurement
+","Measurement
+",3.23,3.23,3.23,3.23,0.5942857143
+balvatika,balvatika,math,Mathematics,math-foundations,Mathematics Foundations,"measurement
+","Measurement
+",3.29,3.29,3.29,3.29,0.03428571429
+balvatika,balvatika,math,Mathematics,math-foundations,Mathematics Foundations,"measurement
+","Measurement
+",3.20,3.20,3.20,3.20,0.7428571429
+Preschool 1,Preschool 1,math,Mathematics,math-foundations,Mathematics Foundations,"measurement
+","Measurement
+",1.23,1.23,1.23,1.23,0.1142857143
+Preschool 1,Preschool 1,math,Mathematics,math-foundations,Mathematics Foundations,"measurement
+","Measurement
+",1.20,1.20,1.20,1.20,0.6571428571
+Preschool 2,Preschool 2,math,Mathematics,math-foundations,Mathematics Foundations,"measurement
+","Measurement
+",2.21,2.21,2.21,2.21,0.4457142857
+Preschool 2,Preschool 2,math,Mathematics,math-foundations,Mathematics Foundations,"measurement
+","Measurement
+",2.22,2.22,2.22,2.22,0.2628571429
+Preschool 2,Preschool 2,math,Mathematics,math-foundations,Mathematics Foundations,"measurement
+","Measurement
+",2.23,2.23,2.23,2.23,0.4514285714
+Preschool 2,Preschool 2,math,Mathematics,math-foundations,Mathematics Foundations,"measurement
+","Measurement
+",2.20,2.20,2.20,2.20,0.72
+3,Grade 3,math,Mathematics,math-foundations,Mathematics Foundations,"measurement
+","Measurement
+",6.21,6.21,6.21,6.21,0.6914285714
+3,Grade 3,math,Mathematics,math-foundations,Mathematics Foundations,"measurement
+","Measurement
+",6.22,6.22,6.22,6.22,0.6971428571
+3,Grade 3,math,Mathematics,math-foundations,Mathematics Foundations,"measurement
+","Measurement
+",6.23,6.23,6.23,6.23,0.7028571429
+3,Grade 3,math,Mathematics,math-foundations,Mathematics Foundations,"measurement
+","Measurement
+",6.24,6.24,6.24,6.24,0.6457142857
+3,Grade 3,math,Mathematics,math-foundations,Mathematics Foundations,number-operations,Number Operations,6.12,6.12,6.12,6.12,0.8285714286
+3,Grade 3,math,Mathematics,math-foundations,Mathematics Foundations,number-operations,Number Operations,6.14,6.14,6.14,6.14,0.9428571429
+3,Grade 3,math,Mathematics,math-foundations,Mathematics Foundations,number-operations,Number Operations,6.15,6.15,6.15,6.15,0.9714285714
+3,Grade 3,math,Mathematics,math-foundations,Mathematics Foundations,number-operations,Number Operations,6.16,6.16,6.16,6.16,0.9771428571
+3,Grade 3,math,Mathematics,math-foundations,Mathematics Foundations,number-operations,Number Operations,6.17,6.17,6.17,6.17,0.8628571429
+3,Grade 3,math,Mathematics,math-foundations,Mathematics Foundations,number-operations,Number Operations,6.18,6.18,6.18,6.18,0.9828571429
+Preschool 2,Preschool 2,math,Mathematics,math-foundations,Mathematics Foundations,number-operations,Number Operations,2.12,2.12,2.12,2.12,0.6514285714
+Preschool 2,Preschool 2,math,Mathematics,math-foundations,Mathematics Foundations,number-operations,Number Operations,2.14,2.14,2.14,2.14,0.7542857143
+Preschool 2,Preschool 2,math,Mathematics,math-foundations,Mathematics Foundations,number-operations,Number Operations,2.15,2.15,2.15,2.15,0.7771428571
+Preschool 1,Preschool 1,math,Mathematics,math-foundations,Mathematics Foundations,number-sense,Number Sense,1.11,1.11,1.11,1.11,0.5714285714
+Preschool 1,Preschool 1,math,Mathematics,math-foundations,Mathematics Foundations,number-sense,Number Sense,1.13,1.13,1.13,1.13,0.6114285714
+Preschool 1,Preschool 1,math,Mathematics,math-foundations,Mathematics Foundations,number-sense,Number Sense,1.9,1.9,1.9,1.9,0.6171428571
+Preschool 1,Preschool 1,math,Mathematics,math-foundations,Mathematics Foundations,number-sense,Number Sense,1.10,1.10,1.10,1.10,0.5542857143
+Preschool 2,Preschool 2,math,Mathematics,math-foundations,Mathematics Foundations,number-sense,Number Sense,2.9,2.9,2.9,2.9,0.68
+Preschool 2,Preschool 2,math,Mathematics,math-foundations,Mathematics Foundations,number-sense,Number Sense,2.10,2.10,2.10,2.10,0.7142857143
+3,Grade 3,math,Mathematics,math-foundations,Mathematics Foundations,number-sense,Number Sense,6.11,6.11,6.11,6.11,0.8114285714
+3,Grade 3,math,Mathematics,math-foundations,Mathematics Foundations,number-sense,Number Sense,6.13,6.13,6.13,6.13,0.8914285714
+3,Grade 3,math,Mathematics,math-foundations,Mathematics Foundations,number-sense,Number Sense,6.26,6.26,6.26,6.26,0.6228571429
+3,Grade 3,math,Mathematics,math-foundations,Mathematics Foundations,number-sense,Number Sense,6.9,6.9,6.9,6.9,0.9885714286
+3,Grade 3,math,Mathematics,math-foundations,Mathematics Foundations,number-sense,Number Sense,6.10,6.10,6.10,6.10,0.9542857143
+Preschool 2,Preschool 2,math,Mathematics,math-foundations,Mathematics Foundations,number-sense,Number Sense,2.11,2.11,2.11,2.11,0.6057142857
+Preschool 2,Preschool 2,math,Mathematics,math-foundations,Mathematics Foundations,number-sense,Number Sense,2.13,2.13,2.13,2.13,0.5771428571
+1,Grade 1,math,Mathematics,math-foundations,Mathematics Foundations,numbers-and-numops,Numbers and NumOps,4.11,4.11,4.11,4.11,0.7714285714
+1,Grade 1,math,Mathematics,math-foundations,Mathematics Foundations,numbers-and-numops,Numbers and NumOps,4.12,4.12,4.12,4.12,0.7485714286
+1,Grade 1,math,Mathematics,math-foundations,Mathematics Foundations,numbers-and-numops,Numbers and NumOps,4.13,4.13,4.13,4.13,0.7828571429
+1,Grade 1,math,Mathematics,math-foundations,Mathematics Foundations,numbers-and-numops,Numbers and NumOps,4.14,4.14,4.14,4.14,0.8342857143
+1,Grade 1,math,Mathematics,math-foundations,Mathematics Foundations,numbers-and-numops,Numbers and NumOps,4.15,4.15,4.15,4.15,0.8571428571
+1,Grade 1,math,Mathematics,math-foundations,Mathematics Foundations,numbers-and-numops,Numbers and NumOps,4.16,4.16,4.16,4.16,0.88
+1,Grade 1,math,Mathematics,math-foundations,Mathematics Foundations,numbers-and-numops,Numbers and NumOps,4.17,4.17,4.17,4.17,0.8228571429
+1,Grade 1,math,Mathematics,math-foundations,Mathematics Foundations,numbers-and-numops,Numbers and NumOps,4.26,4.26,4.26,4.26,0.1485714286
+1,Grade 1,math,Mathematics,math-foundations,Mathematics Foundations,numbers-and-numops,Numbers and NumOps,4.9,4.9,4.9,4.9,0.7314285714
+1,Grade 1,math,Mathematics,math-foundations,Mathematics Foundations,numbers-and-numops,Numbers and NumOps,4.10,4.10,4.10,4.10,0.84
+2,Grade 2,math,Mathematics,math-foundations,Mathematics Foundations,numbers-and-numops,Numbers and NumOps,5.11,5.11,5.11,5.11,0.8
+2,Grade 2,math,Mathematics,math-foundations,Mathematics Foundations,numbers-and-numops,Numbers and NumOps,5.12,5.12,5.12,5.12,0.7885714286
+2,Grade 2,math,Mathematics,math-foundations,Mathematics Foundations,numbers-and-numops,Numbers and NumOps,5.13,5.13,5.13,5.13,0.8742857143
+2,Grade 2,math,Mathematics,math-foundations,Mathematics Foundations,numbers-and-numops,Numbers and NumOps,5.14,5.14,5.14,5.14,0.9028571429
+2,Grade 2,math,Mathematics,math-foundations,Mathematics Foundations,numbers-and-numops,Numbers and NumOps,5.15,5.15,5.15,5.15,0.92
+2,Grade 2,math,Mathematics,math-foundations,Mathematics Foundations,numbers-and-numops,Numbers and NumOps,5.16,5.16,5.16,5.16,0.9314285714
+2,Grade 2,math,Mathematics,math-foundations,Mathematics Foundations,numbers-and-numops,Numbers and NumOps,5.17,5.17,5.17,5.17,0.8457142857
+2,Grade 2,math,Mathematics,math-foundations,Mathematics Foundations,numbers-and-numops,Numbers and NumOps,5.18,5.18,5.18,5.18,0.9371428571
+2,Grade 2,math,Mathematics,math-foundations,Mathematics Foundations,numbers-and-numops,Numbers and NumOps,5.19,5.19,5.19,5.19,0.96
+2,Grade 2,math,Mathematics,math-foundations,Mathematics Foundations,numbers-and-numops,Numbers and NumOps,5.26,5.26,5.26,5.26,0.1828571429
+2,Grade 2,math,Mathematics,math-foundations,Mathematics Foundations,numbers-and-numops,Numbers and NumOps,5.6,5.6,5.6,5.6,0.8514285714
+2,Grade 2,math,Mathematics,math-foundations,Mathematics Foundations,numbers-and-numops,Numbers and NumOps,5.9,5.9,5.9,5.9,0.9485714286
+2,Grade 2,math,Mathematics,math-foundations,Mathematics Foundations,numbers-and-numops,Numbers and NumOps,5.10,5.10,5.10,5.10,0.8857142857
+balvatika,balvatika,math,Mathematics,math-foundations,Mathematics Foundations,numbers-and-numops,Numbers and NumOps,3.11,3.11,3.11,3.11,0.6857142857
+balvatika,balvatika,math,Mathematics,math-foundations,Mathematics Foundations,numbers-and-numops,Numbers and NumOps,3.12,3.12,3.12,3.12,0.7257142857
+balvatika,balvatika,math,Mathematics,math-foundations,Mathematics Foundations,numbers-and-numops,Numbers and NumOps,3.13,3.13,3.13,3.13,0.7657142857
+balvatika,balvatika,math,Mathematics,math-foundations,Mathematics Foundations,numbers-and-numops,Numbers and NumOps,3.14,3.14,3.14,3.14,0.8057142857
+balvatika,balvatika,math,Mathematics,math-foundations,Mathematics Foundations,numbers-and-numops,Numbers and NumOps,3.15,3.15,3.15,3.15,0.8171428571
+balvatika,balvatika,math,Mathematics,math-foundations,Mathematics Foundations,numbers-and-numops,Numbers and NumOps,3.26,3.26,3.26,3.26,0.04571428571
+balvatika,balvatika,math,Mathematics,math-foundations,Mathematics Foundations,numbers-and-numops,Numbers and NumOps,3.9,3.9,3.9,3.9,0.7085714286
+balvatika,balvatika,math,Mathematics,math-foundations,Mathematics Foundations,numbers-and-numops,Numbers and NumOps,3.10,3.10,3.10,3.10,0.7942857143
+1,Grade 1,math,Mathematics,math-foundations,Mathematics Foundations,patterns,Patterns,4.7,4.7,4.7,4.7,0.4057142857
+3,Grade 3,math,Mathematics,math-foundations,Mathematics Foundations,patterns,Patterns,6.27,6.27,6.27,6.27,0.8971428571
+Preschool 1,Preschool 1,math,Mathematics,math-foundations,Mathematics Foundations,patterns,Patterns,1.27,1.27,1.27,1.27,0.01142857143
+Preschool 2,Preschool 2,math,Mathematics,math-foundations,Mathematics Foundations,patterns,Patterns,2.27,2.27,2.27,2.27,0.06285714286
+1,Grade 1,math,Mathematics,math-foundations,Mathematics Foundations,patterns,Patterns,4.27,4.27,4.27,4.27,0.06857142857
+2,Grade 2,math,Mathematics,math-foundations,Mathematics Foundations,patterns,Patterns,5.27,5.27,5.27,5.27,0.04
+balvatika,balvatika,math,Mathematics,math-foundations,Mathematics Foundations,patterns,Patterns,3.27,3.27,3.27,3.27,0.16
+1,Grade 1,math,Mathematics,math-foundations,Mathematics Foundations,pre-number-concepts,Pre Number Concepts,4.5,4.5,4.5,4.5,0.5085714286
+1,Grade 1,math,Mathematics,math-foundations,Mathematics Foundations,pre-number-concepts,Pre Number Concepts,4.6,4.6,4.6,4.6,0.76
+2,Grade 2,math,Mathematics,math-foundations,Mathematics Foundations,pre-number-concepts,Pre Number Concepts,5.5,5.5,5.5,5.5,0.5485714286
+balvatika,balvatika,math,Mathematics,math-foundations,Mathematics Foundations,pre-number-concepts,Pre Number Concepts,3.4,3.4,3.4,3.4,0.36
+balvatika,balvatika,math,Mathematics,math-foundations,Mathematics Foundations,pre-number-concepts,Pre Number Concepts,3.5,3.5,3.5,3.5,0.44
+balvatika,balvatika,math,Mathematics,math-foundations,Mathematics Foundations,pre-number-concepts,Pre Number Concepts,3.6,3.6,3.6,3.6,0.7371428571
+balvatika,balvatika,math,Mathematics,math-foundations,Mathematics Foundations,sensory-development,Sensory Development,3.1,3.1,3.1,3.1,0.3085714286
+Preschool 1,Preschool 1,math,Mathematics,math-foundations,Mathematics Foundations,sensory-development,Sensory Development,1.1,1.1,1.1,1.1,0.08
+Preschool 2,Preschool 2,math,Mathematics,math-foundations,Mathematics Foundations,sensory-development,Sensory Development,2.1,2.1,2.1,2.1,0.2285714286
+1,Grade 1,math,Mathematics,math-foundations,Mathematics Foundations,shapes,Shapes,4.2b,4.2b,4.2b,4.2b,0.3542857143
+3,Grade 3,math,Mathematics,math-foundations,Mathematics Foundations,shapes,Shapes,6.25,6.25,6.25,6.25,0.52
+Preschool 1,Preschool 1,math,Mathematics,math-foundations,Mathematics Foundations,shapes,Shapes,1.25,1.25,1.25,1.25,0.1257142857
+Preschool 2,Preschool 2,math,Mathematics,math-foundations,Mathematics Foundations,shapes,Shapes,2.25,2.25,2.25,2.25,0.24
+1,Grade 1,math,Mathematics,math-foundations,Mathematics Foundations,shapes-and-spatial-understanding,Shapes and Spatial Understanding,4.25,4.25,4.25,4.25,0.3942857143
+2,Grade 2,math,Mathematics,math-foundations,Mathematics Foundations,shapes-and-spatial-understanding,Shapes and Spatial Understanding,5.25,5.25,5.25,5.25,0.4628571429
+balvatika,balvatika,math,Mathematics,math-foundations,Mathematics Foundations,shapes-and-spatial-understanding,Shapes and Spatial Understanding,3.25,3.25,3.25,3.25,0.32
+3,Grade 3,math,Mathematics,math-foundations,Mathematics Foundations,use-of-technology,Use of Technology,6.30,6.30,6.30,6.30,0.5371428571
+Preschool 1,Preschool 1,math,Mathematics,math-foundations,Mathematics Foundations,use-of-technology,Use of Technology,1.30,1.30,1.30,1.30,0.1942857143
+Preschool 2,Preschool 2,math,Mathematics,math-foundations,Mathematics Foundations,use-of-technology,Use of Technology,2.30,2.30,2.30,2.30,0.2685714286

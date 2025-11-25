@@ -6,8 +6,11 @@ import {
   useState,
 } from "react";
 import type {
+  AbilityState,
+  BlendWeights,
   DependencyGraph,
   GraphSnapshot,
+  LearningIndicator,
   RecommendationContext,
 } from "@pal/core";
 
@@ -16,8 +19,18 @@ interface GraphDiagramProps {
   snapshot: GraphSnapshot;
   recommendation: RecommendationContext;
   targetId: string;
-  selectedGradeId?: string;
-  selectedCompetencyId?: string;
+  abilities: AbilityState;
+  blendWeights: BlendWeights;
+  gradeFilterId: string;
+  subjectFilterId: string;
+  domainFilterId: string;
+  competencyFilterId: string;
+  onGradeFilterChange: (gradeId: string) => void;
+  onSubjectFilterChange: (subjectId: string) => void;
+  onDomainFilterChange: (domainId: string) => void;
+  onCompetencyFilterChange: (competencyId: string) => void;
+  overrideIndicatorId: string;
+  onOverrideIndicatorChange: (indicatorId: string) => void;
 }
 
 interface Position {
@@ -210,14 +223,28 @@ const GraphDiagram = ({
   snapshot,
   recommendation,
   targetId,
-  selectedGradeId,
-  selectedCompetencyId,
+  abilities,
+  blendWeights,
+  gradeFilterId,
+  subjectFilterId,
+  domainFilterId,
+  competencyFilterId,
+  onGradeFilterChange,
+  onSubjectFilterChange,
+  onDomainFilterChange,
+  onCompetencyFilterChange,
+  overrideIndicatorId,
+  onOverrideIndicatorChange,
 }: GraphDiagramProps) => {
-  const [gradeFilterId, setGradeFilterId] = useState("");
-  const [competencyFilterId, setCompetencyFilterId] = useState("");
+  const containerRef = useRef<HTMLDivElement>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchIndicatorId, setSearchIndicatorId] = useState("");
   const [searchError, setSearchError] = useState<string | null>(null);
+  const [hoverInfo, setHoverInfo] = useState<{
+    indicatorId: string;
+    x: number;
+    y: number;
+  } | null>(null);
 
   useEffect(() => {
     if (!gradeFilterId) {
@@ -225,67 +252,215 @@ const GraphDiagram = ({
     }
     const hasGrade = graph.grades.some((grade) => grade.id === gradeFilterId);
     if (!hasGrade) {
-      setGradeFilterId("");
+      onGradeFilterChange("");
     }
-  }, [graph, gradeFilterId]);
-
-  useEffect(() => {
-    if (!selectedGradeId) {
-      return;
-    }
-    setGradeFilterId(selectedGradeId);
-  }, [selectedGradeId]);
+  }, [graph, gradeFilterId, onGradeFilterChange]);
 
   const gradeOptions = useMemo(
     () => [...graph.grades].sort((a, b) => a.label.localeCompare(b.label)),
     [graph]
   );
 
+  const subjectOptions = useMemo(() => {
+    let options = [...graph.subjects];
+    if (gradeFilterId) {
+      options = options.filter((subject) => subject.gradeId === gradeFilterId);
+    }
+    return options.sort((a, b) => a.label.localeCompare(b.label));
+  }, [graph, gradeFilterId]);
+
+  const domainOptions = useMemo(() => {
+    let options = [...graph.domains];
+    if (gradeFilterId) {
+      options = options.filter((domain) => domain.gradeId === gradeFilterId);
+    }
+    if (subjectFilterId) {
+      options = options.filter(
+        (domain) => domain.subjectId === subjectFilterId
+      );
+    }
+    return options.sort((a, b) => a.label.localeCompare(b.label));
+  }, [graph, gradeFilterId, subjectFilterId]);
+
+  useEffect(() => {
+    if (!subjectFilterId) {
+      return;
+    }
+    if (!subjectOptions.some((subject) => subject.id === subjectFilterId)) {
+      onSubjectFilterChange("");
+    }
+  }, [subjectFilterId, subjectOptions, onSubjectFilterChange]);
+
+  useEffect(() => {
+    if (!domainFilterId) {
+      return;
+    }
+    if (!domainOptions.some((domain) => domain.id === domainFilterId)) {
+      onDomainFilterChange("");
+    }
+  }, [domainFilterId, domainOptions, onDomainFilterChange]);
+
+  const gradeLabelLookup = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const grade of graph.grades) {
+      map.set(grade.id, grade.label ?? grade.id);
+    }
+    return map;
+  }, [graph]);
+
+  const subjectLabelLookup = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const subject of graph.subjects) {
+      map.set(subject.id, subject.label ?? subject.id);
+    }
+    return map;
+  }, [graph]);
+
+  const domainLabelLookup = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const domain of graph.domains) {
+      map.set(domain.id, domain.label ?? domain.id);
+    }
+    return map;
+  }, [graph]);
+
   const competencyIndex = useMemo(() => {
     const map = new Map(graph.competencies.map((item) => [item.id, item]));
     return map;
   }, [graph]);
 
-  const gradeCompetencyIds = useMemo(() => {
-    if (!gradeFilterId) {
+  const competencyLabelLookup = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const competency of graph.competencies) {
+      map.set(competency.id, competency.label ?? competency.id);
+    }
+    return map;
+  }, [graph]);
+
+  const learningOutcomeIndex = useMemo(() => {
+    const map = new Map(graph.learningOutcomes.map((item) => [item.id, item]));
+    return map;
+  }, [graph]);
+
+  const filteredCompetencyIds = useMemo(() => {
+    if (!gradeFilterId && !subjectFilterId && !domainFilterId) {
       return graph.competencies.map((competency) => competency.id);
     }
     const ids = new Set<string>();
     for (const indicator of graph.indicators) {
-      if (indicator.gradeId === gradeFilterId) {
-        ids.add(indicator.competencyId);
+      if (gradeFilterId && indicator.gradeId !== gradeFilterId) {
+        continue;
       }
+      if (subjectFilterId && indicator.subjectId !== subjectFilterId) {
+        continue;
+      }
+      if (domainFilterId && indicator.domainId !== domainFilterId) {
+        continue;
+      }
+      ids.add(indicator.competencyId);
     }
     return Array.from(ids);
-  }, [graph, gradeFilterId]);
+  }, [graph, gradeFilterId, subjectFilterId, domainFilterId]);
 
   const competencyOptions = useMemo(() => {
-    const options = gradeCompetencyIds
+    const options = filteredCompetencyIds
       .map((id) => competencyIndex.get(id))
       .filter((entry): entry is NonNullable<typeof entry> => Boolean(entry));
     return options.sort((a, b) => a.label.localeCompare(b.label));
-  }, [gradeCompetencyIds, competencyIndex]);
+  }, [filteredCompetencyIds, competencyIndex]);
 
   useEffect(() => {
     if (!competencyFilterId) {
       return;
     }
-    if (!gradeCompetencyIds.includes(competencyFilterId)) {
-      setCompetencyFilterId("");
+    if (!filteredCompetencyIds.includes(competencyFilterId)) {
+      onCompetencyFilterChange("");
     }
-  }, [competencyFilterId, gradeCompetencyIds]);
+  }, [competencyFilterId, filteredCompetencyIds, onCompetencyFilterChange]);
 
   useEffect(() => {
-    if (!selectedCompetencyId) {
+    if (!overrideIndicatorId) {
       return;
     }
-    setCompetencyFilterId(selectedCompetencyId);
-  }, [selectedCompetencyId]);
+    const indicator = graph.indicators.find((item) => item.id === overrideIndicatorId);
+    if (!indicator) {
+      return;
+    }
+    if (indicator.gradeId !== gradeFilterId) {
+      onGradeFilterChange(indicator.gradeId);
+    }
+    if (indicator.subjectId !== subjectFilterId) {
+      onSubjectFilterChange(indicator.subjectId);
+    }
+    if (indicator.domainId !== domainFilterId) {
+      onDomainFilterChange(indicator.domainId);
+    }
+    if (indicator.competencyId !== competencyFilterId) {
+      onCompetencyFilterChange(indicator.competencyId);
+    }
+  }, [
+    overrideIndicatorId,
+    graph,
+    gradeFilterId,
+    subjectFilterId,
+    domainFilterId,
+    competencyFilterId,
+    onGradeFilterChange,
+    onSubjectFilterChange,
+    onDomainFilterChange,
+    onCompetencyFilterChange,
+  ]);
 
   const indicatorIndex = useMemo(() => {
     const map = new Map(graph.indicators.map((indicator) => [indicator.id, indicator]));
     return map;
   }, [graph]);
+
+  const probabilityIndex = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const entry of snapshot.snapshot) {
+      map.set(entry.indicatorId, entry.probability);
+    }
+    return map;
+  }, [snapshot]);
+
+  const formatAbilityValue = (value: number) => value.toFixed(2);
+  const formatProbabilityValue = (value: number) => (value * 100).toFixed(1);
+
+  const getIndicatorAbilitySnapshot = useCallback(
+    (indicatorId: string) => {
+      const indicator = indicatorIndex.get(indicatorId);
+      if (!indicator) {
+        return null;
+      }
+      const thetaIndicator = abilities.indicator[indicator.id] ?? 0;
+      const thetaOutcome = abilities.outcome[indicator.learningOutcomeId] ?? 0;
+      const thetaCompetency = abilities.competency[indicator.competencyId] ?? 0;
+      const thetaDomain = abilities.domain[indicator.domainId] ?? 0;
+      const thetaSubject = abilities.subject[indicator.subjectId] ?? 0;
+      const thetaGrade = abilities.grade[indicator.gradeId] ?? 0;
+      const thetaBlend =
+        thetaIndicator * blendWeights.indicator +
+        thetaOutcome * blendWeights.outcome +
+        thetaCompetency * blendWeights.competency +
+        thetaDomain * blendWeights.domain +
+        thetaSubject * blendWeights.subject +
+        thetaGrade * blendWeights.grade;
+      const probability = probabilityIndex.get(indicator.id) ?? 0;
+      return {
+        indicator,
+        thetaIndicator,
+        thetaOutcome,
+        thetaCompetency,
+        thetaSubject,
+        thetaDomain,
+        thetaGrade,
+        thetaBlend,
+        probability,
+      };
+    },
+    [abilities, blendWeights, indicatorIndex, probabilityIndex]
+  );
 
   useEffect(() => {
     if (searchIndicatorId && !indicatorIndex.has(searchIndicatorId)) {
@@ -299,18 +474,24 @@ const GraphDiagram = ({
     if (!searchIndicatorId) {
       return undefined;
     }
-    const indicator = indicatorIndex.get(searchIndicatorId);
-    if (!indicator) {
-      return undefined;
-    }
     const connected = new Set<string>();
-    connected.add(searchIndicatorId);
-    for (const prereq of indicator.prerequisites) {
-      connected.add(prereq);
-    }
-    const dependents = globalDependents.get(searchIndicatorId) ?? [];
-    for (const dep of dependents) {
-      connected.add(dep);
+    const stack = [searchIndicatorId];
+    while (stack.length > 0) {
+      const current = stack.pop()!;
+      if (connected.has(current)) {
+        continue;
+      }
+      connected.add(current);
+      const indicator = indicatorIndex.get(current);
+      if (indicator) {
+        for (const prereq of indicator.prerequisites) {
+          stack.push(prereq);
+        }
+      }
+      const dependents = globalDependents.get(current) ?? [];
+      for (const dep of dependents) {
+        stack.push(dep);
+      }
     }
     return connected;
   }, [searchIndicatorId, indicatorIndex, globalDependents]);
@@ -319,13 +500,24 @@ const GraphDiagram = ({
     if (searchConnectedFilter) {
       return searchConnectedFilter;
     }
-    if (!gradeFilterId && !competencyFilterId) {
+    if (
+      !gradeFilterId &&
+      !subjectFilterId &&
+      !domainFilterId &&
+      !competencyFilterId
+    ) {
       return undefined;
     }
     const allowed = new Set(
       graph.indicators
         .filter((indicator) => {
           if (gradeFilterId && indicator.gradeId !== gradeFilterId) {
+            return false;
+          }
+          if (subjectFilterId && indicator.subjectId !== subjectFilterId) {
+            return false;
+          }
+          if (domainFilterId && indicator.domainId !== domainFilterId) {
             return false;
           }
           if (
@@ -339,7 +531,14 @@ const GraphDiagram = ({
         .map((indicator) => indicator.id)
     );
     return allowed;
-  }, [graph, gradeFilterId, competencyFilterId, searchConnectedFilter]);
+  }, [
+    graph,
+    gradeFilterId,
+    subjectFilterId,
+    domainFilterId,
+    competencyFilterId,
+    searchConnectedFilter,
+  ]);
 
   const layout = useMemo(
     () => computeLayout(graph, indicatorFilter),
@@ -358,6 +557,50 @@ const GraphDiagram = ({
     [graph, indicatorFilter]
   );
 
+  const overrideOptions = useMemo(() => {
+    const filtered = graph.indicators.filter((indicator) => {
+      if (gradeFilterId && indicator.gradeId !== gradeFilterId) {
+        return false;
+      }
+      if (subjectFilterId && indicator.subjectId !== subjectFilterId) {
+        return false;
+      }
+      if (domainFilterId && indicator.domainId !== domainFilterId) {
+        return false;
+      }
+      if (competencyFilterId && indicator.competencyId !== competencyFilterId) {
+        return false;
+      }
+      return true;
+    });
+    const hardestByCompetency = new Map<string, { indicatorId: string; difficulty: number }>();
+    for (const indicator of filtered) {
+      const existing = hardestByCompetency.get(indicator.competencyId);
+      if (!existing || indicator.difficulty > existing.difficulty) {
+        hardestByCompetency.set(indicator.competencyId, {
+          indicatorId: indicator.id,
+          difficulty: indicator.difficulty,
+        });
+      }
+    }
+    const highlightSet = new Set<string>();
+    for (const entry of hardestByCompetency.values()) {
+      highlightSet.add(entry.indicatorId);
+    }
+    return {
+      filtered,
+      highlightSet,
+    };
+  }, [graph, gradeFilterId, subjectFilterId, domainFilterId, competencyFilterId]);
+
+  const overrideSelectionMissing =
+    Boolean(overrideIndicatorId) &&
+    !overrideOptions.filtered.some((indicator) => indicator.id === overrideIndicatorId);
+
+  const hoverSnapshot = hoverInfo
+    ? getIndicatorAbilitySnapshot(hoverInfo.indicatorId)
+    : null;
+
   const width = positions.length
     ? Math.max(...positions.map((pos) => pos.x)) + NODE_RADIUS + MARGIN
     : 400;
@@ -367,16 +610,30 @@ const GraphDiagram = ({
 
   const handleGradeFilterChange = useCallback(
     (event: React.ChangeEvent<HTMLSelectElement>) => {
-      setGradeFilterId(event.target.value);
+      onGradeFilterChange(event.target.value);
     },
-    []
+    [onGradeFilterChange]
+  );
+
+  const handleSubjectFilterChange = useCallback(
+    (event: React.ChangeEvent<HTMLSelectElement>) => {
+      onSubjectFilterChange(event.target.value);
+    },
+    [onSubjectFilterChange]
+  );
+
+  const handleDomainFilterChange = useCallback(
+    (event: React.ChangeEvent<HTMLSelectElement>) => {
+      onDomainFilterChange(event.target.value);
+    },
+    [onDomainFilterChange]
   );
 
   const handleCompetencyFilterChange = useCallback(
     (event: React.ChangeEvent<HTMLSelectElement>) => {
-      setCompetencyFilterId(event.target.value);
+      onCompetencyFilterChange(event.target.value);
     },
-    []
+    [onCompetencyFilterChange]
   );
 
   const noResults = indicatorFilter !== undefined && positions.length === 0;
@@ -483,29 +740,42 @@ const GraphDiagram = ({
     setTranslate({ x: 0, y: 0 });
   }, []);
 
+  const selectSearchIndicator = useCallback(
+    (indicatorId: string) => {
+      setSearchIndicatorId(indicatorId);
+      setSearchError(null);
+      onOverrideIndicatorChange(indicatorId);
+    },
+    [onOverrideIndicatorChange]
+  );
+
   const resolveSearchIndicator = useCallback(
     (query: string) => {
       const trimmed = query.trim();
       if (!trimmed) {
         return null;
       }
-      const directMatch = indicatorIndex.get(trimmed);
+      const pool = overrideOptions.filtered;
+      if (pool.length === 0) {
+        return null;
+      }
+      const directMatch = pool.find((indicator) => indicator.id === trimmed);
       if (directMatch) {
         return directMatch.id;
       }
       const normalized = trimmed.toLowerCase();
-      const idMatch = graph.indicators.find(
+      const idMatch = pool.find(
         (indicator) => indicator.id.toLowerCase() === normalized
       );
       if (idMatch) {
         return idMatch.id;
       }
-      const labelMatch = graph.indicators.find((indicator) =>
+      const labelMatch = pool.find((indicator) =>
         indicator.label.toLowerCase().includes(normalized)
       );
       return labelMatch?.id ?? null;
     },
-    [graph, indicatorIndex]
+    [overrideOptions]
   );
 
   const handleSearchSubmit = useCallback(
@@ -521,14 +791,13 @@ const GraphDiagram = ({
       }
       const resolved = resolveSearchIndicator(trimmed);
       if (resolved) {
-        setSearchIndicatorId(resolved);
-        setSearchError(null);
+        selectSearchIndicator(resolved);
       } else {
         setSearchIndicatorId("");
         setSearchError("No learning indicator matches that search.");
       }
     },
-    [resolveSearchIndicator, searchQuery]
+    [resolveSearchIndicator, searchQuery, selectSearchIndicator]
   );
 
   const clearSearch = useCallback(() => {
@@ -537,8 +806,22 @@ const GraphDiagram = ({
     setSearchError(null);
   }, []);
 
+  const handleNodeEnter = useCallback(
+    (event: React.MouseEvent<SVGGElement>, indicatorId: string) => {
+      const rect = containerRef.current?.getBoundingClientRect();
+      const x = event.clientX - (rect?.left ?? 0);
+      const y = event.clientY - (rect?.top ?? 0);
+      setHoverInfo({ indicatorId, x, y });
+    },
+    []
+  );
+
+  const handleNodeLeave = useCallback(() => {
+    setHoverInfo(null);
+  }, []);
+
   return (
-    <div>
+    <div ref={containerRef} style={{ position: "relative" }}>
       <div className="graph-legend section">
         <span className="legend-item">
           <span className="legend-swatch" style={{ background: "#dbeafe" }} />
@@ -557,13 +840,75 @@ const GraphDiagram = ({
           Recommended action
         </span>
       </div>
-      <div className="graph-search section">
+      <div className="graph-filters">
+        <label className="graph-filter-field">
+          <span>Grade label</span>
+          <select
+            className="select"
+            value={gradeFilterId}
+            onChange={handleGradeFilterChange}
+          >
+            <option value="">All grades</option>
+            {gradeOptions.map((grade) => (
+              <option key={grade.id} value={grade.id}>
+                {grade.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="graph-filter-field">
+          <span>Subject label</span>
+          <select
+            className="select"
+            value={subjectFilterId}
+            onChange={handleSubjectFilterChange}
+          >
+            <option value="">All subjects</option>
+            {subjectOptions.map((subject) => (
+              <option key={subject.id} value={subject.id}>
+                {subject.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="graph-filter-field">
+          <span>Domain label</span>
+          <select
+            className="select"
+            value={domainFilterId}
+            onChange={handleDomainFilterChange}
+          >
+            <option value="">All domains</option>
+            {domainOptions.map((domain) => (
+              <option key={domain.id} value={domain.id}>
+                {domain.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="graph-filter-field">
+          <span>Competency label</span>
+          <select
+            className="select"
+            value={competencyFilterId}
+            onChange={handleCompetencyFilterChange}
+          >
+            <option value="">All competencies</option>
+            {competencyOptions.map((competency) => (
+              <option key={competency.id} value={competency.id}>
+                {competency.label}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+      <div className="graph-override section">
         <form
           onSubmit={handleSearchSubmit}
           style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}
         >
           <label htmlFor="graph-search-input" style={{ fontSize: "0.95rem" }}>
-            Search learning indicator
+            Search or select a learning indicator
           </label>
           <div style={{ display: "flex", gap: "0.4rem" }}>
             <input
@@ -584,7 +929,7 @@ const GraphDiagram = ({
           </div>
         </form>
         <datalist id="graph-indicator-options">
-          {graph.indicators.map((indicator) => (
+          {overrideOptions.filtered.map((indicator) => (
             <option key={indicator.id} value={indicator.id}>
               {indicator.label}
             </option>
@@ -597,7 +942,7 @@ const GraphDiagram = ({
               {indicatorIndex.get(searchIndicatorId)?.label ?? searchIndicatorId} (
               {searchIndicatorId})
             </strong>
-            .
+            . The manual override dropdown below has been synced to this indicator.
           </p>
         )}
         {searchError && (
@@ -605,38 +950,50 @@ const GraphDiagram = ({
             {searchError}
           </p>
         )}
-      </div>
-      <div className="graph-filters">
-        <label className="graph-filter-field">
-          <span>Grade label</span>
-          <select
-            className="select"
-            value={gradeFilterId}
-            onChange={handleGradeFilterChange}
-          >
-            <option value="">All grades</option>
-            {gradeOptions.map((grade) => (
-              <option key={grade.id} value={grade.id}>
-                {grade.label}
-              </option>
-            ))}
-          </select>
+        <label htmlFor="graph-override-select" style={{ fontSize: "0.95rem", marginTop: "0.6rem" }}>
+          Indicator override (optional)
         </label>
-        <label className="graph-filter-field">
-          <span>Competency label</span>
-          <select
-            className="select"
-            value={competencyFilterId}
-            onChange={handleCompetencyFilterChange}
-          >
-            <option value="">All competencies</option>
-            {competencyOptions.map((competency) => (
-              <option key={competency.id} value={competency.id}>
-                {competency.label}
+        <select
+          id="graph-override-select"
+          className="select"
+          value={overrideIndicatorId}
+          onChange={(event) => onOverrideIndicatorChange(event.target.value)}
+        >
+          <option value="">
+            Use recommendation{" "}
+            {recommendation.candidateId
+              ? `(${indicatorIndex.get(recommendation.candidateId)?.label ?? recommendation.candidateId} – ${recommendation.candidateId})`
+              : "(none available)"}
+          </option>
+          {overrideSelectionMissing && overrideIndicatorId && (
+            <option value={overrideIndicatorId}>
+              {indicatorIndex.get(overrideIndicatorId)?.label ?? overrideIndicatorId} ({overrideIndicatorId}) — outside current filter
+            </option>
+          )}
+          {overrideOptions.filtered.map((indicator) => {
+            const gradeLabel = gradeLabelLookup.get(indicator.gradeId) ?? indicator.gradeId;
+            const competencyLabel =
+              competencyLabelLookup.get(indicator.competencyId) ?? indicator.competencyId;
+            const highlightLabel = overrideOptions.highlightSet.has(indicator.id)
+              ? " — Highest difficulty"
+              : "";
+            return (
+              <option key={indicator.id} value={indicator.id}>
+                {`${indicator.label} (${indicator.id}) — ${competencyLabel} | ${gradeLabel}${highlightLabel}`}
               </option>
-            ))}
-          </select>
-        </label>
+            );
+          })}
+        </select>
+        {overrideOptions.filtered.length === 0 && (
+          <p style={{ fontSize: "0.8rem", color: "#b91c1c", marginTop: "0.35rem" }}>
+            No indicators match the current graph filters. Adjust the grade or competency
+            filters to find an override.
+          </p>
+        )}
+        <p style={{ fontSize: "0.8rem", color: "#64748b", marginTop: "0.35rem" }}>
+          The override list respects the same grade and competency filters shown above so you
+          can focus on a specific slice of the graph.
+        </p>
       </div>
       <div className="graph-toolbar">
         <button
@@ -735,11 +1092,21 @@ const GraphDiagram = ({
                   ?.probability ?? 0;
               const difficulty = indicator?.difficulty ?? 0;
               const isSearchFocus = searchIndicatorId === pos.id;
-              const circleStroke = isSearchFocus ? "#f97316" : palette.stroke;
-              const strokeWidth = pos.id === targetId || isSearchFocus ? 3 : 2;
+              const isOverrideFocus = overrideIndicatorId === pos.id;
+              const circleStroke = isSearchFocus
+                ? "#f97316"
+                : isOverrideFocus
+                ? "#0ea5e9"
+                : palette.stroke;
+              const strokeWidth =
+                isSearchFocus || isOverrideFocus || pos.id === targetId ? 3 : 2;
 
               return (
-                <g key={pos.id}>
+                <g
+                  key={pos.id}
+                  onMouseEnter={(event) => handleNodeEnter(event, pos.id)}
+                  onMouseLeave={handleNodeLeave}
+                >
                   <circle
                     cx={pos.x}
                     cy={pos.y}
@@ -791,6 +1158,66 @@ const GraphDiagram = ({
           </g>
         </svg>
       </div>
+      {hoverSnapshot && hoverInfo
+        ? (() => {
+            const indicator = hoverSnapshot.indicator;
+            const learningOutcome = learningOutcomeIndex.get(
+              indicator.learningOutcomeId
+            );
+            const competencyLabel =
+              competencyLabelLookup.get(indicator.competencyId) ??
+              indicator.competencyId;
+            const subjectLabel =
+              subjectLabelLookup.get(indicator.subjectId) ?? indicator.subjectId;
+            const domainLabel =
+              domainLabelLookup.get(indicator.domainId) ?? indicator.domainId;
+            const gradeLabel =
+              gradeLabelLookup.get(indicator.gradeId) ?? indicator.gradeId;
+            return (
+              <div
+                className="graph-tooltip"
+                style={{
+                  position: "absolute",
+                  left: hoverInfo.x + 12,
+                  top: hoverInfo.y + 12,
+                  background: "#0f172a",
+                  color: "white",
+                  borderRadius: 8,
+                  padding: "0.6rem 0.8rem",
+                  fontSize: "0.75rem",
+                  pointerEvents: "none",
+                  maxWidth: 260,
+                  boxShadow: "0 8px 24px rgba(15, 23, 42, 0.3)",
+                  zIndex: 10,
+                }}
+              >
+                <div style={{ fontWeight: 600, fontSize: "0.8rem", marginBottom: 4 }}>
+                  {indicator.label} ({indicator.id})
+                </div>
+                <div>θ indicator: {formatAbilityValue(hoverSnapshot.thetaIndicator)}</div>
+                <div>
+                  θ outcome: {formatAbilityValue(hoverSnapshot.thetaOutcome)} — {learningOutcome?.label ?? indicator.learningOutcomeId}
+                </div>
+                <div>
+                  θ competency: {formatAbilityValue(hoverSnapshot.thetaCompetency)} — {competencyLabel}
+                </div>
+                <div>
+                  θ subject: {formatAbilityValue(hoverSnapshot.thetaSubject)} — {subjectLabel}
+                </div>
+                <div>
+                  θ domain: {formatAbilityValue(hoverSnapshot.thetaDomain)} — {domainLabel}
+                </div>
+                <div>
+                  θ grade: {formatAbilityValue(hoverSnapshot.thetaGrade)} — {gradeLabel}
+                </div>
+                <div style={{ marginTop: 6 }}>
+                  θ blend: {formatAbilityValue(hoverSnapshot.thetaBlend)}
+                </div>
+                <div>Probability: {formatProbabilityValue(hoverSnapshot.probability)}%</div>
+              </div>
+            );
+          })()
+        : null}
     </div>
   );
 };

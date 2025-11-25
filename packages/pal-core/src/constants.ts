@@ -19,15 +19,19 @@ export interface CoreConstantsUpdate {
 
 const INITIAL_CORE_CONSTANTS: CoreConstants = {
   blendWeights: {
-    indicator: 0.45,
-    outcome: 0.35,
-    competency: 0.15,
+    indicator: 0.35,
+    outcome: 0.2,
+    competency: 0.18,
+    domain: 0.12,
+    subject: 0.1,
     grade: 0.05,
   },
   learningRates: {
     indicator: 0.5,
     outcome: 0.08,
     competency: 0.04,
+    domain: 0.04,
+    subject: 0.05,
     grade: 0.03,
   },
   zpdRange: [0.5, 0.8],
@@ -47,6 +51,8 @@ const cloneBlendWeights = (weights: BlendWeights): BlendWeights => ({
   indicator: weights.indicator,
   outcome: weights.outcome,
   competency: weights.competency,
+  domain: weights.domain,
+  subject: weights.subject,
   grade: weights.grade,
 });
 
@@ -54,6 +60,8 @@ const cloneLearningRates = (rates: LearningRates): LearningRates => ({
   indicator: rates.indicator,
   outcome: rates.outcome,
   competency: rates.competency,
+  domain: rates.domain,
+  subject: rates.subject,
   grade: rates.grade,
 });
 
@@ -135,6 +143,8 @@ export const updateCoreConstants = (
       indicator: ensureFinite(next.indicator, "Blend weight (indicator)"),
       outcome: ensureFinite(next.outcome, "Blend weight (outcome)"),
       competency: ensureFinite(next.competency, "Blend weight (competency)"),
+      domain: ensureFinite(next.domain, "Blend weight (domain)"),
+      subject: ensureFinite(next.subject, "Blend weight (subject)"),
       grade: ensureFinite(next.grade, "Blend weight (grade)"),
     };
   }
@@ -151,6 +161,8 @@ export const updateCoreConstants = (
         next.competency,
         "Learning rate (competency)"
       ),
+      domain: ensureFinite(next.domain, "Learning rate (domain)"),
+      subject: ensureFinite(next.subject, "Learning rate (subject)"),
       grade: ensureFinite(next.grade, "Learning rate (grade)"),
     };
   }
@@ -240,6 +252,8 @@ export const parseCoreConstantsCsv = (
           case "indicator":
           case "outcome":
           case "competency":
+          case "domain":
+          case "subject":
           case "grade":
             blendWeights[key] = parseNumericCell(
               value,
@@ -257,6 +271,8 @@ export const parseCoreConstantsCsv = (
           case "indicator":
           case "outcome":
           case "competency":
+          case "domain":
+          case "subject":
           case "grade":
             learningRates[key] = parseNumericCell(
               value,
@@ -327,5 +343,7 @@ export const createEmptyAbilityState = (): AbilityState => ({
   indicator: {},
   outcome: {},
   competency: {},
+  domain: {},
+  subject: {},
   grade: {},
 });

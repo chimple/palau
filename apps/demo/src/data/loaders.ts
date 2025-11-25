@@ -24,6 +24,12 @@ const createDefaultAbilitiesForGraph = (graph: DependencyGraph): AbilityState =>
   for (const grade of graph.grades) {
     state.grade[grade.id] = state.grade[grade.id] ?? 0;
   }
+  for (const subject of graph.subjects) {
+    state.subject[subject.id] = state.subject[subject.id] ?? 0;
+  }
+  for (const domain of graph.domains) {
+    state.domain[domain.id] = state.domain[domain.id] ?? 0;
+  }
   for (const competency of graph.competencies) {
     state.competency[competency.id] = state.competency[competency.id] ?? 0;
   }
@@ -47,27 +53,52 @@ const parseGraphRows = (
 
   const [, ...dataRows] = filteredRows;
   const gradesMap = new Map<string, { id: string; label: string }>();
-  const competenciesMap = new Map<
+  const subjectsMap = new Map<
     string,
     { id: string; label: string; gradeId: string }
   >();
+  const domainsMap = new Map<
+    string,
+    { id: string; label: string; gradeId: string; subjectId: string }
+  >();
+  const competenciesMap = new Map<
+    string,
+    {
+      id: string;
+      label: string;
+      gradeId: string;
+      subjectId: string;
+      domainId: string;
+    }
+  >();
   const outcomesMap = new Map<
     string,
-    { id: string; label: string; competencyId: string }
+    {
+      id: string;
+      label: string;
+      competencyId: string;
+      domainId: string;
+      subjectId: string;
+      gradeId: string;
+    }
   >();
   const indicators: LearningIndicator[] = [];
   const indicatorIndex = new Map<string, LearningIndicator>();
 
   for (const row of dataRows) {
-    if (row.length < 9) {
+    if (row.length < 13) {
       throw new Error(
-        "Each graph row must contain 9 columns (see header specification)."
+        "Each graph row must contain 13 columns (see header specification)."
       );
     }
 
     const [
       gradeId,
       gradeLabel,
+      subjectId,
+      subjectName,
+      domainId,
+      domainName,
       competencyId,
       competencyName,
       learningOutcomeId,
@@ -77,7 +108,14 @@ const parseGraphRows = (
       difficultyText,
     ] = row.map((cell) => cell.trim());
 
-    if (!gradeId || !competencyId || !learningOutcomeId || !indicatorId) {
+    if (
+      !gradeId ||
+      !subjectId ||
+      !domainId ||
+      !competencyId ||
+      !learningOutcomeId ||
+      !indicatorId
+    ) {
       throw new Error("Graph rows must include non-empty IDs for all entities.");
     }
 
@@ -95,11 +133,30 @@ const parseGraphRows = (
       });
     }
 
+    if (!subjectsMap.has(subjectId)) {
+      subjectsMap.set(subjectId, {
+        id: subjectId,
+        label: subjectName || subjectId,
+        gradeId,
+      });
+    }
+
+    if (!domainsMap.has(domainId)) {
+      domainsMap.set(domainId, {
+        id: domainId,
+        label: domainName || domainId,
+        gradeId,
+        subjectId,
+      });
+    }
+
     if (!competenciesMap.has(competencyId)) {
       competenciesMap.set(competencyId, {
         id: competencyId,
         label: competencyName || competencyId,
         gradeId,
+        subjectId,
+        domainId,
       });
     }
 
@@ -108,6 +165,9 @@ const parseGraphRows = (
         id: learningOutcomeId,
         label: learningOutcomeName || learningOutcomeId,
         competencyId,
+        domainId,
+        subjectId,
+        gradeId,
       });
     }
 
@@ -119,7 +179,9 @@ const parseGraphRows = (
       id: indicatorId,
       label: indicatorName || indicatorId,
       gradeId,
+      subjectId,
       competencyId,
+      domainId,
       learningOutcomeId,
       difficulty,
       prerequisites: [],
@@ -161,6 +223,8 @@ const parseGraphRows = (
     startIndicatorId: startIndicator ? startIndicator.id : "",
     indicators,
     grades: Array.from(gradesMap.values()),
+    subjects: Array.from(subjectsMap.values()),
+    domains: Array.from(domainsMap.values()),
     competencies: Array.from(competenciesMap.values()),
     learningOutcomes: Array.from(outcomesMap.values()),
   };
@@ -185,6 +249,12 @@ const applyAbilityRow = (
       break;
     case "competency":
       state.competency[id] = safeAbility;
+      break;
+    case "domain":
+      state.domain[id] = safeAbility;
+      break;
+    case "subject":
+      state.subject[id] = safeAbility;
       break;
     case "outcome":
     case "learningoutcome":
@@ -251,6 +321,8 @@ export const cloneAbilities = (abilities: AbilityState): AbilityState => ({
   indicator: { ...abilities.indicator },
   outcome: { ...abilities.outcome },
   competency: { ...abilities.competency },
+  domain: { ...abilities.domain },
+  subject: { ...abilities.subject },
   grade: { ...abilities.grade },
 });
 
