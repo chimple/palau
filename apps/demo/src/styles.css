@@ -65,6 +65,7 @@ button {
 }
 
 .select,
+.input,
 .radio-group,
 .btn,
 .btn-ghost {
@@ -163,6 +164,27 @@ button {
   flex-wrap: wrap;
 }
 
+.graph-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 0.75rem 0;
+}
+
+.graph-filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 180px;
+  flex: 1 1 200px;
+  font-size: 0.85rem;
+  color: #475569;
+}
+
+.graph-filter-field span {
+  font-weight: 600;
+}
+
 .legend-item {
   display: inline-flex;
   align-items: center;
@@ -206,6 +228,12 @@ button {
 .graph-toolbar span {
   font-size: 0.85rem;
   color: #475569;
+}
+
+.graph-empty-state {
+  margin: 0 0 0.75rem;
+  font-size: 0.85rem;
+  color: #64748b;
 }
 
 .graph-canvas {
