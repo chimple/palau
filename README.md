@@ -60,7 +60,7 @@ import {
 
 | File | Required | Columns |
 | --- | --- | --- |
-| `sample-graph.csv` | Yes | `gradeId, gradeLabel, competencyId, competencyName, learningOutcomeId, learningOutcomeName, indicatorId, indicatorName, difficulty` |
+| `sample-graph.csv` | Yes | `gradeId, gradeLabel, competencyId, competencyName, outcomeId, outcomeName, indicatorId, indicatorName, difficulty` |
 | `sample-prerequisites.csv` | Yes | `sourceIndicatorId, targetIndicatorId` (edge points from prerequisite → dependent) |
 | `sample-abilities.csv` | Optional | `type, id, ability` where `type ∈ {grade, competency, outcome, indicator}` |
 

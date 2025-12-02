@@ -2,7 +2,7 @@ import type {
   AbilityState,
   BlendWeights,
   DependencyGraph,
-  LearningIndicator,
+  Indicator,
 } from "./types";
 import { DEFAULT_BLEND_WEIGHTS, DEFAULT_SCALE } from "./constants";
 
@@ -24,14 +24,14 @@ export const cloneAbilityState = (state: AbilityState): AbilityState => ({
 });
 
 export const blendAbility = (
-  indicator: LearningIndicator,
+  indicator: Indicator,
   abilities: AbilityState,
   weights: BlendWeights = DEFAULT_BLEND_WEIGHTS
 ): number => {
   const thetaLi = getAbilityValue(abilities.indicator, indicator.id);
   const thetaLO = getAbilityValue(
     abilities.outcome,
-    indicator.learningOutcomeId
+    indicator.outcomeId
   );
   const thetaCompetency = getAbilityValue(
     abilities.competency,
@@ -52,7 +52,7 @@ export const blendAbility = (
 };
 
 export const indexGraphByIndicator = (graph: DependencyGraph) => {
-  const indicatorById = new Map<string, LearningIndicator>();
+  const indicatorById = new Map<string, Indicator>();
   const prerequisites = new Map<string, string[]>();
   const dependents = new Map<string, string[]>();
 
@@ -79,7 +79,7 @@ export const indexGraphByIndicator = (graph: DependencyGraph) => {
 export const getIndicator = (
   graph: DependencyGraph,
   id: string
-): LearningIndicator => {
+): Indicator => {
   const indicator = graph.indicators.find((li) => li.id === id);
   if (!indicator) {
     throw new Error(`Unknown indicator "${id}"`);

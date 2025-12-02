@@ -21,7 +21,7 @@ export const updateAbilities = (
 
   const currentIndicator = newState.indicator[indicator.id] ?? 0;
   const currentOutcome =
-    newState.outcome[indicator.learningOutcomeId] ?? 0;
+    newState.outcome[indicator.outcomeId] ?? 0;
   const currentCompetency =
     newState.competency[indicator.competencyId] ?? 0;
   const currentDomain = newState.domain[indicator.domainId] ?? 0;
@@ -30,7 +30,7 @@ export const updateAbilities = (
 
   newState.indicator[indicator.id] =
     currentIndicator + rates.indicator * error;
-  newState.outcome[indicator.learningOutcomeId] =
+  newState.outcome[indicator.outcomeId] =
     currentOutcome + rates.outcome * error;
   newState.competency[indicator.competencyId] =
     currentCompetency + rates.competency * error;

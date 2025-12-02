@@ -4,11 +4,11 @@ import { DEFAULT_ZPD_RANGE, DEFAULT_MASTERED_THRESHOLD } from '../packages/pal-c
 // Minimal graph matching types
 const graph = {
   indicators: [
-    { id: 'A', label: 'A', learningOutcomeId: 'lo1', competencyId: 'c1', gradeId: 'g1', difficulty: 0, prerequisites: [] },
-    { id: 'B', label: 'B', learningOutcomeId: 'lo1', competencyId: 'c1', gradeId: 'g1', difficulty: 0, prerequisites: ['A'] },
-    { id: 'C', label: 'C', learningOutcomeId: 'lo1', competencyId: 'c1', gradeId: 'g1', difficulty: 0, prerequisites: ['A'] },
+    { id: 'A', label: 'A', outcomeId: 'lo1', competencyId: 'c1', gradeId: 'g1', difficulty: 0, prerequisites: [] },
+    { id: 'B', label: 'B', outcomeId: 'lo1', competencyId: 'c1', gradeId: 'g1', difficulty: 0, prerequisites: ['A'] },
+    { id: 'C', label: 'C', outcomeId: 'lo1', competencyId: 'c1', gradeId: 'g1', difficulty: 0, prerequisites: ['A'] },
   ],
-  learningOutcomes: [{ id: 'lo1', label: 'LO1', competencyId: 'c1' }],
+  outcomes: [{ id: 'lo1', label: 'LO1', competencyId: 'c1' }],
   competencies: [{ id: 'c1', label: 'C1', gradeId: 'g1' }],
   grades: [{ id: 'g1', label: 'G1' }],
   startIndicatorId: 'A',

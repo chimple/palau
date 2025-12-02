@@ -10,7 +10,7 @@ import type {
   BlendWeights,
   DependencyGraph,
   GraphSnapshot,
-  LearningIndicator,
+  Indicator,
   RecommendationContext,
 } from "@pal/core";
 
@@ -337,8 +337,8 @@ const GraphDiagram = ({
     return map;
   }, [graph]);
 
-  const learningOutcomeIndex = useMemo(() => {
-    const map = new Map(graph.learningOutcomes.map((item) => [item.id, item]));
+  const outcomeIndex = useMemo(() => {
+    const map = new Map(graph.outcomes.map((item) => [item.id, item]));
     return map;
   }, [graph]);
 
@@ -434,7 +434,7 @@ const GraphDiagram = ({
         return null;
       }
       const thetaIndicator = abilities.indicator[indicator.id] ?? 0;
-      const thetaOutcome = abilities.outcome[indicator.learningOutcomeId] ?? 0;
+      const thetaOutcome = abilities.outcome[indicator.outcomeId] ?? 0;
       const thetaCompetency = abilities.competency[indicator.competencyId] ?? 0;
       const thetaDomain = abilities.domain[indicator.domainId] ?? 0;
       const thetaSubject = abilities.subject[indicator.subjectId] ?? 0;
@@ -1161,8 +1161,8 @@ const GraphDiagram = ({
       {hoverSnapshot && hoverInfo
         ? (() => {
             const indicator = hoverSnapshot.indicator;
-            const learningOutcome = learningOutcomeIndex.get(
-              indicator.learningOutcomeId
+            const outcome = outcomeIndex.get(
+              indicator.outcomeId
             );
             const competencyLabel =
               competencyLabelLookup.get(indicator.competencyId) ??
@@ -1196,7 +1196,7 @@ const GraphDiagram = ({
                 </div>
                 <div>θ indicator: {formatAbilityValue(hoverSnapshot.thetaIndicator)}</div>
                 <div>
-                  θ outcome: {formatAbilityValue(hoverSnapshot.thetaOutcome)} — {learningOutcome?.label ?? indicator.learningOutcomeId}
+                  θ outcome: {formatAbilityValue(hoverSnapshot.thetaOutcome)} — {outcome?.label ?? indicator.outcomeId}
                 </div>
                 <div>
                   θ competency: {formatAbilityValue(hoverSnapshot.thetaCompetency)} — {competencyLabel}

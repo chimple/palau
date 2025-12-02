@@ -20,7 +20,7 @@ import {
   type DependencyGraph,
   type GraphSnapshot,
   type RecommendationContext,
-  type LearningIndicator,
+  type Indicator,
 } from "@pal/core";
 import GraphDiagram from "./components/GraphDiagram";
 import {
@@ -122,7 +122,7 @@ const App = () => {
     }
   ): string => {
     if (!graph || graph.indicators.length === 0) return "";
-    const matchesFilter = (indicator: LearningIndicator) => {
+    const matchesFilter = (indicator: Indicator) => {
       if (filters?.gradeId && indicator.gradeId !== filters.gradeId) {
         return false;
       }
@@ -146,7 +146,7 @@ const App = () => {
     if (indicatorPool.length === 0) {
       return "";
     }
-    const selectByDifficulty = (pool: LearningIndicator[]): string => {
+    const selectByDifficulty = (pool: Indicator[]): string => {
       if (pool.length === 0) return "";
       const sorted = [...pool].sort(
         (a, b) => (b.difficulty ?? 0) - (a.difficulty ?? 0)
@@ -434,7 +434,7 @@ const App = () => {
     Array<{
       competencyId: string;
       competencyLabel: string;
-      indicators: LearningIndicator[];
+      indicators: Indicator[];
     }>
   >([]);
   const [uploadedGraphCsv, setUploadedGraphCsv] = useState<string | null>(null);
@@ -499,7 +499,7 @@ const App = () => {
       trimmedIndicators.map((indicator) => indicator.competencyId)
     );
     const allowedOutcomeIds = new Set(
-      trimmedIndicators.map((indicator) => indicator.learningOutcomeId)
+      trimmedIndicators.map((indicator) => indicator.outcomeId)
     );
     const filteredGraph: DependencyGraph = {
       startIndicatorId:
@@ -516,7 +516,7 @@ const App = () => {
       competencies: graph.competencies.filter((competency) =>
         allowedCompetencyIds.has(competency.id)
       ),
-      learningOutcomes: graph.learningOutcomes.filter((outcome) =>
+      outcomes: graph.outcomes.filter((outcome) =>
         allowedOutcomeIds.has(outcome.id)
       ),
     };
@@ -556,11 +556,11 @@ const App = () => {
   );
 
   const indicatorsByOutcome = useMemo(() => {
-    const map = new Map<string, LearningIndicator[]>();
+    const map = new Map<string, Indicator[]>();
     for (const indicator of graph.indicators) {
-      const list = map.get(indicator.learningOutcomeId) ?? [];
+      const list = map.get(indicator.outcomeId) ?? [];
       list.push(indicator);
-      map.set(indicator.learningOutcomeId, list);
+      map.set(indicator.outcomeId, list);
     }
     return map;
   }, [graph]);
@@ -613,7 +613,7 @@ const App = () => {
     const interim = new Map<string, Set<string>>();
     for (const indicator of graph.indicators) {
       const list = interim.get(indicator.gradeId) ?? new Set<string>();
-      list.add(indicator.learningOutcomeId);
+      list.add(indicator.outcomeId);
       interim.set(indicator.gradeId, list);
     }
     const normalized = new Map<string, string[]>();
@@ -627,7 +627,7 @@ const App = () => {
     const interim = new Map<string, Set<string>>();
     for (const indicator of graph.indicators) {
       const list = interim.get(indicator.subjectId) ?? new Set<string>();
-      list.add(indicator.learningOutcomeId);
+      list.add(indicator.outcomeId);
       interim.set(indicator.subjectId, list);
     }
     const normalized = new Map<string, string[]>();
@@ -655,7 +655,7 @@ const App = () => {
     const interim = new Map<string, Set<string>>();
     for (const indicator of graph.indicators) {
       const set = interim.get(indicator.domainId) ?? new Set<string>();
-      set.add(indicator.learningOutcomeId);
+      set.add(indicator.outcomeId);
       interim.set(indicator.domainId, set);
     }
     const normalized = new Map<string, string[]>();
@@ -722,7 +722,7 @@ const App = () => {
   }, [graph, assessmentGradeId, assessmentSubjectId, domainsByGrade, domainsBySubject]);
 
   const assessmentOutcomeOptions = useMemo(() => {
-    let filtered = graph.learningOutcomes;
+    let filtered = graph.outcomes;
     if (assessmentCompetencyId) {
       filtered = filtered.filter(
         (outcome) => outcome.competencyId === assessmentCompetencyId
@@ -826,10 +826,7 @@ const App = () => {
         { mastered: boolean; notMastered: boolean }
       >();
 
-      const noteStatus = (
-        indicator: LearningIndicator,
-        mastered: boolean
-      ) => {
+      const noteStatus = (indicator: Indicator, mastered: boolean) => {
         const competencyEntry =
           competencyStatus.get(indicator.competencyId) ?? {
             mastered: false,
@@ -888,7 +885,7 @@ const App = () => {
         }
         visited.add(indicatorId);
         updated.indicator[indicatorId] = ASSESSMENT_MASTERY_THETA;
-        updated.outcome[indicator.learningOutcomeId] = ASSESSMENT_MASTERY_THETA;
+        updated.outcome[indicator.outcomeId] = ASSESSMENT_MASTERY_THETA;
         noteStatus(indicator, true);
         for (const prereq of indicator.prerequisites) {
           markMasteredIndicator(prereq);
@@ -901,7 +898,7 @@ const App = () => {
           return;
         }
         updated.indicator[indicatorId] = ASSESSMENT_NON_MASTERY_THETA;
-        updated.outcome[indicator.learningOutcomeId] =
+        updated.outcome[indicator.outcomeId] =
           ASSESSMENT_NON_MASTERY_THETA;
         noteStatus(indicator, false);
       };
@@ -965,7 +962,7 @@ const App = () => {
     (currentAbilities: AbilityState, competencyFilter?: string) => {
       const results = new Map<
         string,
-        { competencyId: string; competencyLabel: string; indicators: LearningIndicator[] }
+        { competencyId: string; competencyLabel: string; indicators: Indicator[] }
       >();
       for (const indicator of graph.indicators) {
         if (competencyFilter && indicator.competencyId !== competencyFilter) {
@@ -1035,7 +1032,7 @@ const App = () => {
     if (!resolvedIndicator) {
       return;
     }
-    const outcomeId = resolvedIndicator.learningOutcomeId;
+    const outcomeId = resolvedIndicator.outcomeId;
     const competencyId = resolvedIndicator.competencyId;
     const subjectId = resolvedIndicator.subjectId;
     const domainId = resolvedIndicator.domainId;
@@ -1252,7 +1249,7 @@ const App = () => {
     const weights = constantsSnapshot.blendWeights;
     const thetaIndicator = abilityState.indicator[indicator.id] ?? 0;
     const thetaOutcome =
-      abilityState.outcome[indicator.learningOutcomeId] ?? 0;
+      abilityState.outcome[indicator.outcomeId] ?? 0;
     const thetaCompetency =
       abilityState.competency[indicator.competencyId] ?? 0;
     const thetaDomain = abilityState.domain[indicator.domainId] ?? 0;
@@ -1272,8 +1269,8 @@ const App = () => {
     size: "default" | "compact" = "default"
   ) => {
     if (!indicator) return null;
-    const learningOutcome = graph.learningOutcomes.find(
-      (lo) => lo.id === indicator.learningOutcomeId
+    const outcome = graph.outcomes.find(
+      (lo) => lo.id === indicator.outcomeId
     );
     const competency = graph.competencies.find(
       (comp) => comp.id === indicator.competencyId
@@ -1306,8 +1303,8 @@ const App = () => {
           <div>
             <strong>Learning Outcome</strong>
             <div>
-              {learningOutcome?.label ?? indicator.learningOutcomeId} — θ=
-              {formatAbility(abilities.outcome[indicator.learningOutcomeId])}
+              {outcome?.label ?? indicator.outcomeId} — θ=
+              {formatAbility(abilities.outcome[indicator.outcomeId])}
             </div>
           </div>
           <div>
@@ -1403,8 +1400,8 @@ const App = () => {
             </div>
             <p style={{ fontSize: "0.8rem", color: "#64748b" }}>
               Graph CSV format: gradeId, gradeLabel, subjectId, subjectName,
-              domainId, domainName, competencyId, competencyName, learningOutcomeId,
-              learningOutcomeName, indicatorId, indicatorName, difficulty.
+              domainId, domainName, competencyId, competencyName, outcomeId,
+              outcomeName, indicatorId, indicatorName, difficulty.
               Prerequisites CSV format: sourceIndicatorId, targetIndicatorId.
               Abilities CSV format: type, id, ability.
             </p>

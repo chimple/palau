@@ -24,7 +24,7 @@ export interface Competency {
   domainId: string;
 }
 
-export interface LearningOutcome {
+export interface Outcome {
   id: string;
   label: string;
   competencyId: string;
@@ -33,10 +33,10 @@ export interface LearningOutcome {
   gradeId: string;
 }
 
-export interface LearningIndicator {
+export interface Indicator {
   id: string;
   label: string;
-  learningOutcomeId: string;
+  outcomeId: string;
   competencyId: string;
   domainId: string;
   subjectId: string;
@@ -46,8 +46,8 @@ export interface LearningIndicator {
 }
 
 export interface DependencyGraph {
-  indicators: LearningIndicator[];
-  learningOutcomes: LearningOutcome[];
+  indicators: Indicator[];
+  outcomes: Outcome[];
   competencies: Competency[];
   domains: Domain[];
   subjects: Subject[];

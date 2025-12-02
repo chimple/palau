@@ -6,7 +6,7 @@ import {
   type AbilityState,
   type CsvRow,
   type DependencyGraph,
-  type LearningIndicator,
+  type Indicator,
 } from "@pal/core";
 
 import sampleGraphCsv from "./sample-graph.csv?raw";
@@ -33,7 +33,7 @@ const createDefaultAbilitiesForGraph = (graph: DependencyGraph): AbilityState =>
   for (const competency of graph.competencies) {
     state.competency[competency.id] = state.competency[competency.id] ?? 0;
   }
-  for (const outcome of graph.learningOutcomes) {
+  for (const outcome of graph.outcomes) {
     state.outcome[outcome.id] = state.outcome[outcome.id] ?? 0;
   }
   for (const indicator of graph.indicators) {
@@ -82,8 +82,8 @@ const parseGraphRows = (
       gradeId: string;
     }
   >();
-  const indicators: LearningIndicator[] = [];
-  const indicatorIndex = new Map<string, LearningIndicator>();
+  const indicators: Indicator[] = [];
+  const indicatorIndex = new Map<string, Indicator>();
 
   for (const row of dataRows) {
     if (row.length < 13) {
@@ -101,8 +101,8 @@ const parseGraphRows = (
       domainName,
       competencyId,
       competencyName,
-      learningOutcomeId,
-      learningOutcomeName,
+      outcomeId,
+      outcomeName,
       indicatorId,
       indicatorName,
       difficultyText,
@@ -113,7 +113,7 @@ const parseGraphRows = (
       !subjectId ||
       !domainId ||
       !competencyId ||
-      !learningOutcomeId ||
+      !outcomeId ||
       !indicatorId
     ) {
       throw new Error("Graph rows must include non-empty IDs for all entities.");
@@ -160,10 +160,10 @@ const parseGraphRows = (
       });
     }
 
-    if (!outcomesMap.has(learningOutcomeId)) {
-      outcomesMap.set(learningOutcomeId, {
-        id: learningOutcomeId,
-        label: learningOutcomeName || learningOutcomeId,
+    if (!outcomesMap.has(outcomeId)) {
+      outcomesMap.set(outcomeId, {
+        id: outcomeId,
+        label: outcomeName || outcomeId,
         competencyId,
         domainId,
         subjectId,
@@ -175,14 +175,14 @@ const parseGraphRows = (
       throw new Error(`Duplicate indicator ID detected: "${indicatorId}".`);
     }
 
-    const indicator: LearningIndicator = {
+    const indicator: Indicator = {
       id: indicatorId,
       label: indicatorName || indicatorId,
       gradeId,
       subjectId,
       competencyId,
       domainId,
-      learningOutcomeId,
+      outcomeId,
       difficulty,
       prerequisites: [],
     };
@@ -226,7 +226,7 @@ const parseGraphRows = (
     subjects: Array.from(subjectsMap.values()),
     domains: Array.from(domainsMap.values()),
     competencies: Array.from(competenciesMap.values()),
-    learningOutcomes: Array.from(outcomesMap.values()),
+    outcomes: Array.from(outcomesMap.values()),
   };
 };
 
@@ -257,7 +257,6 @@ const applyAbilityRow = (
       state.subject[id] = safeAbility;
       break;
     case "outcome":
-    case "learningoutcome":
       state.outcome[id] = safeAbility;
       break;
     case "indicator":
