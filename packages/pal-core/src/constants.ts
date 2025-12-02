@@ -23,8 +23,7 @@ const INITIAL_CORE_CONSTANTS: CoreConstants = {
     outcome: 0.2,
     competency: 0.18,
     domain: 0.12,
-    subject: 0.1,
-    grade: 0.05,
+    subject: 0.15,
   },
   learningRates: {
     indicator: 0.5,
@@ -32,7 +31,6 @@ const INITIAL_CORE_CONSTANTS: CoreConstants = {
     competency: 0.04,
     domain: 0.04,
     subject: 0.05,
-    grade: 0.03,
   },
   zpdRange: [0.5, 0.8],
   masteredThreshold: 0.8,
@@ -53,7 +51,6 @@ const cloneBlendWeights = (weights: BlendWeights): BlendWeights => ({
   competency: weights.competency,
   domain: weights.domain,
   subject: weights.subject,
-  grade: weights.grade,
 });
 
 const cloneLearningRates = (rates: LearningRates): LearningRates => ({
@@ -62,7 +59,6 @@ const cloneLearningRates = (rates: LearningRates): LearningRates => ({
   competency: rates.competency,
   domain: rates.domain,
   subject: rates.subject,
-  grade: rates.grade,
 });
 
 const cloneZpdRange = (range: [number, number]): [number, number] => [
@@ -145,7 +141,6 @@ export const updateCoreConstants = (
       competency: ensureFinite(next.competency, "Blend weight (competency)"),
       domain: ensureFinite(next.domain, "Blend weight (domain)"),
       subject: ensureFinite(next.subject, "Blend weight (subject)"),
-      grade: ensureFinite(next.grade, "Blend weight (grade)"),
     };
   }
 
@@ -163,7 +158,6 @@ export const updateCoreConstants = (
       ),
       domain: ensureFinite(next.domain, "Learning rate (domain)"),
       subject: ensureFinite(next.subject, "Learning rate (subject)"),
-      grade: ensureFinite(next.grade, "Learning rate (grade)"),
     };
   }
 
@@ -254,7 +248,6 @@ export const parseCoreConstantsCsv = (
           case "competency":
           case "domain":
           case "subject":
-          case "grade":
             blendWeights[key] = parseNumericCell(
               value,
               `Blend weight (${key})`
@@ -273,7 +266,6 @@ export const parseCoreConstantsCsv = (
           case "competency":
           case "domain":
           case "subject":
-          case "grade":
             learningRates[key] = parseNumericCell(
               value,
               `Learning rate (${key})`
@@ -345,5 +337,4 @@ export const createEmptyAbilityState = (): AbilityState => ({
   competency: {},
   domain: {},
   subject: {},
-  grade: {},
 });

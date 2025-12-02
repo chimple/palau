@@ -1,25 +1,17 @@
-export interface Grade {
-  id: string;
-  label: string;
-}
-
 export interface Subject {
   id: string;
   label: string;
-  gradeId: string;
 }
 
 export interface Domain {
   id: string;
   label: string;
-  gradeId: string;
   subjectId: string;
 }
 
 export interface Competency {
   id: string;
   label: string;
-  gradeId: string;
   subjectId: string;
   domainId: string;
 }
@@ -30,7 +22,6 @@ export interface Outcome {
   competencyId: string;
   domainId: string;
   subjectId: string;
-  gradeId: string;
 }
 
 export interface Indicator {
@@ -40,7 +31,6 @@ export interface Indicator {
   competencyId: string;
   domainId: string;
   subjectId: string;
-  gradeId: string;
   difficulty: number;
   prerequisites: string[];
 }
@@ -51,7 +41,6 @@ export interface DependencyGraph {
   competencies: Competency[];
   domains: Domain[];
   subjects: Subject[];
-  grades: Grade[];
   startIndicatorId: string;
 }
 
@@ -61,7 +50,6 @@ export interface AbilityState {
   competency: Record<string, number>;
   domain: Record<string, number>;
   subject: Record<string, number>;
-  grade: Record<string, number>;
 }
 
 export interface LearningRates {
@@ -70,7 +58,6 @@ export interface LearningRates {
   competency: number;
   domain: number;
   subject: number;
-  grade: number;
 }
 
 export interface BlendWeights {
@@ -79,7 +66,6 @@ export interface BlendWeights {
   competency: number;
   domain: number;
   subject: number;
-  grade: number;
 }
 
 export interface RecommendationContext {

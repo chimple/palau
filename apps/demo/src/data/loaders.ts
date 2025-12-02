@@ -21,9 +21,6 @@ export interface DatasetBundle {
 
 const createDefaultAbilitiesForGraph = (graph: DependencyGraph): AbilityState => {
   const state = createEmptyAbilityState();
-  for (const grade of graph.grades) {
-    state.grade[grade.id] = state.grade[grade.id] ?? 0;
-  }
   for (const subject of graph.subjects) {
     state.subject[subject.id] = state.subject[subject.id] ?? 0;
   }
@@ -52,21 +49,19 @@ const parseGraphRows = (
   }
 
   const [, ...dataRows] = filteredRows;
-  const gradesMap = new Map<string, { id: string; label: string }>();
   const subjectsMap = new Map<
     string,
-    { id: string; label: string; gradeId: string }
+    { id: string; label: string }
   >();
   const domainsMap = new Map<
     string,
-    { id: string; label: string; gradeId: string; subjectId: string }
+    { id: string; label: string; subjectId: string }
   >();
   const competenciesMap = new Map<
     string,
     {
       id: string;
       label: string;
-      gradeId: string;
       subjectId: string;
       domainId: string;
     }
@@ -79,22 +74,19 @@ const parseGraphRows = (
       competencyId: string;
       domainId: string;
       subjectId: string;
-      gradeId: string;
     }
   >();
   const indicators: Indicator[] = [];
   const indicatorIndex = new Map<string, Indicator>();
 
   for (const row of dataRows) {
-    if (row.length < 13) {
+    if (row.length < 11) {
       throw new Error(
-        "Each graph row must contain 13 columns (see header specification)."
+        "Each graph row must contain 11 columns (see header specification)."
       );
     }
 
     const [
-      gradeId,
-      gradeLabel,
       subjectId,
       subjectName,
       domainId,
@@ -109,7 +101,6 @@ const parseGraphRows = (
     ] = row.map((cell) => cell.trim());
 
     if (
-      !gradeId ||
       !subjectId ||
       !domainId ||
       !competencyId ||
@@ -126,18 +117,10 @@ const parseGraphRows = (
       );
     }
 
-    if (!gradesMap.has(gradeId)) {
-      gradesMap.set(gradeId, {
-        id: gradeId,
-        label: gradeLabel || gradeId,
-      });
-    }
-
     if (!subjectsMap.has(subjectId)) {
       subjectsMap.set(subjectId, {
         id: subjectId,
         label: subjectName || subjectId,
-        gradeId,
       });
     }
 
@@ -145,7 +128,6 @@ const parseGraphRows = (
       domainsMap.set(domainId, {
         id: domainId,
         label: domainName || domainId,
-        gradeId,
         subjectId,
       });
     }
@@ -154,7 +136,6 @@ const parseGraphRows = (
       competenciesMap.set(competencyId, {
         id: competencyId,
         label: competencyName || competencyId,
-        gradeId,
         subjectId,
         domainId,
       });
@@ -167,7 +148,6 @@ const parseGraphRows = (
         competencyId,
         domainId,
         subjectId,
-        gradeId,
       });
     }
 
@@ -178,7 +158,6 @@ const parseGraphRows = (
     const indicator: Indicator = {
       id: indicatorId,
       label: indicatorName || indicatorId,
-      gradeId,
       subjectId,
       competencyId,
       domainId,
@@ -222,7 +201,6 @@ const parseGraphRows = (
   return {
     startIndicatorId: startIndicator ? startIndicator.id : "",
     indicators,
-    grades: Array.from(gradesMap.values()),
     subjects: Array.from(subjectsMap.values()),
     domains: Array.from(domainsMap.values()),
     competencies: Array.from(competenciesMap.values()),
@@ -244,9 +222,6 @@ const applyAbilityRow = (
   const ability = Number.parseFloat(abilityText);
   const safeAbility = Number.isNaN(ability) ? 0 : ability;
   switch (type.toLowerCase()) {
-    case "grade":
-      state.grade[id] = safeAbility;
-      break;
     case "competency":
       state.competency[id] = safeAbility;
       break;
@@ -264,7 +239,7 @@ const applyAbilityRow = (
       break;
     default:
       throw new Error(
-        `Unknown ability type "${type}". Expected grade | competency | outcome | indicator.`
+        `Unknown ability type "${type}". Expected competency | domain | subject | outcome | indicator.`
       );
   }
   return state;
@@ -322,7 +297,6 @@ export const cloneAbilities = (abilities: AbilityState): AbilityState => ({
   competency: { ...abilities.competency },
   domain: { ...abilities.domain },
   subject: { ...abilities.subject },
-  grade: { ...abilities.grade },
 });
 
 export const selectDefaultTargetIndicator = (graph: DependencyGraph): string => {

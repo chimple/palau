@@ -35,7 +35,6 @@ interface AbilityVector {
   competency: number;
   subject: number;
   domain: number;
-  grade: number;
 }
 
 interface HistoryEntry {
@@ -115,7 +114,6 @@ const App = () => {
     | "zpd-prereq-aware"
   ,
     filters?: {
-      gradeId?: string;
       subjectId?: string;
       domainId?: string;
       competencyId?: string;
@@ -123,9 +121,6 @@ const App = () => {
   ): string => {
     if (!graph || graph.indicators.length === 0) return "";
     const matchesFilter = (indicator: Indicator) => {
-      if (filters?.gradeId && indicator.gradeId !== filters.gradeId) {
-        return false;
-      }
       if (filters?.subjectId && indicator.subjectId !== filters.subjectId) {
         return false;
       }
@@ -364,7 +359,6 @@ const App = () => {
     }
   };
 
-  const [graphGradeFilterId, setGraphGradeFilterId] = useState<string>("");
   const [graphSubjectFilterId, setGraphSubjectFilterId] = useState<string>("");
   const [graphDomainFilterId, setGraphDomainFilterId] = useState<string>("");
   const [graphCompetencyFilterId, setGraphCompetencyFilterId] =
@@ -376,7 +370,6 @@ const App = () => {
       baselineAbilitiesRef.current,
       "zpd-prereq-aware",
       {
-        gradeId: graphGradeFilterId,
         subjectId: graphSubjectFilterId,
         domainId: graphDomainFilterId,
         competencyId: graphCompetencyFilterId,
@@ -394,7 +387,6 @@ const App = () => {
         abilities,
         selectionPolicy,
         {
-          gradeId: graphGradeFilterId,
           subjectId: graphSubjectFilterId,
           domainId: graphDomainFilterId,
           competencyId: graphCompetencyFilterId,
@@ -407,7 +399,6 @@ const App = () => {
     selectionPolicy,
     graph,
     abilities,
-    graphGradeFilterId,
     graphSubjectFilterId,
     graphDomainFilterId,
     graphCompetencyFilterId,
@@ -418,7 +409,6 @@ const App = () => {
   );
   const [manualOutcomeIndicatorId, setManualOutcomeIndicatorId] =
     useState<string>("");
-  const [assessmentGradeId, setAssessmentGradeId] = useState<string>("");
   const [assessmentDomainId, setAssessmentDomainId] = useState<string>("");
   const [assessmentSubjectId, setAssessmentSubjectId] = useState<string>("");
   const [assessmentCompetencyId, setAssessmentCompetencyId] =
@@ -451,7 +441,6 @@ const App = () => {
 
   const recommendationGraph = useMemo(() => {
     if (
-      !graphGradeFilterId &&
       !graphSubjectFilterId &&
       !graphDomainFilterId &&
       !graphCompetencyFilterId
@@ -459,9 +448,6 @@ const App = () => {
       return graph;
     }
     const filteredIndicators = graph.indicators.filter((indicator) => {
-      if (graphGradeFilterId && indicator.gradeId !== graphGradeFilterId) {
-        return false;
-      }
       if (graphSubjectFilterId && indicator.subjectId !== graphSubjectFilterId) {
         return false;
       }
@@ -486,9 +472,6 @@ const App = () => {
         allowedIds.has(pre)
       ),
     }));
-    const allowedGradeIds = new Set(
-      trimmedIndicators.map((indicator) => indicator.gradeId)
-    );
     const allowedSubjectIds = new Set(
       trimmedIndicators.map((indicator) => indicator.subjectId)
     );
@@ -506,7 +489,6 @@ const App = () => {
         trimmedIndicators.find((indicator) => indicator.prerequisites.length === 0)?.id ??
         trimmedIndicators[0].id,
       indicators: trimmedIndicators,
-      grades: graph.grades.filter((grade) => allowedGradeIds.has(grade.id)),
       subjects: graph.subjects.filter((subject) =>
         allowedSubjectIds.has(subject.id)
       ),
@@ -523,7 +505,6 @@ const App = () => {
     return filteredGraph;
   }, [
     graph,
-    graphGradeFilterId,
     graphSubjectFilterId,
     graphDomainFilterId,
     graphCompetencyFilterId,
@@ -565,40 +546,6 @@ const App = () => {
     return map;
   }, [graph]);
 
-  const subjectsByGrade = useMemo(() => {
-    const map = new Map<string, string[]>();
-    for (const subject of graph.subjects) {
-      const list = map.get(subject.gradeId) ?? [];
-      list.push(subject.id);
-      map.set(subject.gradeId, list);
-    }
-    return map;
-  }, [graph]);
-
-  const competenciesByGrade = useMemo(() => {
-    const interim = new Map<string, Set<string>>();
-    for (const indicator of graph.indicators) {
-      const list = interim.get(indicator.gradeId) ?? new Set<string>();
-      list.add(indicator.competencyId);
-      interim.set(indicator.gradeId, list);
-    }
-    const normalized = new Map<string, string[]>();
-    for (const [gradeId, set] of interim.entries()) {
-      normalized.set(gradeId, Array.from(set));
-    }
-    return normalized;
-  }, [graph]);
-
-  const domainsByGrade = useMemo(() => {
-    const map = new Map<string, string[]>();
-    for (const domain of graph.domains) {
-      const list = map.get(domain.gradeId) ?? [];
-      list.push(domain.id);
-      map.set(domain.gradeId, list);
-    }
-    return map;
-  }, [graph]);
-
   const domainsBySubject = useMemo(() => {
     const map = new Map<string, string[]>();
     for (const domain of graph.domains) {
@@ -607,20 +554,6 @@ const App = () => {
       map.set(domain.subjectId, list);
     }
     return map;
-  }, [graph]);
-
-  const outcomesByGrade = useMemo(() => {
-    const interim = new Map<string, Set<string>>();
-    for (const indicator of graph.indicators) {
-      const list = interim.get(indicator.gradeId) ?? new Set<string>();
-      list.add(indicator.outcomeId);
-      interim.set(indicator.gradeId, list);
-    }
-    const normalized = new Map<string, string[]>();
-    for (const [gradeId, set] of interim.entries()) {
-      normalized.set(gradeId, Array.from(set));
-    }
-    return normalized;
   }, [graph]);
 
   const outcomesBySubject = useMemo(() => {
@@ -667,14 +600,6 @@ const App = () => {
 
   const assessmentCompetencyOptions = useMemo(() => {
     let pool = graph.competencies;
-    if (assessmentGradeId) {
-      const allowedByGrade = new Set(
-        competenciesByGrade.get(assessmentGradeId) ?? []
-      );
-      pool = pool.filter((competency) =>
-        allowedByGrade.has(competency.id)
-      );
-    }
     if (assessmentSubjectId) {
       pool = pool.filter(
         (competency) => competency.subjectId === assessmentSubjectId
@@ -691,27 +616,17 @@ const App = () => {
     return pool;
   }, [
     graph,
-    assessmentGradeId,
     assessmentSubjectId,
     assessmentDomainId,
-    competenciesByGrade,
     competenciesByDomain,
   ]);
 
   const assessmentSubjectOptions = useMemo(() => {
-    if (!assessmentGradeId) {
-      return graph.subjects;
-    }
-    const allowed = new Set(subjectsByGrade.get(assessmentGradeId) ?? []);
-    return graph.subjects.filter((subject) => allowed.has(subject.id));
-  }, [graph, assessmentGradeId, subjectsByGrade]);
+    return graph.subjects;
+  }, [graph]);
 
   const assessmentDomainOptions = useMemo(() => {
     let pool = graph.domains;
-    if (assessmentGradeId) {
-      const allowed = new Set(domainsByGrade.get(assessmentGradeId) ?? []);
-      pool = pool.filter((domain) => allowed.has(domain.id));
-    }
     if (assessmentSubjectId) {
       const allowedBySubject = new Set(
         domainsBySubject.get(assessmentSubjectId) ?? []
@@ -719,21 +634,13 @@ const App = () => {
       pool = pool.filter((domain) => allowedBySubject.has(domain.id));
     }
     return pool;
-  }, [graph, assessmentGradeId, assessmentSubjectId, domainsByGrade, domainsBySubject]);
+  }, [graph, assessmentSubjectId, domainsBySubject]);
 
   const assessmentOutcomeOptions = useMemo(() => {
     let filtered = graph.outcomes;
     if (assessmentCompetencyId) {
       filtered = filtered.filter(
         (outcome) => outcome.competencyId === assessmentCompetencyId
-      );
-    }
-    if (assessmentGradeId) {
-      const allowedOutcomeIds = new Set(
-        outcomesByGrade.get(assessmentGradeId) ?? []
-      );
-      filtered = filtered.filter((outcome) =>
-        allowedOutcomeIds.has(outcome.id)
       );
     }
     if (assessmentSubjectId) {
@@ -757,9 +664,7 @@ const App = () => {
     graph,
     assessmentDomainId,
     assessmentCompetencyId,
-    assessmentGradeId,
     assessmentSubjectId,
-    outcomesByGrade,
     outcomesBySubject,
     outcomesByDomain,
   ]);
@@ -774,14 +679,6 @@ const App = () => {
       return haystack.includes(query);
     });
   }, [assessmentOutcomeOptions, assessmentOutcomeSearch]);
-
-  useEffect(() => {
-    setAssessmentSubjectId("");
-    setAssessmentDomainId("");
-    setAssessmentCompetencyId("");
-    setAssessmentOutcomeValues({});
-    setAssessmentOutcomeSearch("");
-  }, [assessmentGradeId]);
 
   useEffect(() => {
     setAssessmentDomainId("");
@@ -818,10 +715,6 @@ const App = () => {
         { mastered: boolean; notMastered: boolean }
       >();
       const subjectStatus = new Map<
-        string,
-        { mastered: boolean; notMastered: boolean }
-      >();
-      const gradeStatus = new Map<
         string,
         { mastered: boolean; notMastered: boolean }
       >();
@@ -862,17 +755,6 @@ const App = () => {
           subjectEntry.notMastered = true;
         }
         subjectStatus.set(indicator.subjectId, subjectEntry);
-
-        const gradeEntry = gradeStatus.get(indicator.gradeId) ?? {
-          mastered: false,
-          notMastered: false,
-        };
-        if (mastered) {
-          gradeEntry.mastered = true;
-        } else {
-          gradeEntry.notMastered = true;
-        }
-        gradeStatus.set(indicator.gradeId, gradeEntry);
       };
 
       const markMasteredIndicator = (indicatorId: string) => {
@@ -942,14 +824,6 @@ const App = () => {
           updated.subject[subjectId] = ASSESSMENT_NON_MASTERY_THETA;
         } else if (status.mastered) {
           updated.subject[subjectId] = ASSESSMENT_MASTERY_THETA;
-        }
-      }
-
-      for (const [gradeId, status] of gradeStatus.entries()) {
-        if (status.notMastered) {
-          updated.grade[gradeId] = ASSESSMENT_NON_MASTERY_THETA;
-        } else if (status.mastered) {
-          updated.grade[gradeId] = ASSESSMENT_MASTERY_THETA;
         }
       }
 
@@ -1036,7 +910,6 @@ const App = () => {
     const competencyId = resolvedIndicator.competencyId;
     const subjectId = resolvedIndicator.subjectId;
     const domainId = resolvedIndicator.domainId;
-    const gradeId = resolvedIndicator.gradeId;
     const label = resolvedIndicator.label ?? indicatorId;
     const result = updateAbilities({
       graph,
@@ -1053,7 +926,6 @@ const App = () => {
       competency: abilities.competency[competencyId] ?? 0,
       subject: abilities.subject[subjectId] ?? 0,
       domain: abilities.domain[domainId] ?? 0,
-      grade: abilities.grade[gradeId] ?? 0,
     };
     const thetaAfter: AbilityVector = {
       indicator: result.abilities.indicator[indicatorId] ?? 0,
@@ -1061,7 +933,6 @@ const App = () => {
       competency: result.abilities.competency[competencyId] ?? 0,
       subject: result.abilities.subject[subjectId] ?? 0,
       domain: result.abilities.domain[domainId] ?? 0,
-      grade: result.abilities.grade[gradeId] ?? 0,
     };
     setAbilities(result.abilities);
     setHistory((prevHistory) => [
@@ -1150,7 +1021,6 @@ const App = () => {
     setHistory([]);
     setSelectedOutcome("correct");
     setManualOutcomeIndicatorId("");
-    setGraphGradeFilterId("");
     setGraphSubjectFilterId("");
     setGraphDomainFilterId("");
     setGraphCompetencyFilterId("");
@@ -1159,7 +1029,6 @@ const App = () => {
       baselineAbilitiesRef.current,
       selectionPolicy,
       {
-        gradeId: "",
         subjectId: "",
         domainId: "",
         competencyId: "",
@@ -1253,13 +1122,11 @@ const App = () => {
     const thetaCompetency =
       abilityState.competency[indicator.competencyId] ?? 0;
     const thetaDomain = abilityState.domain[indicator.domainId] ?? 0;
-    const thetaGrade = abilityState.grade[indicator.gradeId] ?? 0;
     return (
       thetaIndicator * weights.indicator +
       thetaOutcome * weights.outcome +
       thetaCompetency * weights.competency +
-      thetaDomain * weights.domain +
-      thetaGrade * weights.grade
+      thetaDomain * weights.domain
     );
   };
 
@@ -1277,7 +1144,6 @@ const App = () => {
     );
     const subject = graph.subjects.find((item) => item.id === indicator.subjectId);
     const domain = graph.domains.find((item) => item.id === indicator.domainId);
-    const grade = graph.grades.find((item) => item.id === indicator.gradeId);
     const fontSize = size === "compact" ? "0.85rem" : "0.9rem";
     const thetaBlend = computeThetaBlend(indicator, abilities);
     const probability = getIndicatorProbability(
@@ -1326,13 +1192,6 @@ const App = () => {
             <div>
               {domain?.label ?? indicator.domainId} — θ=
               {formatAbility(abilities.domain[indicator.domainId])}
-            </div>
-          </div>
-          <div>
-            <strong>Grade Prior</strong>
-            <div>
-              {grade?.label ?? indicator.gradeId} — θ=
-              {formatAbility(abilities.grade[indicator.gradeId])}
             </div>
           </div>
           <div>
@@ -1399,9 +1258,9 @@ const App = () => {
               </button>
             </div>
             <p style={{ fontSize: "0.8rem", color: "#64748b" }}>
-              Graph CSV format: gradeId, gradeLabel, subjectId, subjectName,
-              domainId, domainName, competencyId, competencyName, outcomeId,
-              outcomeName, indicatorId, indicatorName, difficulty.
+              Graph CSV format: subjectId, subjectName, domainId, domainName,
+              competencyId, competencyName, outcomeId, outcomeName, indicatorId,
+              indicatorName, difficulty.
               Prerequisites CSV format: sourceIndicatorId, targetIndicatorId.
               Abilities CSV format: type, id, ability.
             </p>
@@ -1413,26 +1272,10 @@ const App = () => {
 
         <div className="section">
           <h3>Assessment Module</h3>
-          <p style={{ marginTop: 0, fontSize: "0.85rem", color: "#475569" }}>
+        <p style={{ marginTop: 0, fontSize: "0.85rem", color: "#475569" }}>
             Mark learning outcomes as mastered after an assessment. All prerequisite indicators
             and outcomes will be considered mastered, and new targets are surfaced per competency.
           </p>
-          <div className="input-group">
-            <label htmlFor="assessment-grade">Grade</label>
-            <select
-              id="assessment-grade"
-              className="select"
-              value={assessmentGradeId}
-              onChange={(event) => setAssessmentGradeId(event.target.value)}
-            >
-              <option value="">All grades</option>
-              {graph.grades.map((grade) => (
-                <option key={grade.id} value={grade.id}>
-                  {grade.label}
-                </option>
-              ))}
-            </select>
-          </div>
           <div className="input-group">
             <label htmlFor="assessment-subject">Subject</label>
             <select
@@ -1648,16 +1491,14 @@ const App = () => {
                 outcome {formatConstant(constantsSnapshot.blendWeights.outcome)},
                 competency {formatConstant(constantsSnapshot.blendWeights.competency)},
                 domain {formatConstant(constantsSnapshot.blendWeights.domain)},
-                subject {formatConstant(constantsSnapshot.blendWeights.subject)},
-                grade {formatConstant(constantsSnapshot.blendWeights.grade)}
+                subject {formatConstant(constantsSnapshot.blendWeights.subject)}
               </div>
               <div>
                 Learning rates — indicator {formatConstant(constantsSnapshot.learningRates.indicator)},
                 outcome {formatConstant(constantsSnapshot.learningRates.outcome)},
                 competency {formatConstant(constantsSnapshot.learningRates.competency)},
                 domain {formatConstant(constantsSnapshot.learningRates.domain)},
-                subject {formatConstant(constantsSnapshot.learningRates.subject)},
-                grade {formatConstant(constantsSnapshot.learningRates.grade)}
+                subject {formatConstant(constantsSnapshot.learningRates.subject)}
               </div>
               <div>
                 ZPD range — {formatConstant(constantsSnapshot.zpdRange[0])} to {formatConstant(constantsSnapshot.zpdRange[1])}
@@ -1689,7 +1530,6 @@ const App = () => {
                     abilities,
                     policy,
                     {
-                      gradeId: graphGradeFilterId,
                       subjectId: graphSubjectFilterId,
                       domainId: graphDomainFilterId,
                       competencyId: graphCompetencyFilterId,
@@ -1910,15 +1750,6 @@ const App = () => {
                     )}
                     )
                   </div>
-                  <div className="history-meta">
-                    θ grade: {formatAbility(entry.thetaBefore.grade)} →{" "}
-                    {formatAbility(entry.thetaAfter.grade)} (
-                    {formatPercentChange(
-                      entry.thetaBefore.grade,
-                      entry.thetaAfter.grade
-                    )}
-                    )
-                  </div>
                 </li>
               ))}
             </ul>
@@ -1939,11 +1770,9 @@ const App = () => {
           targetId={targetId}
           abilities={abilities}
           blendWeights={constantsSnapshot.blendWeights}
-          gradeFilterId={graphGradeFilterId}
           subjectFilterId={graphSubjectFilterId}
           domainFilterId={graphDomainFilterId}
           competencyFilterId={graphCompetencyFilterId}
-          onGradeFilterChange={setGraphGradeFilterId}
           onSubjectFilterChange={setGraphSubjectFilterId}
           onDomainFilterChange={setGraphDomainFilterId}
           onCompetencyFilterChange={setGraphCompetencyFilterId}

@@ -1,16 +1,17 @@
 import { recommendNextIndicator } from '../packages/pal-core/src/recommendation';
 import { DEFAULT_ZPD_RANGE, DEFAULT_MASTERED_THRESHOLD } from '../packages/pal-core/src/constants';
 
-// Minimal graph matching types
+// Minimal graph matching types (grade removed)
 const graph = {
   indicators: [
-    { id: 'A', label: 'A', outcomeId: 'lo1', competencyId: 'c1', gradeId: 'g1', difficulty: 0, prerequisites: [] },
-    { id: 'B', label: 'B', outcomeId: 'lo1', competencyId: 'c1', gradeId: 'g1', difficulty: 0, prerequisites: ['A'] },
-    { id: 'C', label: 'C', outcomeId: 'lo1', competencyId: 'c1', gradeId: 'g1', difficulty: 0, prerequisites: ['A'] },
+    { id: 'A', label: 'A', outcomeId: 'lo1', competencyId: 'c1', domainId: 'd1', subjectId: 's1', difficulty: 0, prerequisites: [] },
+    { id: 'B', label: 'B', outcomeId: 'lo1', competencyId: 'c1', domainId: 'd1', subjectId: 's1', difficulty: 0, prerequisites: ['A'] },
+    { id: 'C', label: 'C', outcomeId: 'lo1', competencyId: 'c1', domainId: 'd1', subjectId: 's1', difficulty: 0, prerequisites: ['A'] },
   ],
-  outcomes: [{ id: 'lo1', label: 'LO1', competencyId: 'c1' }],
-  competencies: [{ id: 'c1', label: 'C1', gradeId: 'g1' }],
-  grades: [{ id: 'g1', label: 'G1' }],
+  outcomes: [{ id: 'lo1', label: 'LO1', competencyId: 'c1', domainId: 'd1', subjectId: 's1' }],
+  competencies: [{ id: 'c1', label: 'C1', subjectId: 's1', domainId: 'd1' }],
+  domains: [{ id: 'd1', label: 'D1', subjectId: 's1' }],
+  subjects: [{ id: 's1', label: 'S1' }],
   startIndicatorId: 'A',
 };
 
@@ -30,14 +31,15 @@ const abilities = {
   },
   outcome: {},
   competency: {},
-  grade: {},
+  domain: {},
+  subject: {},
 };
 
 const req = {
   graph,
   abilities,
   targetIndicatorId: 'A',
-  blendWeights: { indicator: 1, outcome: 0, competency: 0, grade: 0 },
+  blendWeights: { indicator: 1, outcome: 0, competency: 0, domain: 0, subject: 0 },
   // Use default blend weights by leaving undefined; our theta values are direct
 };
 

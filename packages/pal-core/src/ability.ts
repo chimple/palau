@@ -26,7 +26,6 @@ export const updateAbilities = (
     newState.competency[indicator.competencyId] ?? 0;
   const currentDomain = newState.domain[indicator.domainId] ?? 0;
   const currentSubject = newState.subject[indicator.subjectId] ?? 0;
-  const currentGrade = newState.grade[indicator.gradeId] ?? 0;
 
   newState.indicator[indicator.id] =
     currentIndicator + rates.indicator * error;
@@ -38,8 +37,6 @@ export const updateAbilities = (
     currentDomain + rates.domain * error;
   newState.subject[indicator.subjectId] =
     currentSubject + rates.subject * error;
-  newState.grade[indicator.gradeId] =
-    currentGrade + rates.grade * error;
 
   const posteriorBlend =
     blendAbility(indicator, newState, weights) - indicator.difficulty;

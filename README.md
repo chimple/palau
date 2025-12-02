@@ -45,14 +45,14 @@ import {
 ```
 
 - `recommendNextIndicator` traverses prerequisites from a target indicator, returning the next learning indicator to test inside the ZPD window (default 0.5–0.8). It classifies results as `recommended`, `auto-mastered`, `needs-remediation`, or `no-candidate`.
-- `updateAbilities` applies Elo/IRT-style ability updates across indicator, learning outcome, competency, and grade layers after a correct/incorrect outcome.
+- `updateAbilities` applies Elo/IRT-style ability updates across indicator, learning outcome, competency, domain, and subject layers after a correct/incorrect outcome.
 - `buildGraphSnapshot` aggregates predicted probabilities across the full dependency graph for visualisation.
 - Combine these utilities with your own CSV data exports to drive bespoke lesson assignment flows.
 
 ## Demo Highlights
 
 - Switch targets to reopen gates and test the traversal path the engine follows.
-- Record outcomes to adjust all four θ layers and instantly recompute the recommendation.
+- Record outcomes to adjust all ability layers and instantly recompute the recommendation.
 - View the dependency graph with colour-coded mastery/ZPD bands and the current recommendation highlighted.
 - Load custom data by providing three CSV files (graph, prerequisites, abilities) and watch the UI rebuild the adaptive path instantly.
 
@@ -60,9 +60,9 @@ import {
 
 | File | Required | Columns |
 | --- | --- | --- |
-| `sample-graph.csv` | Yes | `gradeId, gradeLabel, competencyId, competencyName, outcomeId, outcomeName, indicatorId, indicatorName, difficulty` |
+| `sample-graph.csv` | Yes | `subjectId, subjectName, domainId, domainName, competencyId, competencyName, outcomeId, outcomeName, indicatorId, indicatorName, difficulty` |
 | `sample-prerequisites.csv` | Yes | `sourceIndicatorId, targetIndicatorId` (edge points from prerequisite → dependent) |
-| `sample-abilities.csv` | Optional | `type, id, ability` where `type ∈ {grade, competency, outcome, indicator}` |
+| `sample-abilities.csv` | Optional | `type, id, ability` where `type ∈ {competency, domain, subject, outcome, indicator}` |
 
 Drop-in replacements following the same schema will update the demo without rebuilding.
 

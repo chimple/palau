@@ -21,11 +21,9 @@ interface GraphDiagramProps {
   targetId: string;
   abilities: AbilityState;
   blendWeights: BlendWeights;
-  gradeFilterId: string;
   subjectFilterId: string;
   domainFilterId: string;
   competencyFilterId: string;
-  onGradeFilterChange: (gradeId: string) => void;
   onSubjectFilterChange: (subjectId: string) => void;
   onDomainFilterChange: (domainId: string) => void;
   onCompetencyFilterChange: (competencyId: string) => void;
@@ -225,11 +223,9 @@ const GraphDiagram = ({
   targetId,
   abilities,
   blendWeights,
-  gradeFilterId,
   subjectFilterId,
   domainFilterId,
   competencyFilterId,
-  onGradeFilterChange,
   onSubjectFilterChange,
   onDomainFilterChange,
   onCompetencyFilterChange,
@@ -246,41 +242,19 @@ const GraphDiagram = ({
     y: number;
   } | null>(null);
 
-  useEffect(() => {
-    if (!gradeFilterId) {
-      return;
-    }
-    const hasGrade = graph.grades.some((grade) => grade.id === gradeFilterId);
-    if (!hasGrade) {
-      onGradeFilterChange("");
-    }
-  }, [graph, gradeFilterId, onGradeFilterChange]);
-
-  const gradeOptions = useMemo(
-    () => [...graph.grades].sort((a, b) => a.label.localeCompare(b.label)),
-    [graph]
-  );
-
   const subjectOptions = useMemo(() => {
-    let options = [...graph.subjects];
-    if (gradeFilterId) {
-      options = options.filter((subject) => subject.gradeId === gradeFilterId);
-    }
-    return options.sort((a, b) => a.label.localeCompare(b.label));
-  }, [graph, gradeFilterId]);
+    return [...graph.subjects].sort((a, b) => a.label.localeCompare(b.label));
+  }, [graph]);
 
   const domainOptions = useMemo(() => {
     let options = [...graph.domains];
-    if (gradeFilterId) {
-      options = options.filter((domain) => domain.gradeId === gradeFilterId);
-    }
     if (subjectFilterId) {
       options = options.filter(
         (domain) => domain.subjectId === subjectFilterId
       );
     }
     return options.sort((a, b) => a.label.localeCompare(b.label));
-  }, [graph, gradeFilterId, subjectFilterId]);
+  }, [graph, subjectFilterId]);
 
   useEffect(() => {
     if (!subjectFilterId) {
@@ -299,14 +273,6 @@ const GraphDiagram = ({
       onDomainFilterChange("");
     }
   }, [domainFilterId, domainOptions, onDomainFilterChange]);
-
-  const gradeLabelLookup = useMemo(() => {
-    const map = new Map<string, string>();
-    for (const grade of graph.grades) {
-      map.set(grade.id, grade.label ?? grade.id);
-    }
-    return map;
-  }, [graph]);
 
   const subjectLabelLookup = useMemo(() => {
     const map = new Map<string, string>();
@@ -343,14 +309,11 @@ const GraphDiagram = ({
   }, [graph]);
 
   const filteredCompetencyIds = useMemo(() => {
-    if (!gradeFilterId && !subjectFilterId && !domainFilterId) {
+    if (!subjectFilterId && !domainFilterId) {
       return graph.competencies.map((competency) => competency.id);
     }
     const ids = new Set<string>();
     for (const indicator of graph.indicators) {
-      if (gradeFilterId && indicator.gradeId !== gradeFilterId) {
-        continue;
-      }
       if (subjectFilterId && indicator.subjectId !== subjectFilterId) {
         continue;
       }
@@ -360,7 +323,7 @@ const GraphDiagram = ({
       ids.add(indicator.competencyId);
     }
     return Array.from(ids);
-  }, [graph, gradeFilterId, subjectFilterId, domainFilterId]);
+  }, [graph, subjectFilterId, domainFilterId]);
 
   const competencyOptions = useMemo(() => {
     const options = filteredCompetencyIds
@@ -386,9 +349,6 @@ const GraphDiagram = ({
     if (!indicator) {
       return;
     }
-    if (indicator.gradeId !== gradeFilterId) {
-      onGradeFilterChange(indicator.gradeId);
-    }
     if (indicator.subjectId !== subjectFilterId) {
       onSubjectFilterChange(indicator.subjectId);
     }
@@ -401,11 +361,9 @@ const GraphDiagram = ({
   }, [
     overrideIndicatorId,
     graph,
-    gradeFilterId,
     subjectFilterId,
     domainFilterId,
     competencyFilterId,
-    onGradeFilterChange,
     onSubjectFilterChange,
     onDomainFilterChange,
     onCompetencyFilterChange,
@@ -438,14 +396,12 @@ const GraphDiagram = ({
       const thetaCompetency = abilities.competency[indicator.competencyId] ?? 0;
       const thetaDomain = abilities.domain[indicator.domainId] ?? 0;
       const thetaSubject = abilities.subject[indicator.subjectId] ?? 0;
-      const thetaGrade = abilities.grade[indicator.gradeId] ?? 0;
       const thetaBlend =
         thetaIndicator * blendWeights.indicator +
         thetaOutcome * blendWeights.outcome +
         thetaCompetency * blendWeights.competency +
         thetaDomain * blendWeights.domain +
-        thetaSubject * blendWeights.subject +
-        thetaGrade * blendWeights.grade;
+        thetaSubject * blendWeights.subject;
       const probability = probabilityIndex.get(indicator.id) ?? 0;
       return {
         indicator,
@@ -454,7 +410,6 @@ const GraphDiagram = ({
         thetaCompetency,
         thetaSubject,
         thetaDomain,
-        thetaGrade,
         thetaBlend,
         probability,
       };
@@ -501,7 +456,6 @@ const GraphDiagram = ({
       return searchConnectedFilter;
     }
     if (
-      !gradeFilterId &&
       !subjectFilterId &&
       !domainFilterId &&
       !competencyFilterId
@@ -511,9 +465,6 @@ const GraphDiagram = ({
     const allowed = new Set(
       graph.indicators
         .filter((indicator) => {
-          if (gradeFilterId && indicator.gradeId !== gradeFilterId) {
-            return false;
-          }
           if (subjectFilterId && indicator.subjectId !== subjectFilterId) {
             return false;
           }
@@ -533,7 +484,6 @@ const GraphDiagram = ({
     return allowed;
   }, [
     graph,
-    gradeFilterId,
     subjectFilterId,
     domainFilterId,
     competencyFilterId,
@@ -559,9 +509,6 @@ const GraphDiagram = ({
 
   const overrideOptions = useMemo(() => {
     const filtered = graph.indicators.filter((indicator) => {
-      if (gradeFilterId && indicator.gradeId !== gradeFilterId) {
-        return false;
-      }
       if (subjectFilterId && indicator.subjectId !== subjectFilterId) {
         return false;
       }
@@ -591,7 +538,7 @@ const GraphDiagram = ({
       filtered,
       highlightSet,
     };
-  }, [graph, gradeFilterId, subjectFilterId, domainFilterId, competencyFilterId]);
+  }, [graph, subjectFilterId, domainFilterId, competencyFilterId]);
 
   const overrideSelectionMissing =
     Boolean(overrideIndicatorId) &&
@@ -607,13 +554,6 @@ const GraphDiagram = ({
   const height = positions.length
     ? Math.max(...positions.map((pos) => pos.y)) + NODE_RADIUS + MARGIN
     : 400;
-
-  const handleGradeFilterChange = useCallback(
-    (event: React.ChangeEvent<HTMLSelectElement>) => {
-      onGradeFilterChange(event.target.value);
-    },
-    [onGradeFilterChange]
-  );
 
   const handleSubjectFilterChange = useCallback(
     (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -842,21 +782,6 @@ const GraphDiagram = ({
       </div>
       <div className="graph-filters">
         <label className="graph-filter-field">
-          <span>Grade label</span>
-          <select
-            className="select"
-            value={gradeFilterId}
-            onChange={handleGradeFilterChange}
-          >
-            <option value="">All grades</option>
-            {gradeOptions.map((grade) => (
-              <option key={grade.id} value={grade.id}>
-                {grade.label}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="graph-filter-field">
           <span>Subject label</span>
           <select
             className="select"
@@ -971,7 +896,6 @@ const GraphDiagram = ({
             </option>
           )}
           {overrideOptions.filtered.map((indicator) => {
-            const gradeLabel = gradeLabelLookup.get(indicator.gradeId) ?? indicator.gradeId;
             const competencyLabel =
               competencyLabelLookup.get(indicator.competencyId) ?? indicator.competencyId;
             const highlightLabel = overrideOptions.highlightSet.has(indicator.id)
@@ -979,19 +903,18 @@ const GraphDiagram = ({
               : "";
             return (
               <option key={indicator.id} value={indicator.id}>
-                {`${indicator.label} (${indicator.id}) — ${competencyLabel} | ${gradeLabel}${highlightLabel}`}
+                {`${indicator.label} (${indicator.id}) — ${competencyLabel}${highlightLabel}`}
               </option>
             );
           })}
         </select>
         {overrideOptions.filtered.length === 0 && (
           <p style={{ fontSize: "0.8rem", color: "#b91c1c", marginTop: "0.35rem" }}>
-            No indicators match the current graph filters. Adjust the grade or competency
-            filters to find an override.
+            No indicators match the current graph filters. Adjust the filters to find an override.
           </p>
         )}
         <p style={{ fontSize: "0.8rem", color: "#64748b", marginTop: "0.35rem" }}>
-          The override list respects the same grade and competency filters shown above so you
+          The override list respects the same subject, domain, and competency filters shown above so you
           can focus on a specific slice of the graph.
         </p>
       </div>
@@ -1171,8 +1094,6 @@ const GraphDiagram = ({
               subjectLabelLookup.get(indicator.subjectId) ?? indicator.subjectId;
             const domainLabel =
               domainLabelLookup.get(indicator.domainId) ?? indicator.domainId;
-            const gradeLabel =
-              gradeLabelLookup.get(indicator.gradeId) ?? indicator.gradeId;
             return (
               <div
                 className="graph-tooltip"
@@ -1206,9 +1127,6 @@ const GraphDiagram = ({
                 </div>
                 <div>
                   θ domain: {formatAbilityValue(hoverSnapshot.thetaDomain)} — {domainLabel}
-                </div>
-                <div>
-                  θ grade: {formatAbilityValue(hoverSnapshot.thetaGrade)} — {gradeLabel}
                 </div>
                 <div style={{ marginTop: 6 }}>
                   θ blend: {formatAbilityValue(hoverSnapshot.thetaBlend)}

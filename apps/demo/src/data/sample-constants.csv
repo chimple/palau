@@ -4,13 +4,11 @@ blendWeights,outcome,0.10
 blendWeights,competency,0.60
 blendWeights,domain,0.10
 blendWeights,subject,0.10
-blendWeights,grade,0.10
 learningRates,indicator,0.5
 learningRates,outcome,0.8
 learningRates,competency,0.3
 learningRates,domain,0.5
 learningRates,subject,0.5
-learningRates,grade,0.4
 zpdRange,min,0.5
 zpdRange,max,0.8
 masteredThreshold,value,0.8
