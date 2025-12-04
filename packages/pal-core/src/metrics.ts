@@ -4,30 +4,30 @@ import {
   DEFAULT_MASTERED_THRESHOLD,
   DEFAULT_ZPD_RANGE,
 } from "./constants";
-import { getIndicator } from "./utils";
+import { getSkill } from "./utils";
 import { blendAbility, logistic } from "./utils";
 
-export interface IndicatorSnapshot {
-  indicatorId: string;
+export interface SkillSnapshot {
+  skillId: string;
   probability: number;
   status: "below" | "zpd" | "mastered";
 }
 
 export interface GraphSnapshot {
-  snapshot: IndicatorSnapshot[];
+  snapshot: SkillSnapshot[];
   masteredIds: string[];
   zpdIds: string[];
   belowIds: string[];
 }
 
-export const getIndicatorProbability = (
+export const getSkillProbability = (
   graph: DependencyGraph,
   abilities: AbilityState,
-  indicatorId: string,
+  skillId: string,
   weights: BlendWeights = DEFAULT_BLEND_WEIGHTS
 ): number => {
-  const indicator = getIndicator(graph, indicatorId);
-  return logistic(blendAbility(indicator, abilities, weights) - indicator.difficulty);
+  const skill = getSkill(graph, skillId);
+  return logistic(blendAbility(skill, abilities, weights) - skill.difficulty);
 };
 
 export const buildGraphSnapshot = (
@@ -37,30 +37,30 @@ export const buildGraphSnapshot = (
   zpdRange: [number, number] = DEFAULT_ZPD_RANGE,
   masteredThreshold: number = DEFAULT_MASTERED_THRESHOLD
 ): GraphSnapshot => {
-  const snapshot: IndicatorSnapshot[] = [];
+  const snapshot: SkillSnapshot[] = [];
   const masteredIds: string[] = [];
   const zpdIds: string[] = [];
   const belowIds: string[] = [];
 
-  for (const indicator of graph.indicators) {
-    const probability = getIndicatorProbability(
+  for (const skill of graph.skills) {
+    const probability = getSkillProbability(
       graph,
       abilities,
-      indicator.id,
+      skill.id,
       weights
     );
-    let status: IndicatorSnapshot["status"] = "below";
+    let status: SkillSnapshot["status"] = "below";
     if (probability >= masteredThreshold) {
       status = "mastered";
-      masteredIds.push(indicator.id);
+      masteredIds.push(skill.id);
     } else if (probability >= zpdRange[0] && probability <= zpdRange[1]) {
       status = "zpd";
-      zpdIds.push(indicator.id);
+      zpdIds.push(skill.id);
     } else {
-      belowIds.push(indicator.id);
+      belowIds.push(skill.id);
     }
     snapshot.push({
-      indicatorId: indicator.id,
+      skillId: skill.id,
       probability,
       status,
     });

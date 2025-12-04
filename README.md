@@ -19,7 +19,7 @@ This repo hosts a miniature monorepo that contains:
    npm run dev
    ```
 
-   Visit `http://localhost:5173` to explore the dependency graph, change the active target learning indicator, and log outcomes. The recommendation panel and graph will refresh after every outcome you record.
+   Visit `http://localhost:5173` to explore the dependency graph, change the active target learning skill, and log outcomes. The recommendation panel and graph will refresh after every outcome you record.
 
 3. Build packages:
 
@@ -33,7 +33,7 @@ Key exports:
 
 ```ts
 import {
-  recommendNextIndicator,
+  recommendNextSkill,
   updateAbilities,
   buildGraphSnapshot,
   DEFAULT_BLEND_WEIGHTS,
@@ -44,8 +44,8 @@ import {
 } from "@pal/core";
 ```
 
-- `recommendNextIndicator` traverses prerequisites from a target indicator, returning the next learning indicator to test inside the ZPD window (default 0.5–0.8). It classifies results as `recommended`, `auto-mastered`, `needs-remediation`, or `no-candidate`.
-- `updateAbilities` applies Elo/IRT-style ability updates across indicator, learning outcome, competency, domain, and subject layers after a correct/incorrect outcome.
+- `recommendNextSkill` traverses prerequisites from a target skill, returning the next learning skill to test inside the ZPD window (default 0.5–0.8). It classifies results as `recommended`, `auto-mastered`, `needs-remediation`, or `no-candidate`.
+- `updateAbilities` applies Elo/IRT-style ability updates across skill, learning outcome, competency, domain, and subject layers after a correct/incorrect outcome.
 - `buildGraphSnapshot` aggregates predicted probabilities across the full dependency graph for visualisation.
 - Combine these utilities with your own CSV data exports to drive bespoke lesson assignment flows.
 
@@ -60,9 +60,9 @@ import {
 
 | File | Required | Columns |
 | --- | --- | --- |
-| `sample-graph.csv` | Yes | `subjectId, subjectName, domainId, domainName, competencyId, competencyName, outcomeId, outcomeName, indicatorId, indicatorName, difficulty` |
-| `sample-prerequisites.csv` | Yes | `sourceIndicatorId, targetIndicatorId` (edge points from prerequisite → dependent) |
-| `sample-abilities.csv` | Optional | `type, id, ability` where `type ∈ {competency, domain, subject, outcome, indicator}` |
+| `sample-graph.csv` | Yes | `subjectId, subjectName, domainId, domainName, competencyId, competencyName, outcomeId, outcomeName, skillId, skillName, difficulty` |
+| `sample-prerequisites.csv` | Yes | `sourceSkillId, targetSkillId` (edge points from prerequisite → dependent) |
+| `sample-abilities.csv` | Optional | `type, id, ability` where `type ∈ {competency, domain, subject, outcome, skill}` |
 
 Drop-in replacements following the same schema will update the demo without rebuilding.
 

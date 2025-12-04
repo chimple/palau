@@ -6,7 +6,7 @@ import {
   type AbilityState,
   type CsvRow,
   type DependencyGraph,
-  type Indicator,
+  type Skill,
 } from "@pal/core";
 
 import sampleGraphCsv from "./sample-graph.csv?raw";
@@ -33,8 +33,8 @@ const createDefaultAbilitiesForGraph = (graph: DependencyGraph): AbilityState =>
   for (const outcome of graph.outcomes) {
     state.outcome[outcome.id] = state.outcome[outcome.id] ?? 0;
   }
-  for (const indicator of graph.indicators) {
-    state.indicator[indicator.id] = state.indicator[indicator.id] ?? 0;
+  for (const skill of graph.skills) {
+    state.skill[skill.id] = state.skill[skill.id] ?? 0;
   }
   return state;
 };
@@ -76,8 +76,8 @@ const parseGraphRows = (
       subjectId: string;
     }
   >();
-  const indicators: Indicator[] = [];
-  const indicatorIndex = new Map<string, Indicator>();
+  const skills: Skill[] = [];
+  const skillIndex = new Map<string, Skill>();
 
   for (const row of dataRows) {
     if (row.length < 11) {
@@ -95,8 +95,8 @@ const parseGraphRows = (
       competencyName,
       outcomeId,
       outcomeName,
-      indicatorId,
-      indicatorName,
+      skillId,
+      skillName,
       difficultyText,
     ] = row.map((cell) => cell.trim());
 
@@ -105,7 +105,7 @@ const parseGraphRows = (
       !domainId ||
       !competencyId ||
       !outcomeId ||
-      !indicatorId
+      !skillId
     ) {
       throw new Error("Graph rows must include non-empty IDs for all entities.");
     }
@@ -113,7 +113,7 @@ const parseGraphRows = (
     const difficulty = Number.parseFloat(difficultyText);
     if (Number.isNaN(difficulty)) {
       throw new Error(
-        `Difficulty must be numeric. Check indicator "${indicatorId}".`
+        `Difficulty must be numeric. Check skill "${skillId}".`
       );
     }
 
@@ -151,13 +151,13 @@ const parseGraphRows = (
       });
     }
 
-    if (indicatorIndex.has(indicatorId)) {
-      throw new Error(`Duplicate indicator ID detected: "${indicatorId}".`);
+    if (skillIndex.has(skillId)) {
+      throw new Error(`Duplicate skill ID detected: "${skillId}".`);
     }
 
-    const indicator: Indicator = {
-      id: indicatorId,
-      label: indicatorName || indicatorId,
+    const skill: Skill = {
+      id: skillId,
+      label: skillName || skillId,
       subjectId,
       competencyId,
       domainId,
@@ -166,8 +166,8 @@ const parseGraphRows = (
       prerequisites: [],
     };
 
-    indicators.push(indicator);
-    indicatorIndex.set(indicatorId, indicator);
+    skills.push(skill);
+    skillIndex.set(skillId, skill);
   }
 
   const prereqData = trimEmptyRows(prerequisiteRows);
@@ -178,29 +178,29 @@ const parseGraphRows = (
   for (const row of prereqRowsData) {
     if (row.length < 2) {
       throw new Error(
-        "Prerequisite rows must contain sourceIndicatorId,targetIndicatorId."
+        "Prerequisite rows must contain sourceSkillId,targetSkillId."
       );
     }
     const [sourceId, targetId] = row.map((cell) => cell.trim());
     if (!sourceId || !targetId) {
       continue;
     }
-    const targetIndicator = indicatorIndex.get(targetId);
-    if (!targetIndicator) {
+    const targetSkill = skillIndex.get(targetId);
+    if (!targetSkill) {
       continue;
     }
-    targetIndicator.prerequisites = Array.from(
-      new Set([...targetIndicator.prerequisites, sourceId])
+    targetSkill.prerequisites = Array.from(
+      new Set([...targetSkill.prerequisites, sourceId])
     );
   }
 
-  const startIndicator =
-    indicators.find((indicator) => indicator.prerequisites.length === 0) ??
-    indicators[0];
+  const startSkill =
+    skills.find((skill) => skill.prerequisites.length === 0) ??
+    skills[0];
 
   return {
-    startIndicatorId: startIndicator ? startIndicator.id : "",
-    indicators,
+    startSkillId: startSkill ? startSkill.id : "",
+    skills,
     subjects: Array.from(subjectsMap.values()),
     domains: Array.from(domainsMap.values()),
     competencies: Array.from(competenciesMap.values()),
@@ -234,12 +234,12 @@ const applyAbilityRow = (
     case "outcome":
       state.outcome[id] = safeAbility;
       break;
-    case "indicator":
-      state.indicator[id] = safeAbility;
+    case "skill":
+      state.skill[id] = safeAbility;
       break;
     default:
       throw new Error(
-        `Unknown ability type "${type}". Expected competency | domain | subject | outcome | indicator.`
+        `Unknown ability type "${type}". Expected competency | domain | subject | outcome | skill.`
       );
   }
   return state;
@@ -292,19 +292,19 @@ export const getDefaultDataset = (): DatasetBundle => {
 };
 
 export const cloneAbilities = (abilities: AbilityState): AbilityState => ({
-  indicator: { ...abilities.indicator },
+  skill: { ...abilities.skill },
   outcome: { ...abilities.outcome },
   competency: { ...abilities.competency },
   domain: { ...abilities.domain },
   subject: { ...abilities.subject },
 });
 
-export const selectDefaultTargetIndicator = (graph: DependencyGraph): string => {
-  if (graph.indicators.length === 0) {
+export const selectDefaultTargetSkill = (graph: DependencyGraph): string => {
+  if (graph.skills.length === 0) {
     return "";
   }
-  const sorted = [...graph.indicators].sort(
+  const sorted = [...graph.skills].sort(
     (a, b) => (b.difficulty ?? 0) - (a.difficulty ?? 0)
   );
-  return sorted[0]?.id ?? graph.indicators[0].id;
+  return sorted[0]?.id ?? graph.skills[0].id;
 };

@@ -10,7 +10,7 @@ import type {
   BlendWeights,
   DependencyGraph,
   GraphSnapshot,
-  Indicator,
+  Skill,
   RecommendationContext,
 } from "@pal/core";
 
@@ -27,8 +27,8 @@ interface GraphDiagramProps {
   onSubjectFilterChange: (subjectId: string) => void;
   onDomainFilterChange: (domainId: string) => void;
   onCompetencyFilterChange: (competencyId: string) => void;
-  overrideIndicatorId: string;
-  onOverrideIndicatorChange: (indicatorId: string) => void;
+  overrideSkillId: string;
+  onOverrideSkillChange: (skillId: string) => void;
 }
 
 interface Position {
@@ -51,21 +51,21 @@ const buildDependents = (
   const map = new Map<string, string[]>();
   const shouldInclude = (id: string) => !allowed || allowed.has(id);
 
-  for (const indicator of graph.indicators) {
-    if (!shouldInclude(indicator.id)) {
+  for (const skill of graph.skills) {
+    if (!shouldInclude(skill.id)) {
       continue;
     }
 
-    if (!map.has(indicator.id)) {
-      map.set(indicator.id, []);
+    if (!map.has(skill.id)) {
+      map.set(skill.id, []);
     }
 
-    for (const prereq of indicator.prerequisites) {
+    for (const prereq of skill.prerequisites) {
       if (!shouldInclude(prereq)) {
         continue;
       }
       const dependents = map.get(prereq) ?? [];
-      dependents.push(indicator.id);
+      dependents.push(skill.id);
       map.set(prereq, dependents);
     }
   }
@@ -82,19 +82,19 @@ const computeLevels = (
   const queue: string[] = [];
   const shouldInclude = (id: string) => !allowed || allowed.has(id);
 
-  for (const indicator of graph.indicators) {
-    if (!shouldInclude(indicator.id)) {
+  for (const skill of graph.skills) {
+    if (!shouldInclude(skill.id)) {
       continue;
     }
 
-    const prereqs = indicator.prerequisites.filter((pre) =>
+    const prereqs = skill.prerequisites.filter((pre) =>
       shouldInclude(pre)
     );
 
-    indegree.set(indicator.id, prereqs.length);
+    indegree.set(skill.id, prereqs.length);
     if (prereqs.length === 0) {
-      queue.push(indicator.id);
-      levels.set(indicator.id, 0);
+      queue.push(skill.id);
+      levels.set(skill.id, 0);
     }
   }
 
@@ -117,12 +117,12 @@ const computeLevels = (
   }
 
   // Fallback for any nodes left unattached (e.g. cycles)
-  for (const indicator of graph.indicators) {
-    if (!shouldInclude(indicator.id)) {
+  for (const skill of graph.skills) {
+    if (!shouldInclude(skill.id)) {
       continue;
     }
-    if (!levels.has(indicator.id)) {
-      levels.set(indicator.id, 0);
+    if (!levels.has(skill.id)) {
+      levels.set(skill.id, 0);
     }
   }
 
@@ -184,7 +184,7 @@ const statusColor = (args: {
   targetId: string;
 }): { fill: string; stroke: string } => {
   const { id, snapshot, recommendation, targetId } = args;
-  const item = snapshot.snapshot.find((entry) => entry.indicatorId === id);
+  const item = snapshot.snapshot.find((entry) => entry.skillId === id);
   const isTarget = id === targetId;
   const isCandidate = recommendation.candidateId === id;
   const baseStroke = isTarget ? "#1d4ed8" : "rgba(51,65,85,0.35)";
@@ -229,15 +229,15 @@ const GraphDiagram = ({
   onSubjectFilterChange,
   onDomainFilterChange,
   onCompetencyFilterChange,
-  overrideIndicatorId,
-  onOverrideIndicatorChange,
+  overrideSkillId,
+  onOverrideSkillChange,
 }: GraphDiagramProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchIndicatorId, setSearchIndicatorId] = useState("");
+  const [searchSkillId, setSearchSkillId] = useState("");
   const [searchError, setSearchError] = useState<string | null>(null);
   const [hoverInfo, setHoverInfo] = useState<{
-    indicatorId: string;
+    skillId: string;
     x: number;
     y: number;
   } | null>(null);
@@ -313,14 +313,14 @@ const GraphDiagram = ({
       return graph.competencies.map((competency) => competency.id);
     }
     const ids = new Set<string>();
-    for (const indicator of graph.indicators) {
-      if (subjectFilterId && indicator.subjectId !== subjectFilterId) {
+    for (const skill of graph.skills) {
+      if (subjectFilterId && skill.subjectId !== subjectFilterId) {
         continue;
       }
-      if (domainFilterId && indicator.domainId !== domainFilterId) {
+      if (domainFilterId && skill.domainId !== domainFilterId) {
         continue;
       }
-      ids.add(indicator.competencyId);
+      ids.add(skill.competencyId);
     }
     return Array.from(ids);
   }, [graph, subjectFilterId, domainFilterId]);
@@ -342,24 +342,24 @@ const GraphDiagram = ({
   }, [competencyFilterId, filteredCompetencyIds, onCompetencyFilterChange]);
 
   useEffect(() => {
-    if (!overrideIndicatorId) {
+    if (!overrideSkillId) {
       return;
     }
-    const indicator = graph.indicators.find((item) => item.id === overrideIndicatorId);
-    if (!indicator) {
+    const skill = graph.skills.find((item) => item.id === overrideSkillId);
+    if (!skill) {
       return;
     }
-    if (indicator.subjectId !== subjectFilterId) {
-      onSubjectFilterChange(indicator.subjectId);
+    if (skill.subjectId !== subjectFilterId) {
+      onSubjectFilterChange(skill.subjectId);
     }
-    if (indicator.domainId !== domainFilterId) {
-      onDomainFilterChange(indicator.domainId);
+    if (skill.domainId !== domainFilterId) {
+      onDomainFilterChange(skill.domainId);
     }
-    if (indicator.competencyId !== competencyFilterId) {
-      onCompetencyFilterChange(indicator.competencyId);
+    if (skill.competencyId !== competencyFilterId) {
+      onCompetencyFilterChange(skill.competencyId);
     }
   }, [
-    overrideIndicatorId,
+    overrideSkillId,
     graph,
     subjectFilterId,
     domainFilterId,
@@ -369,15 +369,15 @@ const GraphDiagram = ({
     onCompetencyFilterChange,
   ]);
 
-  const indicatorIndex = useMemo(() => {
-    const map = new Map(graph.indicators.map((indicator) => [indicator.id, indicator]));
+  const skillIndex = useMemo(() => {
+    const map = new Map(graph.skills.map((skill) => [skill.id, skill]));
     return map;
   }, [graph]);
 
   const probabilityIndex = useMemo(() => {
     const map = new Map<string, number>();
     for (const entry of snapshot.snapshot) {
-      map.set(entry.indicatorId, entry.probability);
+      map.set(entry.skillId, entry.probability);
     }
     return map;
   }, [snapshot]);
@@ -385,27 +385,27 @@ const GraphDiagram = ({
   const formatAbilityValue = (value: number) => value.toFixed(2);
   const formatProbabilityValue = (value: number) => (value * 100).toFixed(1);
 
-  const getIndicatorAbilitySnapshot = useCallback(
-    (indicatorId: string) => {
-      const indicator = indicatorIndex.get(indicatorId);
-      if (!indicator) {
+  const getSkillAbilitySnapshot = useCallback(
+    (skillId: string) => {
+      const skill = skillIndex.get(skillId);
+      if (!skill) {
         return null;
       }
-      const thetaIndicator = abilities.indicator[indicator.id] ?? 0;
-      const thetaOutcome = abilities.outcome[indicator.outcomeId] ?? 0;
-      const thetaCompetency = abilities.competency[indicator.competencyId] ?? 0;
-      const thetaDomain = abilities.domain[indicator.domainId] ?? 0;
-      const thetaSubject = abilities.subject[indicator.subjectId] ?? 0;
+      const thetaSkill = abilities.skill[skill.id] ?? 0;
+      const thetaOutcome = abilities.outcome[skill.outcomeId] ?? 0;
+      const thetaCompetency = abilities.competency[skill.competencyId] ?? 0;
+      const thetaDomain = abilities.domain[skill.domainId] ?? 0;
+      const thetaSubject = abilities.subject[skill.subjectId] ?? 0;
       const thetaBlend =
-        thetaIndicator * blendWeights.indicator +
+        thetaSkill * blendWeights.skill +
         thetaOutcome * blendWeights.outcome +
         thetaCompetency * blendWeights.competency +
         thetaDomain * blendWeights.domain +
         thetaSubject * blendWeights.subject;
-      const probability = probabilityIndex.get(indicator.id) ?? 0;
+      const probability = probabilityIndex.get(skill.id) ?? 0;
       return {
-        indicator,
-        thetaIndicator,
+        skill,
+        thetaSkill,
         thetaOutcome,
         thetaCompetency,
         thetaSubject,
@@ -414,32 +414,32 @@ const GraphDiagram = ({
         probability,
       };
     },
-    [abilities, blendWeights, indicatorIndex, probabilityIndex]
+    [abilities, blendWeights, skillIndex, probabilityIndex]
   );
 
   useEffect(() => {
-    if (searchIndicatorId && !indicatorIndex.has(searchIndicatorId)) {
-      setSearchIndicatorId("");
+    if (searchSkillId && !skillIndex.has(searchSkillId)) {
+      setSearchSkillId("");
     }
-  }, [indicatorIndex, searchIndicatorId]);
+  }, [skillIndex, searchSkillId]);
 
   const globalDependents = useMemo(() => buildDependents(graph), [graph]);
 
   const searchConnectedFilter = useMemo(() => {
-    if (!searchIndicatorId) {
+    if (!searchSkillId) {
       return undefined;
     }
     const connected = new Set<string>();
-    const stack = [searchIndicatorId];
+    const stack = [searchSkillId];
     while (stack.length > 0) {
       const current = stack.pop()!;
       if (connected.has(current)) {
         continue;
       }
       connected.add(current);
-      const indicator = indicatorIndex.get(current);
-      if (indicator) {
-        for (const prereq of indicator.prerequisites) {
+      const skill = skillIndex.get(current);
+      if (skill) {
+        for (const prereq of skill.prerequisites) {
           stack.push(prereq);
         }
       }
@@ -449,9 +449,9 @@ const GraphDiagram = ({
       }
     }
     return connected;
-  }, [searchIndicatorId, indicatorIndex, globalDependents]);
+  }, [searchSkillId, skillIndex, globalDependents]);
 
-  const indicatorFilter = useMemo<Set<string> | undefined>(() => {
+  const skillFilter = useMemo<Set<string> | undefined>(() => {
     if (searchConnectedFilter) {
       return searchConnectedFilter;
     }
@@ -463,23 +463,23 @@ const GraphDiagram = ({
       return undefined;
     }
     const allowed = new Set(
-      graph.indicators
-        .filter((indicator) => {
-          if (subjectFilterId && indicator.subjectId !== subjectFilterId) {
+      graph.skills
+        .filter((skill) => {
+          if (subjectFilterId && skill.subjectId !== subjectFilterId) {
             return false;
           }
-          if (domainFilterId && indicator.domainId !== domainFilterId) {
+          if (domainFilterId && skill.domainId !== domainFilterId) {
             return false;
           }
           if (
             competencyFilterId &&
-            indicator.competencyId !== competencyFilterId
+            skill.competencyId !== competencyFilterId
           ) {
             return false;
           }
           return true;
         })
-        .map((indicator) => indicator.id)
+        .map((skill) => skill.id)
     );
     return allowed;
   }, [
@@ -491,8 +491,8 @@ const GraphDiagram = ({
   ]);
 
   const layout = useMemo(
-    () => computeLayout(graph, indicatorFilter),
-    [graph, indicatorFilter]
+    () => computeLayout(graph, skillFilter),
+    [graph, skillFilter]
   );
   const positions = useMemo(
     () =>
@@ -503,36 +503,36 @@ const GraphDiagram = ({
     [layout]
   );
   const dependents = useMemo(
-    () => buildDependents(graph, indicatorFilter),
-    [graph, indicatorFilter]
+    () => buildDependents(graph, skillFilter),
+    [graph, skillFilter]
   );
 
   const overrideOptions = useMemo(() => {
-    const filtered = graph.indicators.filter((indicator) => {
-      if (subjectFilterId && indicator.subjectId !== subjectFilterId) {
+    const filtered = graph.skills.filter((skill) => {
+      if (subjectFilterId && skill.subjectId !== subjectFilterId) {
         return false;
       }
-      if (domainFilterId && indicator.domainId !== domainFilterId) {
+      if (domainFilterId && skill.domainId !== domainFilterId) {
         return false;
       }
-      if (competencyFilterId && indicator.competencyId !== competencyFilterId) {
+      if (competencyFilterId && skill.competencyId !== competencyFilterId) {
         return false;
       }
       return true;
     });
-    const hardestByCompetency = new Map<string, { indicatorId: string; difficulty: number }>();
-    for (const indicator of filtered) {
-      const existing = hardestByCompetency.get(indicator.competencyId);
-      if (!existing || indicator.difficulty > existing.difficulty) {
-        hardestByCompetency.set(indicator.competencyId, {
-          indicatorId: indicator.id,
-          difficulty: indicator.difficulty,
+    const hardestByCompetency = new Map<string, { skillId: string; difficulty: number }>();
+    for (const skill of filtered) {
+      const existing = hardestByCompetency.get(skill.competencyId);
+      if (!existing || skill.difficulty > existing.difficulty) {
+        hardestByCompetency.set(skill.competencyId, {
+          skillId: skill.id,
+          difficulty: skill.difficulty,
         });
       }
     }
     const highlightSet = new Set<string>();
     for (const entry of hardestByCompetency.values()) {
-      highlightSet.add(entry.indicatorId);
+      highlightSet.add(entry.skillId);
     }
     return {
       filtered,
@@ -541,11 +541,11 @@ const GraphDiagram = ({
   }, [graph, subjectFilterId, domainFilterId, competencyFilterId]);
 
   const overrideSelectionMissing =
-    Boolean(overrideIndicatorId) &&
-    !overrideOptions.filtered.some((indicator) => indicator.id === overrideIndicatorId);
+    Boolean(overrideSkillId) &&
+    !overrideOptions.filtered.some((skill) => skill.id === overrideSkillId);
 
   const hoverSnapshot = hoverInfo
-    ? getIndicatorAbilitySnapshot(hoverInfo.indicatorId)
+    ? getSkillAbilitySnapshot(hoverInfo.skillId)
     : null;
 
   const width = positions.length
@@ -576,7 +576,7 @@ const GraphDiagram = ({
     [onCompetencyFilterChange]
   );
 
-  const noResults = indicatorFilter !== undefined && positions.length === 0;
+  const noResults = skillFilter !== undefined && positions.length === 0;
 
   const [scale, setScale] = useState(1);
   const [translate, setTranslate] = useState({ x: 0, y: 0 });
@@ -598,9 +598,9 @@ const GraphDiagram = ({
     });
   }, []);
 
-  const focusOnIndicator = useCallback(
-    (indicatorId: string) => {
-      const position = layout.get(indicatorId);
+  const focusOnSkill = useCallback(
+    (skillId: string) => {
+      const position = layout.get(skillId);
       if (!position) {
         return;
       }
@@ -616,10 +616,10 @@ const GraphDiagram = ({
   );
 
   useEffect(() => {
-    if (searchIndicatorId) {
-      focusOnIndicator(searchIndicatorId);
+    if (searchSkillId) {
+      focusOnSkill(searchSkillId);
     }
-  }, [searchIndicatorId, focusOnIndicator]);
+  }, [searchSkillId, focusOnSkill]);
 
   const handleWheel = useCallback(
     (event: React.WheelEvent<HTMLDivElement>) => {
@@ -680,16 +680,16 @@ const GraphDiagram = ({
     setTranslate({ x: 0, y: 0 });
   }, []);
 
-  const selectSearchIndicator = useCallback(
-    (indicatorId: string) => {
-      setSearchIndicatorId(indicatorId);
+  const selectSearchSkill = useCallback(
+    (skillId: string) => {
+      setSearchSkillId(skillId);
       setSearchError(null);
-      onOverrideIndicatorChange(indicatorId);
+      onOverrideSkillChange(skillId);
     },
-    [onOverrideIndicatorChange]
+    [onOverrideSkillChange]
   );
 
-  const resolveSearchIndicator = useCallback(
+  const resolveSearchSkill = useCallback(
     (query: string) => {
       const trimmed = query.trim();
       if (!trimmed) {
@@ -699,19 +699,19 @@ const GraphDiagram = ({
       if (pool.length === 0) {
         return null;
       }
-      const directMatch = pool.find((indicator) => indicator.id === trimmed);
+      const directMatch = pool.find((skill) => skill.id === trimmed);
       if (directMatch) {
         return directMatch.id;
       }
       const normalized = trimmed.toLowerCase();
       const idMatch = pool.find(
-        (indicator) => indicator.id.toLowerCase() === normalized
+        (skill) => skill.id.toLowerCase() === normalized
       );
       if (idMatch) {
         return idMatch.id;
       }
-      const labelMatch = pool.find((indicator) =>
-        indicator.label.toLowerCase().includes(normalized)
+      const labelMatch = pool.find((skill) =>
+        skill.label.toLowerCase().includes(normalized)
       );
       return labelMatch?.id ?? null;
     },
@@ -725,33 +725,33 @@ const GraphDiagram = ({
       }
       const trimmed = searchQuery.trim();
       if (!trimmed) {
-        setSearchIndicatorId("");
+        setSearchSkillId("");
         setSearchError(null);
         return;
       }
-      const resolved = resolveSearchIndicator(trimmed);
+      const resolved = resolveSearchSkill(trimmed);
       if (resolved) {
-        selectSearchIndicator(resolved);
+        selectSearchSkill(resolved);
       } else {
-        setSearchIndicatorId("");
-        setSearchError("No learning indicator matches that search.");
+        setSearchSkillId("");
+        setSearchError("No learning skill matches that search.");
       }
     },
-    [resolveSearchIndicator, searchQuery, selectSearchIndicator]
+    [resolveSearchSkill, searchQuery, selectSearchSkill]
   );
 
   const clearSearch = useCallback(() => {
     setSearchQuery("");
-    setSearchIndicatorId("");
+    setSearchSkillId("");
     setSearchError(null);
   }, []);
 
   const handleNodeEnter = useCallback(
-    (event: React.MouseEvent<SVGGElement>, indicatorId: string) => {
+    (event: React.MouseEvent<SVGGElement>, skillId: string) => {
       const rect = containerRef.current?.getBoundingClientRect();
       const x = event.clientX - (rect?.left ?? 0);
       const y = event.clientY - (rect?.top ?? 0);
-      setHoverInfo({ indicatorId, x, y });
+      setHoverInfo({ skillId, x, y });
     },
     []
   );
@@ -833,14 +833,14 @@ const GraphDiagram = ({
           style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}
         >
           <label htmlFor="graph-search-input" style={{ fontSize: "0.95rem" }}>
-            Search or select a learning indicator
+            Search or select a learning skill
           </label>
           <div style={{ display: "flex", gap: "0.4rem" }}>
             <input
               id="graph-search-input"
               className="select"
               type="search"
-              list="graph-indicator-options"
+              list="graph-skill-options"
               value={searchQuery}
               placeholder="e.g. 5.19 or Addition Facts"
               onChange={(event) => setSearchQuery(event.target.value)}
@@ -853,21 +853,21 @@ const GraphDiagram = ({
             </button>
           </div>
         </form>
-        <datalist id="graph-indicator-options">
-          {overrideOptions.filtered.map((indicator) => (
-            <option key={indicator.id} value={indicator.id}>
-              {indicator.label}
+        <datalist id="graph-skill-options">
+          {overrideOptions.filtered.map((skill) => (
+            <option key={skill.id} value={skill.id}>
+              {skill.label}
             </option>
           ))}
         </datalist>
-        {searchIndicatorId && (
+        {searchSkillId && (
           <p style={{ fontSize: "0.8rem", color: "#475569", marginTop: "0.35rem" }}>
             Showing network for{" "}
             <strong>
-              {indicatorIndex.get(searchIndicatorId)?.label ?? searchIndicatorId} (
-              {searchIndicatorId})
+              {skillIndex.get(searchSkillId)?.label ?? searchSkillId} (
+              {searchSkillId})
             </strong>
-            . The manual override dropdown below has been synced to this indicator.
+            . The manual override dropdown below has been synced to this skill.
           </p>
         )}
         {searchError && (
@@ -876,41 +876,41 @@ const GraphDiagram = ({
           </p>
         )}
         <label htmlFor="graph-override-select" style={{ fontSize: "0.95rem", marginTop: "0.6rem" }}>
-          Indicator override (optional)
+          Skill override (optional)
         </label>
         <select
           id="graph-override-select"
           className="select"
-          value={overrideIndicatorId}
-          onChange={(event) => onOverrideIndicatorChange(event.target.value)}
+          value={overrideSkillId}
+          onChange={(event) => onOverrideSkillChange(event.target.value)}
         >
           <option value="">
             Use recommendation{" "}
             {recommendation.candidateId
-              ? `(${indicatorIndex.get(recommendation.candidateId)?.label ?? recommendation.candidateId} – ${recommendation.candidateId})`
+              ? `(${skillIndex.get(recommendation.candidateId)?.label ?? recommendation.candidateId} – ${recommendation.candidateId})`
               : "(none available)"}
           </option>
-          {overrideSelectionMissing && overrideIndicatorId && (
-            <option value={overrideIndicatorId}>
-              {indicatorIndex.get(overrideIndicatorId)?.label ?? overrideIndicatorId} ({overrideIndicatorId}) — outside current filter
+          {overrideSelectionMissing && overrideSkillId && (
+            <option value={overrideSkillId}>
+              {skillIndex.get(overrideSkillId)?.label ?? overrideSkillId} ({overrideSkillId}) — outside current filter
             </option>
           )}
-          {overrideOptions.filtered.map((indicator) => {
+          {overrideOptions.filtered.map((skill) => {
             const competencyLabel =
-              competencyLabelLookup.get(indicator.competencyId) ?? indicator.competencyId;
-            const highlightLabel = overrideOptions.highlightSet.has(indicator.id)
+              competencyLabelLookup.get(skill.competencyId) ?? skill.competencyId;
+            const highlightLabel = overrideOptions.highlightSet.has(skill.id)
               ? " — Highest difficulty"
               : "";
             return (
-              <option key={indicator.id} value={indicator.id}>
-                {`${indicator.label} (${indicator.id}) — ${competencyLabel}${highlightLabel}`}
+              <option key={skill.id} value={skill.id}>
+                {`${skill.label} (${skill.id}) — ${competencyLabel}${highlightLabel}`}
               </option>
             );
           })}
         </select>
         {overrideOptions.filtered.length === 0 && (
           <p style={{ fontSize: "0.8rem", color: "#b91c1c", marginTop: "0.35rem" }}>
-            No indicators match the current graph filters. Adjust the filters to find an override.
+            No skills match the current graph filters. Adjust the filters to find an override.
           </p>
         )}
         <p style={{ fontSize: "0.8rem", color: "#64748b", marginTop: "0.35rem" }}>
@@ -946,7 +946,7 @@ const GraphDiagram = ({
       </div>
       {noResults ? (
         <p className="graph-empty-state">
-          No learning indicators match the selected filters.
+          No learning skills match the selected filters.
         </p>
       ) : null}
       <div
@@ -1007,15 +1007,15 @@ const GraphDiagram = ({
                 recommendation,
                 targetId,
               });
-              const indicator = graph.indicators.find(
+              const skill = graph.skills.find(
                 (li) => li.id === pos.id
               );
               const probability =
-                snapshot.snapshot.find((entry) => entry.indicatorId === pos.id)
+                snapshot.snapshot.find((entry) => entry.skillId === pos.id)
                   ?.probability ?? 0;
-              const difficulty = indicator?.difficulty ?? 0;
-              const isSearchFocus = searchIndicatorId === pos.id;
-              const isOverrideFocus = overrideIndicatorId === pos.id;
+              const difficulty = skill?.difficulty ?? 0;
+              const isSearchFocus = searchSkillId === pos.id;
+              const isOverrideFocus = overrideSkillId === pos.id;
               const circleStroke = isSearchFocus
                 ? "#f97316"
                 : isOverrideFocus
@@ -1046,7 +1046,7 @@ const GraphDiagram = ({
                     fontWeight="600"
                     fill="#1f2937"
                   >
-                    {indicator?.label ?? pos.id}
+                    {skill?.label ?? pos.id}
                   </text>
                   <text
                     x={pos.x}
@@ -1083,17 +1083,17 @@ const GraphDiagram = ({
       </div>
       {hoverSnapshot && hoverInfo
         ? (() => {
-            const indicator = hoverSnapshot.indicator;
+            const skill = hoverSnapshot.skill;
             const outcome = outcomeIndex.get(
-              indicator.outcomeId
+              skill.outcomeId
             );
             const competencyLabel =
-              competencyLabelLookup.get(indicator.competencyId) ??
-              indicator.competencyId;
+              competencyLabelLookup.get(skill.competencyId) ??
+              skill.competencyId;
             const subjectLabel =
-              subjectLabelLookup.get(indicator.subjectId) ?? indicator.subjectId;
+              subjectLabelLookup.get(skill.subjectId) ?? skill.subjectId;
             const domainLabel =
-              domainLabelLookup.get(indicator.domainId) ?? indicator.domainId;
+              domainLabelLookup.get(skill.domainId) ?? skill.domainId;
             return (
               <div
                 className="graph-tooltip"
@@ -1113,11 +1113,11 @@ const GraphDiagram = ({
                 }}
               >
                 <div style={{ fontWeight: 600, fontSize: "0.8rem", marginBottom: 4 }}>
-                  {indicator.label} ({indicator.id})
+                  {skill.label} ({skill.id})
                 </div>
-                <div>θ indicator: {formatAbilityValue(hoverSnapshot.thetaIndicator)}</div>
+                <div>θ skill: {formatAbilityValue(hoverSnapshot.thetaSkill)}</div>
                 <div>
-                  θ outcome: {formatAbilityValue(hoverSnapshot.thetaOutcome)} — {outcome?.label ?? indicator.outcomeId}
+                  θ outcome: {formatAbilityValue(hoverSnapshot.thetaOutcome)} — {outcome?.label ?? skill.outcomeId}
                 </div>
                 <div>
                   θ competency: {formatAbilityValue(hoverSnapshot.thetaCompetency)} — {competencyLabel}

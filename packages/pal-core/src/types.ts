@@ -24,7 +24,7 @@ export interface Outcome {
   subjectId: string;
 }
 
-export interface Indicator {
+export interface Skill {
   id: string;
   label: string;
   outcomeId: string;
@@ -36,16 +36,16 @@ export interface Indicator {
 }
 
 export interface DependencyGraph {
-  indicators: Indicator[];
+  skills: Skill[];
   outcomes: Outcome[];
   competencies: Competency[];
   domains: Domain[];
   subjects: Subject[];
-  startIndicatorId: string;
+  startSkillId: string;
 }
 
 export interface AbilityState {
-  indicator: Record<string, number>;
+  skill: Record<string, number>;
   outcome: Record<string, number>;
   competency: Record<string, number>;
   domain: Record<string, number>;
@@ -53,7 +53,7 @@ export interface AbilityState {
 }
 
 export interface LearningRates {
-  indicator: number;
+  skill: number;
   outcome: number;
   competency: number;
   domain: number;
@@ -61,7 +61,7 @@ export interface LearningRates {
 }
 
 export interface BlendWeights {
-  indicator: number;
+  skill: number;
   outcome: number;
   competency: number;
   domain: number;
@@ -69,7 +69,7 @@ export interface BlendWeights {
 }
 
 export interface RecommendationContext {
-  targetIndicatorId: string;
+  targetSkillId: string;
   candidateId: string;
   probability: number;
   status: RecommendationStatus;
@@ -80,7 +80,7 @@ export interface RecommendationContext {
 export interface RecommendationRequest {
   graph: DependencyGraph;
   abilities: AbilityState;
-  targetIndicatorId: string;
+  targetSkillId: string;
   zpdRange?: [number, number];
   blendWeights?: BlendWeights;
   masteredThreshold?: number;
@@ -93,7 +93,7 @@ export type RecommendationStatus =
   | "no-candidate";
 
 export interface OutcomeEvent {
-  indicatorId: string;
+  skillId: string;
   correct: boolean;
   timestamp?: number;
 }

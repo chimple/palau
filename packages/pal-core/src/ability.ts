@@ -3,7 +3,7 @@ import {
   DEFAULT_LEARNING_RATES,
 } from "./constants";
 import type { AbilityUpdateOptions, AbilityUpdateResult } from "./types";
-import { blendAbility, cloneAbilityState, getIndicator, logistic } from "./utils";
+import { blendAbility, cloneAbilityState, getSkill, logistic } from "./utils";
 
 export const updateAbilities = (
   options: AbilityUpdateOptions
@@ -11,35 +11,34 @@ export const updateAbilities = (
   const { graph, abilities, event } = options;
   const weights = options.blendWeights ?? DEFAULT_BLEND_WEIGHTS;
   const rates = options.learningRates ?? DEFAULT_LEARNING_RATES;
-  const indicator = getIndicator(graph, event.indicatorId);
+  const skill = getSkill(graph, event.skillId);
   const newState = cloneAbilityState(abilities);
 
-  const priorBlend = blendAbility(indicator, newState, weights) - indicator.difficulty;
+  const priorBlend = blendAbility(skill, newState, weights) - skill.difficulty;
   const probabilityBefore = logistic(priorBlend);
   const outcome = event.correct ? 1 : 0;
   const error = outcome - probabilityBefore;
 
-  const currentIndicator = newState.indicator[indicator.id] ?? 0;
+  const currentSkill = newState.skill[skill.id] ?? 0;
   const currentOutcome =
-    newState.outcome[indicator.outcomeId] ?? 0;
+    newState.outcome[skill.outcomeId] ?? 0;
   const currentCompetency =
-    newState.competency[indicator.competencyId] ?? 0;
-  const currentDomain = newState.domain[indicator.domainId] ?? 0;
-  const currentSubject = newState.subject[indicator.subjectId] ?? 0;
+    newState.competency[skill.competencyId] ?? 0;
+  const currentDomain = newState.domain[skill.domainId] ?? 0;
+  const currentSubject = newState.subject[skill.subjectId] ?? 0;
 
-  newState.indicator[indicator.id] =
-    currentIndicator + rates.indicator * error;
-  newState.outcome[indicator.outcomeId] =
+  newState.skill[skill.id] = currentSkill + rates.skill * error;
+  newState.outcome[skill.outcomeId] =
     currentOutcome + rates.outcome * error;
-  newState.competency[indicator.competencyId] =
+  newState.competency[skill.competencyId] =
     currentCompetency + rates.competency * error;
-  newState.domain[indicator.domainId] =
+  newState.domain[skill.domainId] =
     currentDomain + rates.domain * error;
-  newState.subject[indicator.subjectId] =
+  newState.subject[skill.subjectId] =
     currentSubject + rates.subject * error;
 
   const posteriorBlend =
-    blendAbility(indicator, newState, weights) - indicator.difficulty;
+    blendAbility(skill, newState, weights) - skill.difficulty;
   const probabilityAfter = logistic(posteriorBlend);
 
   return {

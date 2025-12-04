@@ -1,4 +1,4 @@
-subjectId,subjectName,domainId,domainName,competencyId,competencyName,outcomeId,outcomeName,indicatorId,indicatorName,difficulty
+subjectId,subjectName,domainId,domainName,competencyId,competencyName,outcomeId,outcomeName,skillId,skillName,difficulty
 math,Mathematics,math-foundations,Mathematics Foundations,calendar-activity,Calendar Activity,6.29,6.29,6.29,6.29,0.9257142857
 math,Mathematics,math-foundations,Mathematics Foundations,calendar-activity,Calendar Activity,1.29,1.29,1.29,1.29,0.1028571429
 math,Mathematics,math-foundations,Mathematics Foundations,calendar-activity,Calendar Activity,2.29,2.29,2.29,2.29,0.08571428571

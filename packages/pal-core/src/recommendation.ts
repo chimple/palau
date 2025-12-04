@@ -4,53 +4,50 @@ import {
   DEFAULT_ZPD_RANGE,
 } from "./constants";
 import type { RecommendationContext, RecommendationRequest } from "./types";
-import { blendAbility, indexGraphByIndicator, logistic } from "./utils";
+import { blendAbility, indexGraphBySkill, logistic } from "./utils";
 
-export const recommendNextIndicator = (
+export const recommendNextSkill = (
   request: RecommendationRequest
 ): RecommendationContext => {
   const weights = request.blendWeights ?? DEFAULT_BLEND_WEIGHTS;
   const [zpdMin, zpdMax] = request.zpdRange ?? DEFAULT_ZPD_RANGE;
   const masteredThreshold =
     request.masteredThreshold ?? DEFAULT_MASTERED_THRESHOLD;
-  const { indicatorById, dependents } = indexGraphByIndicator(request.graph);
+  const { skillById, dependents } = indexGraphBySkill(request.graph);
   const visited = new Set<string>();
 
-  const evaluate = (
-    indicatorId: string,
-    trail: string[]
-  ): RecommendationContext => {
-    if (visited.has(indicatorId)) {
+  const evaluate = (skillId: string, trail: string[]): RecommendationContext => {
+    if (visited.has(skillId)) {
       return {
-        targetIndicatorId: request.targetIndicatorId,
-        candidateId: indicatorId,
+        targetSkillId: request.targetSkillId,
+        candidateId: skillId,
         probability: 0,
         status: "no-candidate",
         traversed: trail,
         notes: "Cycle detected - already evaluated",
       };
     }
-    visited.add(indicatorId);
-    const indicator = indicatorById.get(indicatorId);
-    if (!indicator) {
+    visited.add(skillId);
+    const skill = skillById.get(skillId);
+    if (!skill) {
       return {
-        targetIndicatorId: request.targetIndicatorId,
-        candidateId: indicatorId,
+        targetSkillId: request.targetSkillId,
+        candidateId: skillId,
         probability: 0,
         status: "no-candidate",
         traversed: trail,
-        notes: "Indicator missing from graph definition",
+        notes: "Skill missing from graph definition",
       };
     }
 
-    const updatedTrail = [...trail, indicatorId];
+    const updatedTrail = [...trail, skillId];
 
     // Fallback candidate to suggest remediation on the nearest non-mastered
     // prerequisite when deeper recursion fails to find any ZPD candidate.
     let fallbackRemediation: RecommendationContext | null = null;
 
-    for (const prereqId of indicator.prerequisites) {
-      const prereq = indicatorById.get(prereqId);
+    for (const prereqId of skill.prerequisites) {
+      const prereq = skillById.get(prereqId);
       if (!prereq) {
         continue;
       }
@@ -66,7 +63,7 @@ export const recommendNextIndicator = (
 
       if (prob >= zpdMin && prob <= zpdMax) {
         return {
-          targetIndicatorId: request.targetIndicatorId,
+          targetSkillId: request.targetSkillId,
           candidateId: prereqId,
           probability: prob,
           status: "recommended",
@@ -88,7 +85,7 @@ export const recommendNextIndicator = (
         // returning this remediation suggestion.
         if (!fallbackRemediation) {
           fallbackRemediation = {
-            targetIndicatorId: request.targetIndicatorId,
+            targetSkillId: request.targetSkillId,
             candidateId: prereqId,
             probability: prob,
             status: "needs-remediation",
@@ -96,53 +93,53 @@ export const recommendNextIndicator = (
             notes: "Nearest non-mastered prerequisite requires remediation",
           };
         }
+      }
     }
-  }
-  const selfProb =
+
+    const selfProb =
       logistic(
-        blendAbility(indicator, request.abilities, weights) -
-          indicator.difficulty
+        blendAbility(skill, request.abilities, weights) - skill.difficulty
       ) ?? 0;
 
     if (selfProb >= zpdMin && selfProb <= zpdMax) {
       return {
-        targetIndicatorId: request.targetIndicatorId,
-        candidateId: indicatorId,
+        targetSkillId: request.targetSkillId,
+        candidateId: skillId,
         probability: selfProb,
         status: "recommended",
         traversed: updatedTrail,
         notes:
-          indicatorId === request.targetIndicatorId
+          skillId === request.targetSkillId
             ? "Gate reopened - target is in ZPD"
-            : "Candidate indicator in ZPD",
+            : "Candidate skill in ZPD",
       };
     }
 
     if (selfProb >= masteredThreshold) {
-      // If the current indicator (often the target) appears mastered, try to
+      // If the current skill (often the target) appears mastered, try to
       // advance to its successors (dependents) and select an appropriate
       // candidate among them. Preference:
       //  1) successors whose prerequisites are all mastered
       //  2) among those, prefer successors in ZPD (closest to masteredThreshold)
       //  3) if none in ZPD, pick the successor with highest probability
       // If no suitable successor is found, fall back to returning auto-mastered
-      // for the current indicator.
-      if (indicatorId === request.targetIndicatorId) {
+      // for the current skill.
+      if (skillId === request.targetSkillId) {
         // Forward-search among dependents to find the next actionable
         // candidate. We perform a BFS over successors where prerequisites
         // are all mastered. For each node encountered we call `evaluate` on
         // that node to allow the normal backward traversal to run (so we
         // properly surface ZPD candidates or remediation). If a successor
         // is itself auto-mastered, we continue to its dependents.
-        const startSuccs = dependents.get(indicatorId) ?? [];
+        const startSuccs = dependents.get(skillId) ?? [];
         const queue: string[] = [];
         for (const sid of startSuccs) {
-          const sInd = indicatorById.get(sid);
-          if (!sInd) continue;
+          const sSkill = skillById.get(sid);
+          if (!sSkill) continue;
           // only enqueue successors whose prerequisites are all mastered
           let allMastered = true;
-          for (const pre of sInd.prerequisites) {
-            const preNode = indicatorById.get(pre);
+          for (const pre of sSkill.prerequisites) {
+            const preNode = skillById.get(pre);
             if (!preNode) {
               allMastered = false;
               break;
@@ -165,7 +162,10 @@ export const recommendNextIndicator = (
           // Use evaluate to apply normal backward-checking logic from this
           // successor. Pass the updated trail so traversed path is accurate.
           const result = evaluate(current, updatedTrail);
-          if (result.status === "recommended" || result.status === "needs-remediation") {
+          if (
+            result.status === "recommended" ||
+            result.status === "needs-remediation"
+          ) {
             // Found an actionable recommendation.
             return result;
           }
@@ -174,11 +174,11 @@ export const recommendNextIndicator = (
             // enqueueing its dependents whose prerequisites are all mastered.
             const nextSuccs = dependents.get(current) ?? [];
             for (const ns of nextSuccs) {
-              const nsInd = indicatorById.get(ns);
-              if (!nsInd) continue;
+              const nsSkill = skillById.get(ns);
+              if (!nsSkill) continue;
               let allMasteredNs = true;
-              for (const pre of nsInd.prerequisites) {
-                const preNode = indicatorById.get(pre);
+              for (const pre of nsSkill.prerequisites) {
+                const preNode = skillById.get(pre);
                 if (!preNode) {
                   allMasteredNs = false;
                   break;
@@ -203,24 +203,26 @@ export const recommendNextIndicator = (
         // If BFS over fully-mastered-successors didn't surface an actionable
         // candidate, we may still want to consider direct successors as a
         // fallback — but only in the specific case where the current node
-        // is the *start* indicator (first node) and is the requested
+        // is the *start* skill (first node) and is the requested
         // target. This preserves the invariant that we don't advance to
         // successors until their prerequisites are mastered except for the
         // special bootstrapping case of the start node.
-        const directSuccs = dependents.get(indicatorId) ?? [];
+        const directSuccs = dependents.get(skillId) ?? [];
         const allowDirectFallback =
-          indicatorId === request.targetIndicatorId &&
+          skillId === request.targetSkillId &&
           request.graph &&
-          (request.graph as any).startIndicatorId === indicatorId;
+          (request.graph as any).startSkillId === skillId;
         if (directSuccs.length > 0 && allowDirectFallback) {
-          let bestInZPD: { id: string; prob: number; delta: number } | null = null;
+          let bestInZPD: { id: string; prob: number; delta: number } | null =
+            null;
           let bestByProb: { id: string; prob: number } | null = null;
           for (const sid of directSuccs) {
-            const sInd = indicatorById.get(sid);
-            if (!sInd) continue;
+            const sSkill = skillById.get(sid);
+            if (!sSkill) continue;
             const sProb =
               logistic(
-                blendAbility(sInd, request.abilities, weights) - sInd.difficulty
+                blendAbility(sSkill, request.abilities, weights) -
+                  sSkill.difficulty
               ) ?? 0;
             if (sProb >= zpdMin && sProb <= zpdMax) {
               const delta = Math.abs(sProb - masteredThreshold);
@@ -233,7 +235,11 @@ export const recommendNextIndicator = (
             }
           }
 
-          const chosenId = bestInZPD ? bestInZPD.id : bestByProb ? bestByProb.id : null;
+          const chosenId = bestInZPD
+            ? bestInZPD.id
+            : bestByProb
+            ? bestByProb.id
+            : null;
           if (chosenId && !visited.has(chosenId)) {
             const forwardResult = evaluate(chosenId, updatedTrail);
             if (forwardResult.status !== "no-candidate") {
@@ -244,26 +250,26 @@ export const recommendNextIndicator = (
       }
 
       return {
-        targetIndicatorId: request.targetIndicatorId,
-        candidateId: indicatorId,
+        targetSkillId: request.targetSkillId,
+        candidateId: skillId,
         probability: selfProb,
         status: "auto-mastered",
         traversed: updatedTrail,
         notes:
-          indicatorId === request.targetIndicatorId
+          skillId === request.targetSkillId
             ? "Target appears mastered; advance to successors"
             : "Prerequisite appears mastered",
       };
     }
 
-    if (indicator.prerequisites.length === 0) {
+    if (skill.prerequisites.length === 0) {
       return {
-        targetIndicatorId: request.targetIndicatorId,
-        candidateId: indicatorId,
+        targetSkillId: request.targetSkillId,
+        candidateId: skillId,
         probability: selfProb,
         status: "needs-remediation",
         traversed: updatedTrail,
-        notes: "Reached root indicator outside ZPD - remediation suggested",
+        notes: "Reached root skill outside ZPD - remediation suggested",
       };
     }
 
@@ -275,8 +281,8 @@ export const recommendNextIndicator = (
     }
 
     return {
-      targetIndicatorId: request.targetIndicatorId,
-      candidateId: indicatorId,
+      targetSkillId: request.targetSkillId,
+      candidateId: skillId,
       probability: selfProb,
       status: "no-candidate",
       traversed: updatedTrail,
@@ -284,5 +290,5 @@ export const recommendNextIndicator = (
     };
   };
 
-  return evaluate(request.targetIndicatorId, []);
+  return evaluate(request.targetSkillId, []);
 };

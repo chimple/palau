@@ -10,17 +10,17 @@ import {
   applyCoreConstantsCsv,
   buildGraphSnapshot,
   getCoreConstants,
-  recommendNextIndicator,
+  recommendNextSkill,
   resetCoreConstants,
   updateAbilities,
-  getIndicatorProbability,
+  getSkillProbability,
   DEFAULT_ZPD_RANGE,
   DEFAULT_MASTERED_THRESHOLD,
   type AbilityState,
   type DependencyGraph,
   type GraphSnapshot,
   type RecommendationContext,
-  type Indicator,
+  type Skill,
 } from "@pal/core";
 import GraphDiagram from "./components/GraphDiagram";
 import {
@@ -30,7 +30,7 @@ import {
 } from "./data/loaders";
 
 interface AbilityVector {
-  indicator: number;
+  skill: number;
   outcome: number;
   competency: number;
   subject: number;
@@ -38,7 +38,7 @@ interface AbilityVector {
 }
 
 interface HistoryEntry {
-  indicatorId: string;
+  skillId: string;
   label: string;
   correct: boolean;
   probabilityBefore: number;
@@ -48,8 +48,8 @@ interface HistoryEntry {
   thetaAfter: AbilityVector;
 }
 
-const getIndicatorLabel = (graph: DependencyGraph, id: string) =>
-  graph.indicators.find((li) => li.id === id)?.label ?? id;
+const getSkillLabel = (graph: DependencyGraph, id: string) =>
+  graph.skills.find((li) => li.id === id)?.label ?? id;
 
 const formatAbility = (value: number | undefined) =>
   (value ?? 0).toFixed(2);
@@ -93,12 +93,12 @@ const App = () => {
   const baselineAbilitiesRef = useRef<AbilityState>(
     cloneAbilities(defaultDataset.abilities)
   );
-  // Selection policy controls how the demo picks a default target indicator.
-  // Options: difficulty, lowest-probability, start-indicator, custom
+  // Selection policy controls how the demo picks a default target skill.
+  // Options: difficulty, lowest-probability, start-skill, custom
   const [selectionPolicy, setSelectionPolicy] = useState<
     | "difficulty"
     | "lowest-probability"
-    | "start-indicator"
+    | "start-skill"
     | "custom"
     | "zpd-prereq-aware"
   >("zpd-prereq-aware");
@@ -109,39 +109,38 @@ const App = () => {
     policy:
       | "difficulty"
       | "lowest-probability"
-    | "start-indicator"
-    | "custom"
-    | "zpd-prereq-aware"
-  ,
+      | "start-skill"
+      | "custom"
+      | "zpd-prereq-aware",
     filters?: {
       subjectId?: string;
       domainId?: string;
       competencyId?: string;
     }
   ): string => {
-    if (!graph || graph.indicators.length === 0) return "";
-    const matchesFilter = (indicator: Indicator) => {
-      if (filters?.subjectId && indicator.subjectId !== filters.subjectId) {
+    if (!graph || graph.skills.length === 0) return "";
+    const matchesFilter = (skill: Skill) => {
+      if (filters?.subjectId && skill.subjectId !== filters.subjectId) {
         return false;
       }
-      if (filters?.domainId && indicator.domainId !== filters.domainId) {
+      if (filters?.domainId && skill.domainId !== filters.domainId) {
         return false;
       }
       if (
         filters?.competencyId &&
-        indicator.competencyId !== filters.competencyId
+        skill.competencyId !== filters.competencyId
       ) {
         return false;
       }
       return true;
     };
-    const filtered = graph.indicators.filter(matchesFilter);
-    const indicatorPool =
-      filtered.length > 0 ? filtered : graph.indicators.slice();
-    if (indicatorPool.length === 0) {
+    const filtered = graph.skills.filter(matchesFilter);
+    const skillPool =
+      filtered.length > 0 ? filtered : graph.skills.slice();
+    if (skillPool.length === 0) {
       return "";
     }
-    const selectByDifficulty = (pool: Indicator[]): string => {
+    const selectByDifficulty = (pool: Skill[]): string => {
       if (pool.length === 0) return "";
       const sorted = [...pool].sort(
         (a, b) => (b.difficulty ?? 0) - (a.difficulty ?? 0)
@@ -153,18 +152,18 @@ const App = () => {
 
     switch (policy) {
       case "difficulty":
-        return selectByDifficulty(indicatorPool);
-      case "start-indicator": {
+        return selectByDifficulty(skillPool);
+      case "start-skill": {
         const start =
-          indicatorPool.find((indicator) => indicator.prerequisites.length === 0) ??
-          indicatorPool[0];
+          skillPool.find((skill) => skill.prerequisites.length === 0) ??
+          skillPool[0];
         return start?.id ?? "";
       }
       case "lowest-probability": {
-        let bestId = indicatorPool[0].id;
+        let bestId = skillPool[0].id;
         let bestProb = Infinity;
-        for (const ind of indicatorPool) {
-          const p = getIndicatorProbability(graph, abilities, ind.id) ?? 0;
+        for (const ind of skillPool) {
+          const p = getSkillProbability(graph, abilities, ind.id) ?? 0;
           if (p < bestProb) {
             bestProb = p;
             bestId = ind.id;
@@ -173,24 +172,24 @@ const App = () => {
         return bestId;
       }
       case "zpd-prereq-aware": {
-        // Compute probabilities and mastered/zpd status for all indicators.
+        // Compute probabilities and mastered/zpd status for all skills.
         const probs = new Map<string, number>();
         const mastered = new Map<string, boolean>();
         const inZpd = new Map<string, boolean>();
-        for (const ind of graph.indicators) {
-          const p = getIndicatorProbability(graph, abilities, ind.id) ?? 0;
+        for (const ind of graph.skills) {
+          const p = getSkillProbability(graph, abilities, ind.id) ?? 0;
           probs.set(ind.id, p);
           mastered.set(ind.id, p >= masteredThreshold);
           inZpd.set(ind.id, p >= zpdRange[0] && p <= zpdRange[1]);
         }
-        const indicatorSet = new Set(indicatorPool.map((ind) => ind.id));
+        const skillSet = new Set(skillPool.map((ind) => ind.id));
         // Policy thresholds (uses defaults from core unless overridden)
-        // Eligible indicators: all prerequisites mastered.
-        const eligibleAll = indicatorPool.filter((ind) =>
+        // Eligible skills: all prerequisites mastered.
+        const eligibleAll = skillPool.filter((ind) =>
           ind.prerequisites.every((pre) => mastered.get(pre) === true)
         );
-        // Prefer eligible indicators that are not yet mastered themselves;
-        // only fall back to already-mastered eligible indicators if there
+        // Prefer eligible skills that are not yet mastered themselves;
+        // only fall back to already-mastered eligible skills if there
         // are no non-mastered eligibles. This avoids repeatedly picking a
         // target that the student already appears to have mastered.
         let eligible = eligibleAll.filter((ind) => !mastered.get(ind.id));
@@ -225,13 +224,13 @@ const App = () => {
             return chooseClosestToMasteredByProb(zpdCandidates);
           }
 
-          // If no ZPD candidates, pick the eligible indicator that is
-          // graph-closest to any mastered indicator (fewest forward edges),
+          // If no ZPD candidates, pick the eligible skill that is
+          // graph-closest to any mastered skill (fewest forward edges),
           // tie-breaking by higher probability.
           const dependents = new Map<string, string[]>();
-          for (const ind of indicatorPool) {
+          for (const ind of skillPool) {
             for (const pre of ind.prerequisites) {
-              if (!indicatorSet.has(pre)) {
+              if (!skillSet.has(pre)) {
                 continue;
               }
               const list = dependents.get(pre) ?? [];
@@ -271,35 +270,35 @@ const App = () => {
           return eligible[0].id;
         }
 
-        // Fallback: if no eligible indicators (some prerequisites not mastered),
+        // Fallback: if no eligible skills (some prerequisites not mastered),
         // suggest unmet prerequisite nodes in this order:
         //  1) unmet prerequisites that are inside ZPD, ordered by descending
         //     probability (closest to mastered threshold first)
         //  2) unmet prerequisites below ZPD, ordered by descending probability
         //     (nearest remediation with highest chance first)
         const unmet = new Set<string>();
-        for (const ind of indicatorPool) {
+        for (const ind of skillPool) {
           for (const pre of ind.prerequisites) {
-            if (!indicatorSet.has(pre)) continue;
+            if (!skillSet.has(pre)) continue;
             if (!mastered.get(pre)) unmet.add(pre);
           }
         }
 
         if (unmet.size > 0) {
-        const unmetArr = Array.from(unmet);
-        // Build dependents map (prereq -> dependents) for BFS distance calculations
-        const dependents = new Map<string, string[]>();
-        for (const ind of indicatorPool) {
-          for (const pre of ind.prerequisites) {
-            if (!indicatorSet.has(pre)) continue;
-            const list = dependents.get(pre) ?? [];
-            list.push(ind.id);
-            dependents.set(pre, list);
+          const unmetArr = Array.from(unmet);
+          // Build dependents map (prereq -> dependents) for BFS distance calculations
+          const dependents = new Map<string, string[]>();
+          for (const ind of skillPool) {
+            for (const pre of ind.prerequisites) {
+              if (!skillSet.has(pre)) continue;
+              const list = dependents.get(pre) ?? [];
+              list.push(ind.id);
+              dependents.set(pre, list);
+            }
           }
-        }
 
           const nonMasteredTargets = new Set<string>();
-          for (const ind of graph.indicators) {
+          for (const ind of graph.skills) {
             if (!mastered.get(ind.id)) nonMasteredTargets.add(ind.id);
           }
 
@@ -350,12 +349,12 @@ const App = () => {
         }
 
         // As a last resort, fall back to difficulty-based default.
-        return selectByDifficulty(indicatorPool);
+        return selectByDifficulty(skillPool);
       }
       case "custom":
       default:
         // Custom leaves existing selection (handled by UI).
-        return selectByDifficulty(indicatorPool);
+        return selectByDifficulty(skillPool);
     }
   };
 
@@ -407,7 +406,7 @@ const App = () => {
   const [selectedOutcome, setSelectedOutcome] = useState<"correct" | "incorrect">(
     "correct"
   );
-  const [manualOutcomeIndicatorId, setManualOutcomeIndicatorId] =
+  const [manualOutcomeSkillId, setManualOutcomeSkillId] =
     useState<string>("");
   const [assessmentDomainId, setAssessmentDomainId] = useState<string>("");
   const [assessmentSubjectId, setAssessmentSubjectId] = useState<string>("");
@@ -424,7 +423,7 @@ const App = () => {
     Array<{
       competencyId: string;
       competencyLabel: string;
-      indicators: Indicator[];
+      skills: Skill[];
     }>
   >([]);
   const [uploadedGraphCsv, setUploadedGraphCsv] = useState<string | null>(null);
@@ -447,48 +446,48 @@ const App = () => {
     ) {
       return graph;
     }
-    const filteredIndicators = graph.indicators.filter((indicator) => {
-      if (graphSubjectFilterId && indicator.subjectId !== graphSubjectFilterId) {
+    const filteredSkills = graph.skills.filter((skill) => {
+      if (graphSubjectFilterId && skill.subjectId !== graphSubjectFilterId) {
         return false;
       }
-      if (graphDomainFilterId && indicator.domainId !== graphDomainFilterId) {
+      if (graphDomainFilterId && skill.domainId !== graphDomainFilterId) {
         return false;
       }
       if (
         graphCompetencyFilterId &&
-        indicator.competencyId !== graphCompetencyFilterId
+        skill.competencyId !== graphCompetencyFilterId
       ) {
         return false;
       }
       return true;
     });
-    if (filteredIndicators.length === 0) {
+    if (filteredSkills.length === 0) {
       return graph;
     }
-    const allowedIds = new Set(filteredIndicators.map((indicator) => indicator.id));
-    const trimmedIndicators = filteredIndicators.map((indicator) => ({
-      ...indicator,
-      prerequisites: indicator.prerequisites.filter((pre) =>
+    const allowedIds = new Set(filteredSkills.map((skill) => skill.id));
+    const trimmedSkills = filteredSkills.map((skill) => ({
+      ...skill,
+      prerequisites: skill.prerequisites.filter((pre) =>
         allowedIds.has(pre)
       ),
     }));
     const allowedSubjectIds = new Set(
-      trimmedIndicators.map((indicator) => indicator.subjectId)
+      trimmedSkills.map((skill) => skill.subjectId)
     );
     const allowedDomainIds = new Set(
-      trimmedIndicators.map((indicator) => indicator.domainId)
+      trimmedSkills.map((skill) => skill.domainId)
     );
     const allowedCompetencyIds = new Set(
-      trimmedIndicators.map((indicator) => indicator.competencyId)
+      trimmedSkills.map((skill) => skill.competencyId)
     );
     const allowedOutcomeIds = new Set(
-      trimmedIndicators.map((indicator) => indicator.outcomeId)
+      trimmedSkills.map((skill) => skill.outcomeId)
     );
     const filteredGraph: DependencyGraph = {
-      startIndicatorId:
-        trimmedIndicators.find((indicator) => indicator.prerequisites.length === 0)?.id ??
-        trimmedIndicators[0].id,
-      indicators: trimmedIndicators,
+      startSkillId:
+        trimmedSkills.find((skill) => skill.prerequisites.length === 0)?.id ??
+        trimmedSkills[0].id,
+      skills: trimmedSkills,
       subjects: graph.subjects.filter((subject) =>
         allowedSubjectIds.has(subject.id)
       ),
@@ -512,10 +511,10 @@ const App = () => {
 
   const recommendation: RecommendationContext = useMemo(
     () =>
-      recommendNextIndicator({
+      recommendNextSkill({
         graph: recommendationGraph,
         abilities,
-        targetIndicatorId: targetId,
+        targetSkillId: targetId,
       }),
     [abilities, recommendationGraph, targetId, constantsSnapshot]
   );
@@ -525,23 +524,23 @@ const App = () => {
     [abilities, graph, constantsSnapshot]
   );
 
-  const targetIndicator = useMemo(
-    () => graph.indicators.find((li) => li.id === targetId),
+  const targetSkill = useMemo(
+    () => graph.skills.find((li) => li.id === targetId),
     [graph, targetId]
   );
 
-  const manualIndicator = useMemo(
+  const manualSkill = useMemo(
     () =>
-      graph.indicators.find((li) => li.id === manualOutcomeIndicatorId),
-    [graph, manualOutcomeIndicatorId]
+      graph.skills.find((li) => li.id === manualOutcomeSkillId),
+    [graph, manualOutcomeSkillId]
   );
 
-  const indicatorsByOutcome = useMemo(() => {
-    const map = new Map<string, Indicator[]>();
-    for (const indicator of graph.indicators) {
-      const list = map.get(indicator.outcomeId) ?? [];
-      list.push(indicator);
-      map.set(indicator.outcomeId, list);
+  const skillsByOutcome = useMemo(() => {
+    const map = new Map<string, Skill[]>();
+    for (const skill of graph.skills) {
+      const list = map.get(skill.outcomeId) ?? [];
+      list.push(skill);
+      map.set(skill.outcomeId, list);
     }
     return map;
   }, [graph]);
@@ -558,10 +557,10 @@ const App = () => {
 
   const outcomesBySubject = useMemo(() => {
     const interim = new Map<string, Set<string>>();
-    for (const indicator of graph.indicators) {
-      const list = interim.get(indicator.subjectId) ?? new Set<string>();
-      list.add(indicator.outcomeId);
-      interim.set(indicator.subjectId, list);
+    for (const skill of graph.skills) {
+      const list = interim.get(skill.subjectId) ?? new Set<string>();
+      list.add(skill.outcomeId);
+      interim.set(skill.subjectId, list);
     }
     const normalized = new Map<string, string[]>();
     for (const [subjectId, set] of interim.entries()) {
@@ -572,10 +571,10 @@ const App = () => {
 
   const competenciesByDomain = useMemo(() => {
     const interim = new Map<string, Set<string>>();
-    for (const indicator of graph.indicators) {
-      const set = interim.get(indicator.domainId) ?? new Set<string>();
-      set.add(indicator.competencyId);
-      interim.set(indicator.domainId, set);
+    for (const skill of graph.skills) {
+      const set = interim.get(skill.domainId) ?? new Set<string>();
+      set.add(skill.competencyId);
+      interim.set(skill.domainId, set);
     }
     const normalized = new Map<string, string[]>();
     for (const [domainId, set] of interim.entries()) {
@@ -586,10 +585,10 @@ const App = () => {
 
   const outcomesByDomain = useMemo(() => {
     const interim = new Map<string, Set<string>>();
-    for (const indicator of graph.indicators) {
-      const set = interim.get(indicator.domainId) ?? new Set<string>();
-      set.add(indicator.outcomeId);
-      interim.set(indicator.domainId, set);
+    for (const skill of graph.skills) {
+      const set = interim.get(skill.domainId) ?? new Set<string>();
+      set.add(skill.outcomeId);
+      interim.set(skill.domainId, set);
     }
     const normalized = new Map<string, string[]>();
     for (const [domainId, set] of interim.entries()) {
@@ -703,8 +702,8 @@ const App = () => {
     (updates: { mastered: string[]; notMastered: string[] }): AbilityState => {
       const updated = cloneAbilities(abilities);
       const visited = new Set<string>();
-      const indicatorIndex = new Map(
-        graph.indicators.map((indicator) => [indicator.id, indicator])
+      const skillIndex = new Map(
+        graph.skills.map((skill) => [skill.id, skill])
       );
       const competencyStatus = new Map<
         string,
@@ -719,9 +718,9 @@ const App = () => {
         { mastered: boolean; notMastered: boolean }
       >();
 
-      const noteStatus = (indicator: Indicator, mastered: boolean) => {
+      const noteStatus = (skill: Skill, mastered: boolean) => {
         const competencyEntry =
-          competencyStatus.get(indicator.competencyId) ?? {
+          competencyStatus.get(skill.competencyId) ?? {
             mastered: false,
             notMastered: false,
           };
@@ -730,10 +729,10 @@ const App = () => {
         } else {
           competencyEntry.notMastered = true;
         }
-        competencyStatus.set(indicator.competencyId, competencyEntry);
+        competencyStatus.set(skill.competencyId, competencyEntry);
 
         const domainEntry =
-          domainStatus.get(indicator.domainId) ?? {
+          domainStatus.get(skill.domainId) ?? {
             mastered: false,
             notMastered: false,
           };
@@ -742,10 +741,10 @@ const App = () => {
         } else {
           domainEntry.notMastered = true;
         }
-        domainStatus.set(indicator.domainId, domainEntry);
+        domainStatus.set(skill.domainId, domainEntry);
 
         const subjectEntry =
-          subjectStatus.get(indicator.subjectId) ?? {
+          subjectStatus.get(skill.subjectId) ?? {
             mastered: false,
             notMastered: false,
           };
@@ -754,52 +753,52 @@ const App = () => {
         } else {
           subjectEntry.notMastered = true;
         }
-        subjectStatus.set(indicator.subjectId, subjectEntry);
+        subjectStatus.set(skill.subjectId, subjectEntry);
       };
 
-      const markMasteredIndicator = (indicatorId: string) => {
-        const indicator = indicatorIndex.get(indicatorId);
-        if (!indicator) {
+      const markMasteredSkill = (skillId: string) => {
+        const skill = skillIndex.get(skillId);
+        if (!skill) {
           return;
         }
-        if (visited.has(indicatorId)) {
+        if (visited.has(skillId)) {
           return;
         }
-        visited.add(indicatorId);
-        updated.indicator[indicatorId] = ASSESSMENT_MASTERY_THETA;
-        updated.outcome[indicator.outcomeId] = ASSESSMENT_MASTERY_THETA;
-        noteStatus(indicator, true);
-        for (const prereq of indicator.prerequisites) {
-          markMasteredIndicator(prereq);
+        visited.add(skillId);
+        updated.skill[skillId] = ASSESSMENT_MASTERY_THETA;
+        updated.outcome[skill.outcomeId] = ASSESSMENT_MASTERY_THETA;
+        noteStatus(skill, true);
+        for (const prereq of skill.prerequisites) {
+          markMasteredSkill(prereq);
         }
       };
 
-      const markNotMasteredIndicator = (indicatorId: string) => {
-        const indicator = indicatorIndex.get(indicatorId);
-        if (!indicator) {
+      const markNotMasteredSkill = (skillId: string) => {
+        const skill = skillIndex.get(skillId);
+        if (!skill) {
           return;
         }
-        updated.indicator[indicatorId] = ASSESSMENT_NON_MASTERY_THETA;
-        updated.outcome[indicator.outcomeId] =
+        updated.skill[skillId] = ASSESSMENT_NON_MASTERY_THETA;
+        updated.outcome[skill.outcomeId] =
           ASSESSMENT_NON_MASTERY_THETA;
-        noteStatus(indicator, false);
+        noteStatus(skill, false);
       };
 
       for (const outcomeId of updates.notMastered) {
-        const indicators = indicatorsByOutcome.get(outcomeId) ?? [];
-        if (indicators.length === 0) {
+        const skills = skillsByOutcome.get(outcomeId) ?? [];
+        if (skills.length === 0) {
           updated.outcome[outcomeId] = ASSESSMENT_NON_MASTERY_THETA;
         }
-        for (const indicator of indicators) {
-          markNotMasteredIndicator(indicator.id);
+        for (const skill of skills) {
+          markNotMasteredSkill(skill.id);
         }
       }
 
       for (const outcomeId of updates.mastered) {
         updated.outcome[outcomeId] = ASSESSMENT_MASTERY_THETA;
-        const indicators = indicatorsByOutcome.get(outcomeId) ?? [];
-        for (const indicator of indicators) {
-          markMasteredIndicator(indicator.id);
+        const skills = skillsByOutcome.get(outcomeId) ?? [];
+        for (const skill of skills) {
+          markMasteredSkill(skill.id);
         }
       }
 
@@ -829,45 +828,45 @@ const App = () => {
 
       return updated;
     },
-    [abilities, graph, indicatorsByOutcome]
+    [abilities, graph, skillsByOutcome]
   );
 
   const computeCompetencyAdvancement = useCallback(
     (currentAbilities: AbilityState, competencyFilter?: string) => {
       const results = new Map<
         string,
-        { competencyId: string; competencyLabel: string; indicators: Indicator[] }
+        { competencyId: string; competencyLabel: string; skills: Skill[] }
       >();
-      for (const indicator of graph.indicators) {
-        if (competencyFilter && indicator.competencyId !== competencyFilter) {
+      for (const skill of graph.skills) {
+        if (competencyFilter && skill.competencyId !== competencyFilter) {
           continue;
         }
-        const prerequisitesMastered = indicator.prerequisites.every((pre) => {
+        const prerequisitesMastered = skill.prerequisites.every((pre) => {
           const prob =
-            getIndicatorProbability(graph, currentAbilities, pre) ?? 0;
+            getSkillProbability(graph, currentAbilities, pre) ?? 0;
           return prob >= DEFAULT_MASTERED_THRESHOLD;
         });
-        const indicatorMastered =
-          (getIndicatorProbability(graph, currentAbilities, indicator.id) ?? 0) >=
+        const skillMastered =
+          (getSkillProbability(graph, currentAbilities, skill.id) ?? 0) >=
           DEFAULT_MASTERED_THRESHOLD;
-        if (prerequisitesMastered && !indicatorMastered) {
+        if (prerequisitesMastered && !skillMastered) {
           const competency =
-            graph.competencies.find((comp) => comp.id === indicator.competencyId)
-              ?.label ?? indicator.competencyId;
+            graph.competencies.find((comp) => comp.id === skill.competencyId)
+              ?.label ?? skill.competencyId;
           const entry =
-            results.get(indicator.competencyId) ??
+            results.get(skill.competencyId) ??
             {
-              competencyId: indicator.competencyId,
+              competencyId: skill.competencyId,
               competencyLabel: competency,
-              indicators: [],
+              skills: [],
             };
-          entry.indicators.push(indicator);
-          results.set(indicator.competencyId, entry);
+          entry.skills.push(skill);
+          results.set(skill.competencyId, entry);
         }
       }
       const sorted = Array.from(results.values()).map((entry) => ({
         ...entry,
-        indicators: [...entry.indicators].sort(
+        skills: [...entry.skills].sort(
           (a, b) => (a.difficulty ?? 0) - (b.difficulty ?? 0)
         ),
       }));
@@ -878,13 +877,13 @@ const App = () => {
   );
 
   // Allow recording when we have a recommendation candidate or the user
-  // explicitly picks a manual indicator override.
-  const canRecord = Boolean(recommendation.candidateId || manualIndicator);
+  // explicitly picks a manual skill override.
+  const canRecord = Boolean(recommendation.candidateId || manualSkill);
 
-  const activeLoggingIndicatorId =
-    manualIndicator?.id ?? recommendation.candidateId ?? "";
-  const activeLoggingIndicatorLabel = activeLoggingIndicatorId
-    ? `${getIndicatorLabel(graph, activeLoggingIndicatorId)} (${activeLoggingIndicatorId})`
+  const activeLoggingSkillId =
+    manualSkill?.id ?? recommendation.candidateId ?? "";
+  const activeLoggingSkillLabel = activeLoggingSkillId
+    ? `${getSkillLabel(graph, activeLoggingSkillId)} (${activeLoggingSkillId})`
     : "None selected";
 
   const resetAbilitiesToBaseline = () => {
@@ -893,42 +892,42 @@ const App = () => {
   };
 
   const handleRecordOutcome = () => {
-    const indicatorId =
-      manualIndicator?.id ?? recommendation.candidateId;
-    if (!indicatorId) {
+    const skillId =
+      manualSkill?.id ?? recommendation.candidateId;
+    if (!skillId) {
       return;
     }
     const timestamp = Date.now();
     const correct = selectedOutcome === "correct";
-    const resolvedIndicator =
-      manualIndicator ??
-      graph.indicators.find((li) => li.id === indicatorId);
-    if (!resolvedIndicator) {
+    const resolvedSkill =
+      manualSkill ??
+      graph.skills.find((li) => li.id === skillId);
+    if (!resolvedSkill) {
       return;
     }
-    const outcomeId = resolvedIndicator.outcomeId;
-    const competencyId = resolvedIndicator.competencyId;
-    const subjectId = resolvedIndicator.subjectId;
-    const domainId = resolvedIndicator.domainId;
-    const label = resolvedIndicator.label ?? indicatorId;
+    const outcomeId = resolvedSkill.outcomeId;
+    const competencyId = resolvedSkill.competencyId;
+    const subjectId = resolvedSkill.subjectId;
+    const domainId = resolvedSkill.domainId;
+    const label = resolvedSkill.label ?? skillId;
     const result = updateAbilities({
       graph,
       abilities,
       event: {
-        indicatorId,
+        skillId,
         correct,
         timestamp,
       },
     });
     const thetaBefore: AbilityVector = {
-      indicator: abilities.indicator[indicatorId] ?? 0,
+      skill: abilities.skill[skillId] ?? 0,
       outcome: abilities.outcome[outcomeId] ?? 0,
       competency: abilities.competency[competencyId] ?? 0,
       subject: abilities.subject[subjectId] ?? 0,
       domain: abilities.domain[domainId] ?? 0,
     };
     const thetaAfter: AbilityVector = {
-      indicator: result.abilities.indicator[indicatorId] ?? 0,
+      skill: result.abilities.skill[skillId] ?? 0,
       outcome: result.abilities.outcome[outcomeId] ?? 0,
       competency: result.abilities.competency[competencyId] ?? 0,
       subject: result.abilities.subject[subjectId] ?? 0,
@@ -937,7 +936,7 @@ const App = () => {
     setAbilities(result.abilities);
     setHistory((prevHistory) => [
       {
-        indicatorId,
+        skillId,
         label,
         correct,
         probabilityBefore: result.probabilityBefore,
@@ -1007,7 +1006,7 @@ const App = () => {
     resetAbilitiesToBaseline();
     setHistory([]);
     setSelectedOutcome("correct");
-    setManualOutcomeIndicatorId("");
+    setManualOutcomeSkillId("");
   };
 
   const applyDataset = (dataset: {
@@ -1020,7 +1019,7 @@ const App = () => {
     baselineAbilitiesRef.current = cloneAbilities(dataset.abilities);
     setHistory([]);
     setSelectedOutcome("correct");
-    setManualOutcomeIndicatorId("");
+    setManualOutcomeSkillId("");
     setGraphSubjectFilterId("");
     setGraphDomainFilterId("");
     setGraphCompetencyFilterId("");
@@ -1046,7 +1045,7 @@ const App = () => {
     setUploadedConstantsCsv(null);
     setDataError(null);
     setConstantsError(null);
-    setManualOutcomeIndicatorId("");
+    setManualOutcomeSkillId("");
   };
 
   const handleApplyUploaded = () => {
@@ -1112,18 +1111,18 @@ const App = () => {
     };
 
   const computeThetaBlend = (
-    indicator: (typeof graph.indicators)[number],
+    skill: (typeof graph.skills)[number],
     abilityState: AbilityState
   ): number => {
     const weights = constantsSnapshot.blendWeights;
-    const thetaIndicator = abilityState.indicator[indicator.id] ?? 0;
+    const thetaSkill = abilityState.skill[skill.id] ?? 0;
     const thetaOutcome =
-      abilityState.outcome[indicator.outcomeId] ?? 0;
+      abilityState.outcome[skill.outcomeId] ?? 0;
     const thetaCompetency =
-      abilityState.competency[indicator.competencyId] ?? 0;
-    const thetaDomain = abilityState.domain[indicator.domainId] ?? 0;
+      abilityState.competency[skill.competencyId] ?? 0;
+    const thetaDomain = abilityState.domain[skill.domainId] ?? 0;
     return (
-      thetaIndicator * weights.indicator +
+      thetaSkill * weights.skill +
       thetaOutcome * weights.outcome +
       thetaCompetency * weights.competency +
       thetaDomain * weights.domain
@@ -1131,25 +1130,25 @@ const App = () => {
   };
 
   const renderAbilitySnapshot = (
-    indicator: (typeof graph.indicators)[number] | undefined,
+    skill: (typeof graph.skills)[number] | undefined,
     heading: string,
     size: "default" | "compact" = "default"
   ) => {
-    if (!indicator) return null;
+    if (!skill) return null;
     const outcome = graph.outcomes.find(
-      (lo) => lo.id === indicator.outcomeId
+      (lo) => lo.id === skill.outcomeId
     );
     const competency = graph.competencies.find(
-      (comp) => comp.id === indicator.competencyId
+      (comp) => comp.id === skill.competencyId
     );
-    const subject = graph.subjects.find((item) => item.id === indicator.subjectId);
-    const domain = graph.domains.find((item) => item.id === indicator.domainId);
+    const subject = graph.subjects.find((item) => item.id === skill.subjectId);
+    const domain = graph.domains.find((item) => item.id === skill.domainId);
     const fontSize = size === "compact" ? "0.85rem" : "0.9rem";
-    const thetaBlend = computeThetaBlend(indicator, abilities);
-    const probability = getIndicatorProbability(
+    const thetaBlend = computeThetaBlend(skill, abilities);
+    const probability = getSkillProbability(
       graph,
       abilities,
-      indicator.id,
+      skill.id,
       constantsSnapshot.blendWeights
     );
     return (
@@ -1160,38 +1159,38 @@ const App = () => {
         <h3>{heading}</h3>
         <div style={{ display: "grid", gap: "0.4rem", fontSize }}>
           <div>
-            <strong>Indicator</strong>
+            <strong>Skill</strong>
             <div>
-              {indicator.label} ({indicator.id}) — θ=
-              {formatAbility(abilities.indicator[indicator.id])}
+              {skill.label} ({skill.id}) — θ=
+              {formatAbility(abilities.skill[skill.id])}
             </div>
           </div>
           <div>
             <strong>Learning Outcome</strong>
             <div>
-              {outcome?.label ?? indicator.outcomeId} — θ=
-              {formatAbility(abilities.outcome[indicator.outcomeId])}
+              {outcome?.label ?? skill.outcomeId} — θ=
+              {formatAbility(abilities.outcome[skill.outcomeId])}
             </div>
           </div>
           <div>
             <strong>Competency</strong>
             <div>
-              {competency?.label ?? indicator.competencyId} — θ=
-              {formatAbility(abilities.competency[indicator.competencyId])}
+              {competency?.label ?? skill.competencyId} — θ=
+              {formatAbility(abilities.competency[skill.competencyId])}
             </div>
           </div>
           <div>
             <strong>Subject</strong>
             <div>
-              {subject?.label ?? indicator.subjectId} — θ=
-              {formatAbility(abilities.subject[indicator.subjectId])}
+              {subject?.label ?? skill.subjectId} — θ=
+              {formatAbility(abilities.subject[skill.subjectId])}
             </div>
           </div>
           <div>
             <strong>Domain</strong>
             <div>
-              {domain?.label ?? indicator.domainId} — θ=
-              {formatAbility(abilities.domain[indicator.domainId])}
+              {domain?.label ?? skill.domainId} — θ=
+              {formatAbility(abilities.domain[skill.domainId])}
             </div>
           </div>
           <div>
@@ -1206,7 +1205,7 @@ const App = () => {
       </div>
     );
   };
-  const abilityPanel = renderAbilitySnapshot(targetIndicator, "Ability Snapshot");
+  const abilityPanel = renderAbilitySnapshot(targetSkill, "Ability Snapshot");
 
   return (
     <div className="app-shell">
@@ -1214,7 +1213,7 @@ const App = () => {
         <h2>PAL Diagnostic Controller</h2>
         <p style={{ marginTop: 0, fontSize: "0.9rem", color: "#475569" }}>
           Tune outcomes to observe the adaptive recommendation engine update
-          live. The recommendation surfaces the next Learning Indicator in the
+          live. The recommendation surfaces the next Learning Skill in the
           Zone of Proximal Development (ZPD).
         </p>
 
@@ -1259,9 +1258,9 @@ const App = () => {
             </div>
             <p style={{ fontSize: "0.8rem", color: "#64748b" }}>
               Graph CSV format: subjectId, subjectName, domainId, domainName,
-              competencyId, competencyName, outcomeId, outcomeName, indicatorId,
-              indicatorName, difficulty.
-              Prerequisites CSV format: sourceIndicatorId, targetIndicatorId.
+              competencyId, competencyName, outcomeId, outcomeName, skillId,
+              skillName, difficulty.
+              Prerequisites CSV format: sourceSkillId, targetSkillId.
               Abilities CSV format: type, id, ability.
             </p>
             {dataError && (
@@ -1273,7 +1272,7 @@ const App = () => {
         <div className="section">
           <h3>Assessment Module</h3>
         <p style={{ marginTop: 0, fontSize: "0.85rem", color: "#475569" }}>
-            Mark learning outcomes as mastered after an assessment. All prerequisite indicators
+            Mark learning outcomes as mastered after an assessment. All prerequisite skills
             and outcomes will be considered mastered, and new targets are surfaced per competency.
           </p>
           <div className="input-group">
@@ -1418,15 +1417,15 @@ const App = () => {
                 {assessmentRecommendations.map((entry) => (
                   <li key={entry.competencyId} style={{ marginBottom: "0.5rem" }}>
                     <div style={{ fontWeight: 600 }}>{entry.competencyLabel}</div>
-                    {entry.indicators.length === 0 ? (
+                    {entry.skills.length === 0 ? (
                       <div style={{ fontSize: "0.8rem", color: "#94a3b8" }}>
-                        All indicators mastered.
+                        All skills mastered.
                       </div>
                     ) : (
                       <ul style={{ margin: "0.25rem 0 0 1rem" }}>
-                        {entry.indicators.map((indicator) => (
-                          <li key={indicator.id} style={{ fontSize: "0.8rem" }}>
-                            {indicator.label} ({indicator.id})
+                        {entry.skills.map((skill) => (
+                          <li key={skill.id} style={{ fontSize: "0.8rem" }}>
+                            {skill.label} ({skill.id})
                           </li>
                         ))}
                       </ul>
@@ -1487,14 +1486,14 @@ const App = () => {
             >
               <strong>Current constants</strong>
               <div>
-                Blend weights — indicator {formatConstant(constantsSnapshot.blendWeights.indicator)},
+                Blend weights — skill {formatConstant(constantsSnapshot.blendWeights.skill)},
                 outcome {formatConstant(constantsSnapshot.blendWeights.outcome)},
                 competency {formatConstant(constantsSnapshot.blendWeights.competency)},
                 domain {formatConstant(constantsSnapshot.blendWeights.domain)},
                 subject {formatConstant(constantsSnapshot.blendWeights.subject)}
               </div>
               <div>
-                Learning rates — indicator {formatConstant(constantsSnapshot.learningRates.indicator)},
+                Learning rates — skill {formatConstant(constantsSnapshot.learningRates.skill)},
                 outcome {formatConstant(constantsSnapshot.learningRates.outcome)},
                 competency {formatConstant(constantsSnapshot.learningRates.competency)},
                 domain {formatConstant(constantsSnapshot.learningRates.domain)},
@@ -1520,7 +1519,7 @@ const App = () => {
                 const policy = event.target.value as
                   | "difficulty"
                   | "lowest-probability"
-                  | "start-indicator"
+                  | "start-skill"
                   | "custom"
                   | "zpd-prereq-aware";
                 setSelectionPolicy(policy);
@@ -1542,20 +1541,20 @@ const App = () => {
               <option value="difficulty">Difficulty (hardest)</option>
               <option value="lowest-probability">Lowest probability (history)</option>
               <option value="zpd-prereq-aware">ZPD (prereqs mastered, high success)</option>
-              <option value="start-indicator">Start indicator (roots)</option>
+              <option value="start-skill">Start skill (roots)</option>
               <option value="custom">Custom (manual)</option>
             </select>
 
-            <label htmlFor="target-select">Target Learning Indicator</label>
+            <label htmlFor="target-select">Target Learning Skill</label>
             <select
               id="target-select"
               className="select"
               value={targetId}
               onChange={(event) => setTargetId(event.target.value)}
             >
-              {graph.indicators.map((indicator) => (
-                <option key={indicator.id} value={indicator.id}>
-                  {indicator.label}
+              {graph.skills.map((skill) => (
+                <option key={skill.id} value={skill.id}>
+                  {skill.label}
                 </option>
               ))}
             </select>
@@ -1574,7 +1573,7 @@ const App = () => {
           >
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <strong>
-                {getIndicatorLabel(graph, recommendation.candidateId)}
+                {getSkillLabel(graph, recommendation.candidateId)}
               </strong>
               <span
                 className={
@@ -1616,12 +1615,12 @@ const App = () => {
           <h3>Log Outcome</h3>
           <div className="input-group">
             <p style={{ fontSize: "0.82rem", color: "#475569" }}>
-              Choose an indicator override directly from the Dependency Graph panel. The
+              Choose an skill override directly from the Dependency Graph panel. The
               selection there powers the manual override shown below.
             </p>
-            {manualOutcomeIndicatorId ? (
+            {manualOutcomeSkillId ? (
               <p style={{ fontSize: "0.8rem", color: "#0f172a" }}>
-                Active override: <strong>{getIndicatorLabel(graph, manualOutcomeIndicatorId)}</strong> ({manualOutcomeIndicatorId})
+                Active override: <strong>{getSkillLabel(graph, manualOutcomeSkillId)}</strong> ({manualOutcomeSkillId})
               </p>
             ) : (
               <p style={{ fontSize: "0.8rem", color: "#94a3b8" }}>
@@ -1665,13 +1664,13 @@ const App = () => {
               }}
             >
               Outcome logging is currently disabled because there is no candidate
-              indicator available and no manual override selected. Try choosing
-              an indicator from the dropdown or upload data to get
+              skill available and no manual override selected. Try choosing
+              an skill from the dropdown or upload data to get
               recommendations.
             </p>
           )}
           <p style={{ marginTop: "0.5rem", fontSize: "0.8rem", color: "#475569" }}>
-            Logging outcome for: <strong>{activeLoggingIndicatorLabel}</strong>
+            Logging outcome for: <strong>{activeLoggingSkillLabel}</strong>
           </p>
           <button
             className="btn-ghost"
@@ -1695,7 +1694,7 @@ const App = () => {
               {history.map((entry) => (
                 <li key={entry.timestamp} className="history-card">
                   <strong>
-                    {entry.label} ({entry.indicatorId})
+                    {entry.label} ({entry.skillId})
                   </strong>
                   <div className="history-meta">
                     {new Date(entry.timestamp).toLocaleTimeString()} • Outcome:{" "}
@@ -1706,11 +1705,11 @@ const App = () => {
                     {formatProbability(entry.probabilityAfter)}%
                   </div>
                   <div className="history-meta">
-                    θ indicator: {formatAbility(entry.thetaBefore.indicator)} →{" "}
-                    {formatAbility(entry.thetaAfter.indicator)} (
+                    θ skill: {formatAbility(entry.thetaBefore.skill)} →{" "}
+                    {formatAbility(entry.thetaAfter.skill)} (
                     {formatPercentChange(
-                      entry.thetaBefore.indicator,
-                      entry.thetaAfter.indicator
+                      entry.thetaBefore.skill,
+                      entry.thetaAfter.skill
                     )}
                     )
                   </div>
@@ -1760,7 +1759,7 @@ const App = () => {
       <div className="panel scroller">
         <h2>Dependency Graph</h2>
         <p style={{ marginTop: 0, fontSize: "0.9rem", color: "#475569" }}>
-          Directed edges point towards more advanced learning indicators. Colors
+          Directed edges point towards more advanced learning skills. Colors
           reflect predicted performance bands given the current ability state.
         </p>
         <GraphDiagram
@@ -1776,8 +1775,8 @@ const App = () => {
           onSubjectFilterChange={setGraphSubjectFilterId}
           onDomainFilterChange={setGraphDomainFilterId}
           onCompetencyFilterChange={setGraphCompetencyFilterId}
-          overrideIndicatorId={manualOutcomeIndicatorId}
-          onOverrideIndicatorChange={setManualOutcomeIndicatorId}
+          overrideSkillId={manualOutcomeSkillId}
+          onOverrideSkillChange={setManualOutcomeSkillId}
         />
       </div>
     </div>

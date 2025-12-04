@@ -1,10 +1,10 @@
 category,key,value
-blendWeights,indicator,0.10
+blendWeights,skill,0.10
 blendWeights,outcome,0.10
 blendWeights,competency,0.60
 blendWeights,domain,0.10
 blendWeights,subject,0.10
-learningRates,indicator,0.5
+learningRates,skill,0.5
 learningRates,outcome,0.8
 learningRates,competency,0.3
 learningRates,domain,0.5

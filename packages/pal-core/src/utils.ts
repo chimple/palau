@@ -2,7 +2,7 @@ import type {
   AbilityState,
   BlendWeights,
   DependencyGraph,
-  Indicator,
+  Skill,
 } from "./types";
 import { DEFAULT_BLEND_WEIGHTS, DEFAULT_SCALE } from "./constants";
 
@@ -15,7 +15,7 @@ export const getAbilityValue = (
 ): number => container[id] ?? 0;
 
 export const cloneAbilityState = (state: AbilityState): AbilityState => ({
-  indicator: { ...state.indicator },
+  skill: { ...state.skill },
   outcome: { ...state.outcome },
   competency: { ...state.competency },
   domain: { ...state.domain },
@@ -23,24 +23,21 @@ export const cloneAbilityState = (state: AbilityState): AbilityState => ({
 });
 
 export const blendAbility = (
-  indicator: Indicator,
+  skill: Skill,
   abilities: AbilityState,
   weights: BlendWeights = DEFAULT_BLEND_WEIGHTS
 ): number => {
-  const thetaLi = getAbilityValue(abilities.indicator, indicator.id);
-  const thetaLO = getAbilityValue(
-    abilities.outcome,
-    indicator.outcomeId
-  );
+  const thetaLi = getAbilityValue(abilities.skill, skill.id);
+  const thetaLO = getAbilityValue(abilities.outcome, skill.outcomeId);
   const thetaCompetency = getAbilityValue(
     abilities.competency,
-    indicator.competencyId
+    skill.competencyId
   );
-  const thetaDomain = getAbilityValue(abilities.domain, indicator.domainId);
-  const thetaSubject = getAbilityValue(abilities.subject, indicator.subjectId);
+  const thetaDomain = getAbilityValue(abilities.domain, skill.domainId);
+  const thetaSubject = getAbilityValue(abilities.subject, skill.subjectId);
 
   return (
-    thetaLi * weights.indicator +
+    thetaLi * weights.skill +
     thetaLO * weights.outcome +
     thetaCompetency * weights.competency +
     thetaDomain * weights.domain +
@@ -48,38 +45,38 @@ export const blendAbility = (
   );
 };
 
-export const indexGraphByIndicator = (graph: DependencyGraph) => {
-  const indicatorById = new Map<string, Indicator>();
+export const indexGraphBySkill = (graph: DependencyGraph) => {
+  const skillById = new Map<string, Skill>();
   const prerequisites = new Map<string, string[]>();
   const dependents = new Map<string, string[]>();
 
-  for (const indicator of graph.indicators) {
-    indicatorById.set(indicator.id, indicator);
-    prerequisites.set(indicator.id, indicator.prerequisites);
-    for (const prereq of indicator.prerequisites) {
+  for (const skill of graph.skills) {
+    skillById.set(skill.id, skill);
+    prerequisites.set(skill.id, skill.prerequisites);
+    for (const prereq of skill.prerequisites) {
       const list = dependents.get(prereq) ?? [];
-      list.push(indicator.id);
+      list.push(skill.id);
       dependents.set(prereq, list);
     }
-    if (!dependents.has(indicator.id)) {
-      dependents.set(indicator.id, []);
+    if (!dependents.has(skill.id)) {
+      dependents.set(skill.id, []);
     }
   }
 
   return {
-    indicatorById,
+    skillById,
     prerequisites,
     dependents,
   };
 };
 
-export const getIndicator = (
+export const getSkill = (
   graph: DependencyGraph,
   id: string
-): Indicator => {
-  const indicator = graph.indicators.find((li) => li.id === id);
-  if (!indicator) {
-    throw new Error(`Unknown indicator "${id}"`);
+): Skill => {
+  const skill = graph.skills.find((li) => li.id === id);
+  if (!skill) {
+    throw new Error(`Unknown skill "${id}"`);
   }
-  return indicator;
+  return skill;
 };

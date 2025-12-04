@@ -19,14 +19,14 @@ export interface CoreConstantsUpdate {
 
 const INITIAL_CORE_CONSTANTS: CoreConstants = {
   blendWeights: {
-    indicator: 0.35,
+    skill: 0.35,
     outcome: 0.2,
     competency: 0.18,
     domain: 0.12,
     subject: 0.15,
   },
   learningRates: {
-    indicator: 0.5,
+    skill: 0.5,
     outcome: 0.08,
     competency: 0.04,
     domain: 0.04,
@@ -46,7 +46,7 @@ let currentCoreConstants: CoreConstants = {
 };
 
 const cloneBlendWeights = (weights: BlendWeights): BlendWeights => ({
-  indicator: weights.indicator,
+  skill: weights.skill,
   outcome: weights.outcome,
   competency: weights.competency,
   domain: weights.domain,
@@ -54,7 +54,7 @@ const cloneBlendWeights = (weights: BlendWeights): BlendWeights => ({
 });
 
 const cloneLearningRates = (rates: LearningRates): LearningRates => ({
-  indicator: rates.indicator,
+  skill: rates.skill,
   outcome: rates.outcome,
   competency: rates.competency,
   domain: rates.domain,
@@ -136,7 +136,7 @@ export const updateCoreConstants = (
       ...updates.blendWeights,
     } satisfies BlendWeights;
     currentCoreConstants.blendWeights = {
-      indicator: ensureFinite(next.indicator, "Blend weight (indicator)"),
+      skill: ensureFinite(next.skill, "Blend weight (skill)"),
       outcome: ensureFinite(next.outcome, "Blend weight (outcome)"),
       competency: ensureFinite(next.competency, "Blend weight (competency)"),
       domain: ensureFinite(next.domain, "Blend weight (domain)"),
@@ -150,7 +150,7 @@ export const updateCoreConstants = (
       ...updates.learningRates,
     } satisfies LearningRates;
     currentCoreConstants.learningRates = {
-      indicator: ensureFinite(next.indicator, "Learning rate (indicator)"),
+      skill: ensureFinite(next.skill, "Learning rate (skill)"),
       outcome: ensureFinite(next.outcome, "Learning rate (outcome)"),
       competency: ensureFinite(
         next.competency,
@@ -243,7 +243,7 @@ export const parseCoreConstantsCsv = (
     switch (category) {
       case "blendweights":
         switch (key) {
-          case "indicator":
+          case "skill":
           case "outcome":
           case "competency":
           case "domain":
@@ -261,7 +261,7 @@ export const parseCoreConstantsCsv = (
         break;
       case "learningrates":
         switch (key) {
-          case "indicator":
+          case "skill":
           case "outcome":
           case "competency":
           case "domain":
@@ -332,7 +332,7 @@ export const applyCoreConstantsCsv = (csvText: string): CoreConstants =>
   updateCoreConstants(parseCoreConstantsCsv(csvText));
 
 export const createEmptyAbilityState = (): AbilityState => ({
-  indicator: {},
+  skill: {},
   outcome: {},
   competency: {},
   domain: {},
