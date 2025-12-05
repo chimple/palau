@@ -13,13 +13,47 @@ export const recommendNextSkill = (
   const [zpdMin, zpdMax] = request.zpdRange ?? DEFAULT_ZPD_RANGE;
   const masteredThreshold =
     request.masteredThreshold ?? DEFAULT_MASTERED_THRESHOLD;
-  const { skillById, dependents } = indexGraphBySkill(request.graph);
-  const visited = new Set<string>();
+  const { skillById: allSkillsById, dependents: allDependents } =
+    indexGraphBySkill(request.graph);
 
-  const evaluate = (skillId: string, trail: string[]): RecommendationContext => {
+  const subjectSkillIds = new Set(
+    Array.from(allSkillsById.values())
+      .filter((skill) => skill.subjectId === request.subjectId)
+      .map((skill) => skill.id)
+  );
+
+  if (subjectSkillIds.size === 0) {
+    return {
+      targetSubjectId: request.subjectId,
+      candidateId: "",
+      probability: 0,
+      status: "no-candidate",
+      traversed: [],
+      notes: "No skills found for subject",
+    };
+  }
+
+  // Restrict traversal to the chosen subject.
+  const skillById = new Map(
+    Array.from(allSkillsById.entries()).filter(([id]) =>
+      subjectSkillIds.has(id)
+    )
+  );
+  const dependents = new Map<string, string[]>();
+  for (const [key, value] of allDependents.entries()) {
+    if (!subjectSkillIds.has(key)) continue;
+    const filtered = value.filter((id) => subjectSkillIds.has(id));
+    dependents.set(key, filtered);
+  }
+
+  const evaluate = (
+    skillId: string,
+    trail: string[],
+    visited: Set<string>
+  ): RecommendationContext => {
     if (visited.has(skillId)) {
       return {
-        targetSkillId: request.targetSkillId,
+        targetSubjectId: request.subjectId,
         candidateId: skillId,
         probability: 0,
         status: "no-candidate",
@@ -31,7 +65,7 @@ export const recommendNextSkill = (
     const skill = skillById.get(skillId);
     if (!skill) {
       return {
-        targetSkillId: request.targetSkillId,
+        targetSubjectId: request.subjectId,
         candidateId: skillId,
         probability: 0,
         status: "no-candidate",
@@ -63,7 +97,7 @@ export const recommendNextSkill = (
 
       if (prob >= zpdMin && prob <= zpdMax) {
         return {
-          targetSkillId: request.targetSkillId,
+          targetSubjectId: request.subjectId,
           candidateId: prereqId,
           probability: prob,
           status: "recommended",
@@ -74,7 +108,7 @@ export const recommendNextSkill = (
 
       // Probability too low; recurse backward.
       if (prob < zpdMin) {
-        const deeper = evaluate(prereqId, updatedTrail);
+        const deeper = evaluate(prereqId, updatedTrail, visited);
         if (deeper.status !== "no-candidate") {
           return deeper;
         }
@@ -85,7 +119,7 @@ export const recommendNextSkill = (
         // returning this remediation suggestion.
         if (!fallbackRemediation) {
           fallbackRemediation = {
-            targetSkillId: request.targetSkillId,
+            targetSubjectId: request.subjectId,
             candidateId: prereqId,
             probability: prob,
             status: "needs-remediation",
@@ -103,15 +137,13 @@ export const recommendNextSkill = (
 
     if (selfProb >= zpdMin && selfProb <= zpdMax) {
       return {
-        targetSkillId: request.targetSkillId,
+        targetSubjectId: request.subjectId,
         candidateId: skillId,
         probability: selfProb,
         status: "recommended",
         traversed: updatedTrail,
         notes:
-          skillId === request.targetSkillId
-            ? "Gate reopened - target is in ZPD"
-            : "Candidate skill in ZPD",
+          "Candidate skill in ZPD",
       };
     }
 
@@ -124,7 +156,7 @@ export const recommendNextSkill = (
       //  3) if none in ZPD, pick the successor with highest probability
       // If no suitable successor is found, fall back to returning auto-mastered
       // for the current skill.
-      if (skillId === request.targetSkillId) {
+      if (true) {
         // Forward-search among dependents to find the next actionable
         // candidate. We perform a BFS over successors where prerequisites
         // are all mastered. For each node encountered we call `evaluate` on
@@ -161,7 +193,7 @@ export const recommendNextSkill = (
           const current = queue.shift()!;
           // Use evaluate to apply normal backward-checking logic from this
           // successor. Pass the updated trail so traversed path is accurate.
-          const result = evaluate(current, updatedTrail);
+          const result = evaluate(current, updatedTrail, visited);
           if (
             result.status === "recommended" ||
             result.status === "needs-remediation"
@@ -209,7 +241,6 @@ export const recommendNextSkill = (
         // special bootstrapping case of the start node.
         const directSuccs = dependents.get(skillId) ?? [];
         const allowDirectFallback =
-          skillId === request.targetSkillId &&
           request.graph &&
           (request.graph as any).startSkillId === skillId;
         if (directSuccs.length > 0 && allowDirectFallback) {
@@ -241,7 +272,7 @@ export const recommendNextSkill = (
             ? bestByProb.id
             : null;
           if (chosenId && !visited.has(chosenId)) {
-            const forwardResult = evaluate(chosenId, updatedTrail);
+            const forwardResult = evaluate(chosenId, updatedTrail, visited);
             if (forwardResult.status !== "no-candidate") {
               return forwardResult;
             }
@@ -250,21 +281,19 @@ export const recommendNextSkill = (
       }
 
       return {
-        targetSkillId: request.targetSkillId,
+        targetSubjectId: request.subjectId,
         candidateId: skillId,
         probability: selfProb,
         status: "auto-mastered",
         traversed: updatedTrail,
         notes:
-          skillId === request.targetSkillId
-            ? "Target appears mastered; advance to successors"
-            : "Prerequisite appears mastered",
+          "Skill appears mastered; advance to successors",
       };
     }
 
     if (skill.prerequisites.length === 0) {
       return {
-        targetSkillId: request.targetSkillId,
+        targetSubjectId: request.subjectId,
         candidateId: skillId,
         probability: selfProb,
         status: "needs-remediation",
@@ -281,7 +310,7 @@ export const recommendNextSkill = (
     }
 
     return {
-      targetSkillId: request.targetSkillId,
+      targetSubjectId: request.subjectId,
       candidateId: skillId,
       probability: selfProb,
       status: "no-candidate",
@@ -290,5 +319,18 @@ export const recommendNextSkill = (
     };
   };
 
-  return evaluate(request.targetSkillId, []);
+  // Evaluate all skills in the subject and pick the best candidate by priority.
+  const priority = ["recommended", "needs-remediation", "auto-mastered", "no-candidate"] as const;
+  const results: RecommendationContext[] = [];
+  for (const skillId of subjectSkillIds) {
+    const visited = new Set<string>();
+    results.push(evaluate(skillId, [], visited));
+  }
+  results.sort((a, b) => {
+    const sa = priority.indexOf(a.status as (typeof priority)[number]);
+    const sb = priority.indexOf(b.status as (typeof priority)[number]);
+    if (sa !== sb) return sa - sb;
+    return (b.probability ?? 0) - (a.probability ?? 0);
+  });
+  return results[0];
 };

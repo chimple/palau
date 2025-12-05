@@ -514,7 +514,11 @@ const App = () => {
       recommendNextSkill({
         graph: recommendationGraph,
         abilities,
-        targetSkillId: targetId,
+        subjectId:
+          graphSubjectFilterId ||
+          graph.skills.find((s) => s.id === targetId)?.subjectId ||
+          graph.subjects[0]?.id ||
+          "",
       }),
     [abilities, recommendationGraph, targetId, constantsSnapshot]
   );

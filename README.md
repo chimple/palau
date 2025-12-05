@@ -44,7 +44,7 @@ import {
 } from "@pal/core";
 ```
 
-- `recommendNextSkill` traverses prerequisites from a target skill, returning the next learning skill to test inside the ZPD window (default 0.5–0.8). It classifies results as `recommended`, `auto-mastered`, `needs-remediation`, or `no-candidate`.
+- `recommendNextSkill` traverses prerequisites across a subject, returning the next learning skill to test inside the ZPD window (default 0.5–0.8). It classifies results as `recommended`, `auto-mastered`, `needs-remediation`, or `no-candidate`.
 - `updateAbilities` applies Elo/IRT-style ability updates across skill, learning outcome, competency, domain, and subject layers after a correct/incorrect outcome.
 - `buildGraphSnapshot` aggregates predicted probabilities across the full dependency graph for visualisation.
 - Combine these utilities with your own CSV data exports to drive bespoke lesson assignment flows.

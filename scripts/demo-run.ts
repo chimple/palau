@@ -9,7 +9,11 @@ import { recommendNextSkill, updateAbilities } from '../packages/pal-core/src/in
   const defaultTarget = selectDefaultTargetSkill(graph);
   console.log('Default target:', defaultTarget);
 
-  const rec1 = recommendNextSkill({ graph, abilities, targetSkillId: defaultTarget });
+  const rec1 = recommendNextSkill({
+    graph,
+    abilities,
+    subjectId: graph.skills.find((s) => s.id === defaultTarget)?.subjectId ?? graph.subjects[0]?.id ?? "",
+  });
   console.log('Initial recommendation:', rec1);
 
   if (rec1.candidateId) {
@@ -18,7 +22,11 @@ import { recommendNextSkill, updateAbilities } from '../packages/pal-core/src/in
     console.log('prob before -> after:', res.probabilityBefore.toFixed(3), '->', res.probabilityAfter.toFixed(3));
     abilities = res.abilities;
 
-    const rec2 = recommendNextSkill({ graph, abilities, targetSkillId: defaultTarget });
+    const rec2 = recommendNextSkill({
+      graph,
+      abilities,
+      subjectId: graph.skills.find((s) => s.id === defaultTarget)?.subjectId ?? graph.subjects[0]?.id ?? "",
+    });
     console.log('\nRecommendation after correct outcome:', rec2);
   }
 

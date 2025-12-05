@@ -69,7 +69,7 @@ export interface BlendWeights {
 }
 
 export interface RecommendationContext {
-  targetSkillId: string;
+  targetSubjectId: string;
   candidateId: string;
   probability: number;
   status: RecommendationStatus;
@@ -80,7 +80,7 @@ export interface RecommendationContext {
 export interface RecommendationRequest {
   graph: DependencyGraph;
   abilities: AbilityState;
-  targetSkillId: string;
+  subjectId: string;
   zpdRange?: [number, number];
   blendWeights?: BlendWeights;
   masteredThreshold?: number;
