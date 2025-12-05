@@ -27,8 +27,8 @@ export const blendAbility = (
   abilities: AbilityState,
   weights: BlendWeights = DEFAULT_BLEND_WEIGHTS
 ): number => {
-  const thetaLi = getAbilityValue(abilities.skill, skill.id);
-  const thetaLO = getAbilityValue(abilities.outcome, skill.outcomeId);
+  const thetaSkill = getAbilityValue(abilities.skill, skill.id);
+  const thetaOutcome = getAbilityValue(abilities.outcome, skill.outcomeId);
   const thetaCompetency = getAbilityValue(
     abilities.competency,
     skill.competencyId
@@ -37,8 +37,8 @@ export const blendAbility = (
   const thetaSubject = getAbilityValue(abilities.subject, skill.subjectId);
 
   return (
-    thetaLi * weights.skill +
-    thetaLO * weights.outcome +
+    thetaSkill * weights.skill +
+    thetaOutcome * weights.outcome +
     thetaCompetency * weights.competency +
     thetaDomain * weights.domain +
     thetaSubject * weights.subject
