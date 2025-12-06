@@ -101,13 +101,24 @@ export interface OutcomeEvent {
 export interface AbilityUpdateOptions {
   graph: DependencyGraph;
   abilities: AbilityState;
-  event: OutcomeEvent;
+  events: OutcomeEvent[];
   blendWeights?: BlendWeights;
   learningRates?: LearningRates;
+}
+
+export interface AbilitySnapshot {
+  skill: number;
+  outcome: number;
+  competency: number;
+  domain: number;
+  subject: number;
 }
 
 export interface AbilityUpdateResult {
   abilities: AbilityState;
   probabilityBefore: number;
   probabilityAfter: number;
+  abilityBefore: AbilitySnapshot;
+  abilityAfter: AbilitySnapshot;
+  skillId: string;
 }

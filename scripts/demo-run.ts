@@ -18,7 +18,11 @@ import { recommendNextSkill, updateAbilities } from '../packages/pal-core/src/in
 
   if (rec1.candidateId) {
     console.log('\nSimulating a CORRECT outcome on candidate:', rec1.candidateId);
-    const res = updateAbilities({ graph, abilities, event: { skillId: rec1.candidateId, correct: true, timestamp: Date.now() } });
+    const res = updateAbilities({
+      graph,
+      abilities,
+      events: [{ skillId: rec1.candidateId, correct: true, timestamp: Date.now() }],
+    });
     console.log('prob before -> after:', res.probabilityBefore.toFixed(3), '->', res.probabilityAfter.toFixed(3));
     abilities = res.abilities;
 

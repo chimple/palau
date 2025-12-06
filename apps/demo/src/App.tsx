@@ -917,25 +917,27 @@ const App = () => {
     const result = updateAbilities({
       graph,
       abilities,
-      event: {
-        skillId,
-        correct,
-        timestamp,
-      },
+      events: [
+        {
+          skillId,
+          correct,
+          timestamp,
+        },
+      ],
     });
     const thetaBefore: AbilityVector = {
-      skill: abilities.skill[skillId] ?? 0,
-      outcome: abilities.outcome[outcomeId] ?? 0,
-      competency: abilities.competency[competencyId] ?? 0,
-      subject: abilities.subject[subjectId] ?? 0,
-      domain: abilities.domain[domainId] ?? 0,
+      skill: result.abilityBefore.skill,
+      outcome: result.abilityBefore.outcome,
+      competency: result.abilityBefore.competency,
+      subject: result.abilityBefore.subject,
+      domain: result.abilityBefore.domain,
     };
     const thetaAfter: AbilityVector = {
-      skill: result.abilities.skill[skillId] ?? 0,
-      outcome: result.abilities.outcome[outcomeId] ?? 0,
-      competency: result.abilities.competency[competencyId] ?? 0,
-      subject: result.abilities.subject[subjectId] ?? 0,
-      domain: result.abilities.domain[domainId] ?? 0,
+      skill: result.abilityAfter.skill,
+      outcome: result.abilityAfter.outcome,
+      competency: result.abilityAfter.competency,
+      subject: result.abilityAfter.subject,
+      domain: result.abilityAfter.domain,
     };
     setAbilities(result.abilities);
     setHistory((prevHistory) => [
