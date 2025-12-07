@@ -1,6 +1,6 @@
 {
   "name": "palau",
-  "private": true,
+  "private": false,
   "version": "0.1.0",
   "description": "PAL recommendation engine TypeScript package with demo React app",
   "scripts": {
