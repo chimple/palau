@@ -7,7 +7,13 @@ export default defineConfig({
   base: "./",
   resolve: {
     alias: {
-      "@pal/core": path.resolve(__dirname, "../..", "packages", "pal-core", "src"),
+      "@chimple/palau-recommendation": path.resolve(
+        __dirname,
+        "../..",
+        "packages",
+        "recommendation",
+        "src"
+      ),
     },
   },
   server: {

@@ -1,5 +1,5 @@
 {
-  "name": "@pal/core",
+  "name": "@chimple/palau-recommendation",
   "version": "0.1.0",
   "description": "PAL recommendation engine utilities",
   "type": "module",

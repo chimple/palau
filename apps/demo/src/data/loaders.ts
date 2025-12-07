@@ -7,7 +7,7 @@ import {
   type CsvRow,
   type DependencyGraph,
   type Skill,
-} from "@pal/core";
+} from "@chimple/palau-recommendation";
 
 import sampleGraphCsv from "./sample-graph.csv?raw";
 import samplePrerequisitesCsv from "./sample-prerequisites.csv?raw";

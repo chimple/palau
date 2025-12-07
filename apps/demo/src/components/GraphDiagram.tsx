@@ -12,7 +12,7 @@ import type {
   GraphSnapshot,
   Skill,
   RecommendationContext,
-} from "@pal/core";
+} from "@chimple/palau-recommendation";
 
 interface GraphDiagramProps {
   graph: DependencyGraph;

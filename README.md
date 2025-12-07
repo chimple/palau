@@ -2,7 +2,7 @@
 
 This repo hosts a miniature monorepo that contains:
 
-- `@pal/core` – a TypeScript package with the PAL (Personalised Adaptive Learning) graph traversal logic, probability updates, and helper utilities.
+- `@chimple/palau-recommendation` – a TypeScript package with the PAL (Personalised Adaptive Learning) graph traversal logic, probability updates, and helper utilities.
 - `apps/demo` – a Vite + React demo that visualises a dependency graph, surfaces the next recommendation, and lets you log learner outcomes to see real-time updates.
 
 ## Getting Started
@@ -27,7 +27,7 @@ This repo hosts a miniature monorepo that contains:
    npm run build
    ```
 
-## Package: `@pal/core`
+## Package: `@chimple/palau-recommendation`
 
 Key exports:
 
@@ -41,7 +41,7 @@ import {
   DEFAULT_MASTERED_THRESHOLD,
   AbilityState,
   RecommendationContext,
-} from "@pal/core";
+} from "@chimple/palau-recommendation";
 ```
 
 - `recommendNextSkill` traverses prerequisites across a subject, returning the next learning skill to test inside the ZPD window (default 0.5–0.8). It classifies results as `recommended`, `auto-mastered`, `needs-remediation`, or `no-candidate`.
@@ -69,5 +69,5 @@ Drop-in replacements following the same schema will update the demo without rebu
 ## Next Steps
 
 - Replace the sample CSVs with your NIPUN Bharat exports to see the graph and recommendation loop with authentic data (tune β values as needed).
-- Wire the `@pal/core` APIs into your assessment engine to power live lesson assignment.
+- Wire the `@chimple/palau-recommendation` APIs into your assessment engine to power live lesson assignment.
 - Extend the demo with server-synchronised state, richer analytics, or multi-learner comparisons.

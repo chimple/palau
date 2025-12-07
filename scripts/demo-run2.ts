@@ -1,5 +1,5 @@
-import { recommendNextSkill } from '../packages/pal-core/src/recommendation';
-import { DEFAULT_ZPD_RANGE, DEFAULT_MASTERED_THRESHOLD } from '../packages/pal-core/src/constants';
+import { recommendNextSkill } from '../packages/recommendation/src/recommendation';
+import { DEFAULT_ZPD_RANGE, DEFAULT_MASTERED_THRESHOLD } from '../packages/recommendation/src/constants';
 
 // Minimal graph matching types (grade removed)
 const graph = {

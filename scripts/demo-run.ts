@@ -1,5 +1,5 @@
 import { getDefaultDataset, cloneAbilities, selectDefaultTargetSkill } from '../apps/demo/src/data/loaders';
-import { recommendNextSkill, updateAbilities } from '../packages/pal-core/src/index';
+import { recommendNextSkill, updateAbilities } from '../packages/recommendation/src/index';
 
 (async () => {
   const dataset = getDefaultDataset();

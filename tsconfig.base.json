@@ -14,8 +14,8 @@
     "sourceMap": true,
     "baseUrl": ".",
     "paths": {
-      "@pal/core": [
-        "packages/pal-core/src"
+      "@chimple/palau-recommendation": [
+        "packages/recommendation/src"
       ]
     }
   },

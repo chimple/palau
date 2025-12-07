@@ -21,7 +21,7 @@ import {
   type GraphSnapshot,
   type RecommendationContext,
   type Skill,
-} from "@pal/core";
+} from "@chimple/palau-recommendation";
 import GraphDiagram from "./components/GraphDiagram";
 import {
   cloneAbilities,
