@@ -1,6 +1,6 @@
 {
   "name": "@chimple/palau-recommendation",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "PAL recommendation engine utilities",
   "type": "module",
   "main": "dist/index.js",
@@ -17,7 +17,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --format esm,cjs && tsc --project tsconfig.build.json",
+    "build": "tsup src/index.ts --format esm,cjs && tsc --build tsconfig.build.json --force",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "test": "vitest run"
   },

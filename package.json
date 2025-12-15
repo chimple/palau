@@ -1,7 +1,7 @@
 {
   "name": "palau",
   "private": false,
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "PAL recommendation engine TypeScript package with demo React app",
   "scripts": {
     "build": "pnpm -r run build",
