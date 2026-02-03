@@ -19,18 +19,18 @@ export interface CoreConstantsUpdate {
 
 const INITIAL_CORE_CONSTANTS: CoreConstants = {
   blendWeights: {
-    skill: 0.35,
-    outcome: 0.2,
-    competency: 0.18,
-    domain: 0.12,
-    subject: 0.15,
+    skill: 0.10,
+    outcome: 0.10,
+    competency: 0.60,
+    domain: 0.10,
+    subject: 0.10,
   },
   learningRates: {
-    skill: 0.5,
-    outcome: 0.08,
-    competency: 0.04,
-    domain: 0.04,
-    subject: 0.05,
+    skill: 0.50,
+    outcome: 0.80,
+    competency: 0.30,
+    domain: 0.50,
+    subject: 0.40,
   },
   zpdRange: [0.5, 0.8],
   masteredThreshold: 0.8,
