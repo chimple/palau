@@ -30,6 +30,7 @@ const rec = recommendNextSkill({
   graph,
   abilities,
   subjectId: "math",
+  targetSkillId: "s-fractions-compare",
 });
 
 // Apply one or more outcome events for the recommended skill
@@ -48,7 +49,7 @@ const p = getSkillProbability(graph, updated.abilities, rec.candidateId);
 
 ## Key APIs
 
-- `recommendNextSkill(request)`: subject-scoped recommendation with ZPD classification.
+- `recommendNextSkill(request)`: subject-scoped recommendation with ZPD classification. If `targetSkillId` is omitted, the engine first selects a target using the `zpd-prereq-aware` policy, then evaluates from that target.
 - `updateAbilities(options)`: serially applies outcome events for a skill and returns updated abilities plus before/after snapshots.
 - `buildGraphSnapshot(graph, abilities)`: aggregates probabilities and mastery bands for all skills.
 - `getSkillProbability(graph, abilities, skillId)`: probability for a specific skill given current abilities.
@@ -59,6 +60,7 @@ const p = getSkillProbability(graph, updated.abilities, rec.candidateId);
 - A `DependencyGraph` contains skills, outcomes, competencies, domains, and subjects. Skills include `difficulty` and `prerequisites` (skill IDs).
 - Abilities are stored per layer (`skill`, `outcome`, `competency`, `domain`, `subject`).
 - Recommendations operate within a subject; make sure `subjectId` matches your graph entries.
+- If `targetSkillId` is provided, it must belong to `subjectId`; otherwise the result is `no-candidate`.
 
 ## Scripts & Builds
 

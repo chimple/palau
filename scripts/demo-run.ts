@@ -13,6 +13,7 @@ import { recommendNextSkill, updateAbilities } from '../packages/recommendation/
     graph,
     abilities,
     subjectId: graph.skills.find((s) => s.id === defaultTarget)?.subjectId ?? graph.subjects[0]?.id ?? "",
+    targetSkillId: defaultTarget,
   });
   console.log('Initial recommendation:', rec1);
 
@@ -30,6 +31,7 @@ import { recommendNextSkill, updateAbilities } from '../packages/recommendation/
       graph,
       abilities,
       subjectId: graph.skills.find((s) => s.id === defaultTarget)?.subjectId ?? graph.subjects[0]?.id ?? "",
+      targetSkillId: defaultTarget,
     });
     console.log('\nRecommendation after correct outcome:', rec2);
   }

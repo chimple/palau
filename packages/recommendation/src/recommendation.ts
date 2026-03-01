@@ -33,6 +33,17 @@ export const recommendNextSkill = (
     };
   }
 
+  if (request.targetSkillId && !subjectSkillIds.has(request.targetSkillId)) {
+    return {
+      targetSubjectId: request.subjectId,
+      candidateId: request.targetSkillId,
+      probability: 0,
+      status: "no-candidate",
+      traversed: [],
+      notes: "Target skill not found in requested subject",
+    };
+  }
+
   // Restrict traversal to the chosen subject.
   const skillById = new Map(
     Array.from(allSkillsById.entries()).filter(([id]) =>
@@ -45,6 +56,153 @@ export const recommendNextSkill = (
     const filtered = value.filter((id) => subjectSkillIds.has(id));
     dependents.set(key, filtered);
   }
+  const skillPool = Array.from(skillById.values());
+  const skillSet = new Set(skillPool.map((skill) => skill.id));
+
+  const selectTargetWithZpdPrereqAwarePolicy = (): string => {
+    if (skillPool.length === 0) {
+      return "";
+    }
+
+    const probs = new Map<string, number>();
+    const mastered = new Map<string, boolean>();
+    const inZpd = new Map<string, boolean>();
+    for (const skill of skillPool) {
+      const p =
+        logistic(
+          blendAbility(skill, request.abilities, weights) - skill.difficulty
+        ) ?? 0;
+      probs.set(skill.id, p);
+      mastered.set(skill.id, p >= masteredThreshold);
+      inZpd.set(skill.id, p >= zpdMin && p <= zpdMax);
+    }
+
+    const eligibleAll = skillPool.filter((skill) =>
+      skill.prerequisites.every((pre) => mastered.get(pre) === true)
+    );
+    let eligible = eligibleAll.filter((skill) => !mastered.get(skill.id));
+    if (eligible.length === 0) {
+      eligible = eligibleAll.slice();
+    }
+
+    if (eligible.length > 0) {
+      const zpdCandidates = eligible.filter((skill) => inZpd.get(skill.id));
+
+      const chooseClosestToMasteredByProb = (pool: typeof eligible): string => {
+        let best = pool[0];
+        let bestScore = Math.abs((probs.get(best.id) ?? 0) - masteredThreshold);
+        let bestProb = probs.get(best.id) ?? 0;
+        for (const skill of pool) {
+          const p = probs.get(skill.id) ?? 0;
+          const score = Math.abs(p - masteredThreshold);
+          if (score < bestScore || (score === bestScore && p > bestProb)) {
+            best = skill;
+            bestScore = score;
+            bestProb = p;
+          }
+        }
+        return best.id;
+      };
+
+      if (zpdCandidates.length > 0) {
+        return chooseClosestToMasteredByProb(zpdCandidates);
+      }
+
+      const computeDistanceToMastered = (startId: string): number => {
+        const queue: Array<{ id: string; dist: number }> = [];
+        const seen = new Set<string>();
+        const first = dependents.get(startId) ?? [];
+        for (const id of first) {
+          queue.push({ id, dist: 1 });
+          seen.add(id);
+        }
+        while (queue.length > 0) {
+          const { id, dist } = queue.shift()!;
+          if (mastered.get(id)) return dist;
+          const next = dependents.get(id) ?? [];
+          for (const n of next) {
+            if (!seen.has(n)) {
+              seen.add(n);
+              queue.push({ id: n, dist: dist + 1 });
+            }
+          }
+        }
+        return Number.POSITIVE_INFINITY;
+      };
+
+      eligible.sort((a, b) => {
+        const da = computeDistanceToMastered(a.id);
+        const db = computeDistanceToMastered(b.id);
+        if (da !== db) return da - db;
+        return (probs.get(b.id) ?? 0) - (probs.get(a.id) ?? 0);
+      });
+      return eligible[0].id;
+    }
+
+    const unmet = new Set<string>();
+    for (const skill of skillPool) {
+      for (const pre of skill.prerequisites) {
+        if (!skillSet.has(pre)) continue;
+        if (!mastered.get(pre)) unmet.add(pre);
+      }
+    }
+
+    if (unmet.size > 0) {
+      const unmetArr = Array.from(unmet);
+      const nonMasteredTargets = new Set(
+        skillPool.filter((skill) => !mastered.get(skill.id)).map((s) => s.id)
+      );
+
+      const computeDistanceToNonMastered = (startId: string): number => {
+        const queue: Array<{ id: string; dist: number }> = [];
+        const seen = new Set<string>();
+        const first = dependents.get(startId) ?? [];
+        for (const id of first) {
+          queue.push({ id, dist: 1 });
+          seen.add(id);
+        }
+        while (queue.length > 0) {
+          const { id, dist } = queue.shift()!;
+          if (nonMasteredTargets.has(id)) return dist;
+          const next = dependents.get(id) ?? [];
+          for (const n of next) {
+            if (!seen.has(n)) {
+              seen.add(n);
+              queue.push({ id: n, dist: dist + 1 });
+            }
+          }
+        }
+        return Number.POSITIVE_INFINITY;
+      };
+
+      const unmetInZpd = unmetArr.filter((id) => inZpd.get(id));
+      if (unmetInZpd.length > 0) {
+        unmetInZpd.sort((a, b) => {
+          const da = computeDistanceToNonMastered(a);
+          const db = computeDistanceToNonMastered(b);
+          if (da !== db) return da - db;
+          return (probs.get(b) ?? 0) - (probs.get(a) ?? 0);
+        });
+        return unmetInZpd[0];
+      }
+
+      const unmetBelow = unmetArr.filter((id) => !inZpd.get(id));
+      if (unmetBelow.length > 0) {
+        unmetBelow.sort((a, b) => {
+          const da = computeDistanceToNonMastered(a);
+          const db = computeDistanceToNonMastered(b);
+          if (da !== db) return da - db;
+          return (probs.get(b) ?? 0) - (probs.get(a) ?? 0);
+        });
+        return unmetBelow[0];
+      }
+    }
+
+    const sortedByDifficulty = [...skillPool].sort(
+      (a, b) => (b.difficulty ?? 0) - (a.difficulty ?? 0)
+    );
+    return sortedByDifficulty[0]?.id ?? skillPool[0].id;
+  };
 
   const evaluate = (
     skillId: string,
@@ -319,18 +477,19 @@ export const recommendNextSkill = (
     };
   };
 
-  // Evaluate all skills in the subject and pick the best candidate by priority.
-  const priority = ["recommended", "needs-remediation", "auto-mastered", "no-candidate"] as const;
-  const results: RecommendationContext[] = [];
-  for (const skillId of subjectSkillIds) {
-    const visited = new Set<string>();
-    results.push(evaluate(skillId, [], visited));
+  const targetSkillId =
+    request.targetSkillId ?? selectTargetWithZpdPrereqAwarePolicy();
+
+  if (!targetSkillId) {
+    return {
+      targetSubjectId: request.subjectId,
+      candidateId: "",
+      probability: 0,
+      status: "no-candidate",
+      traversed: [],
+      notes: "Unable to determine target skill for recommendation",
+    };
   }
-  results.sort((a, b) => {
-    const sa = priority.indexOf(a.status as (typeof priority)[number]);
-    const sb = priority.indexOf(b.status as (typeof priority)[number]);
-    if (sa !== sb) return sa - sb;
-    return (b.probability ?? 0) - (a.probability ?? 0);
-  });
-  return results[0];
+
+  return evaluate(targetSkillId, [], new Set<string>());
 };

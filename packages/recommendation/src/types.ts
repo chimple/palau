@@ -81,6 +81,7 @@ export interface RecommendationRequest {
   graph: DependencyGraph;
   abilities: AbilityState;
   subjectId: string;
+  targetSkillId?: string;
   zpdRange?: [number, number];
   blendWeights?: BlendWeights;
   masteredThreshold?: number;

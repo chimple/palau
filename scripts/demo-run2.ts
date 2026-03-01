@@ -39,6 +39,7 @@ const req = {
   graph,
   abilities,
   subjectId: 's1',
+  targetSkillId: 'A',
   blendWeights: { skill: 1, outcome: 0, competency: 0, domain: 0, subject: 0 },
   // Use default blend weights by leaving undefined; our theta values are direct
 };
