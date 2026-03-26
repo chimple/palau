@@ -2,11 +2,44 @@ export type CsvRow = string[];
 
 const cleanLineBreaks = (text: string): string => text.replace(/\r\n/g, "\n");
 
+const detectDelimiter = (text: string): "," | "\t" => {
+  const normalized = cleanLineBreaks(text);
+  const firstNonEmptyLine = normalized
+    .split("\n")
+    .find((line) => line.trim().length > 0);
+
+  if (!firstNonEmptyLine) {
+    return ",";
+  }
+
+  let inQuotes = false;
+  let commaCount = 0;
+  let tabCount = 0;
+
+  for (const char of Array.from(firstNonEmptyLine)) {
+    if (char === "\"") {
+      inQuotes = !inQuotes;
+      continue;
+    }
+    if (inQuotes) {
+      continue;
+    }
+    if (char === ",") {
+      commaCount += 1;
+    } else if (char === "\t") {
+      tabCount += 1;
+    }
+  }
+
+  return tabCount > commaCount ? "\t" : ",";
+};
+
 export const parseCsv = (text: string): CsvRow[] => {
   const rows: CsvRow[] = [];
   let currentRow: string[] = [];
   let currentCell = "";
   let inQuotes = false;
+  const delimiter = detectDelimiter(text);
 
   const pushCell = () => {
     currentRow.push(currentCell.trim());
@@ -34,7 +67,7 @@ export const parseCsv = (text: string): CsvRow[] => {
       } else {
         inQuotes = !inQuotes;
       }
-    } else if (char === "," && !inQuotes) {
+    } else if (char === delimiter && !inQuotes) {
       pushCell();
     } else if (char === "\n" && !inQuotes) {
       pushRow();

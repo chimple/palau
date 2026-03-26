@@ -44,6 +44,38 @@ const MARGIN = 80;
 const ZOOM_MIN = 0.4;
 const ZOOM_MAX = 2.6;
 
+const wrapLabel = (label: string, maxLineLength: number = 18, maxLines: number = 3) => {
+  const words = label.split(/\s+/).filter(Boolean);
+  if (words.length === 0) {
+    return [label];
+  }
+  const lines: string[] = [];
+  let current = "";
+  for (const word of words) {
+    const next = current ? `${current} ${word}` : word;
+    if (next.length <= maxLineLength || current.length === 0) {
+      current = next;
+      continue;
+    }
+    lines.push(current);
+    current = word;
+    if (lines.length === maxLines - 1) {
+      break;
+    }
+  }
+  const consumedWords = lines.join(" ").split(/\s+/).filter(Boolean).length;
+  const remaining = words.slice(consumedWords);
+  if (remaining.length > 0) {
+    const tail = [current, ...remaining].filter(Boolean).join(" ");
+    lines.push(
+      tail.length > maxLineLength ? `${tail.slice(0, maxLineLength - 1)}…` : tail
+    );
+  } else if (current) {
+    lines.push(current);
+  }
+  return lines.slice(0, maxLines);
+};
+
 const buildDependents = (
   graph: DependencyGraph,
   allowed?: Set<string>
@@ -425,36 +457,7 @@ const GraphDiagram = ({
 
   const globalDependents = useMemo(() => buildDependents(graph), [graph]);
 
-  const searchConnectedFilter = useMemo(() => {
-    if (!searchSkillId) {
-      return undefined;
-    }
-    const connected = new Set<string>();
-    const stack = [searchSkillId];
-    while (stack.length > 0) {
-      const current = stack.pop()!;
-      if (connected.has(current)) {
-        continue;
-      }
-      connected.add(current);
-      const skill = skillIndex.get(current);
-      if (skill) {
-        for (const prereq of skill.prerequisites) {
-          stack.push(prereq);
-        }
-      }
-      const dependents = globalDependents.get(current) ?? [];
-      for (const dep of dependents) {
-        stack.push(dep);
-      }
-    }
-    return connected;
-  }, [searchSkillId, skillIndex, globalDependents]);
-
   const skillFilter = useMemo<Set<string> | undefined>(() => {
-    if (searchConnectedFilter) {
-      return searchConnectedFilter;
-    }
     if (
       !subjectFilterId &&
       !domainFilterId &&
@@ -487,7 +490,6 @@ const GraphDiagram = ({
     subjectFilterId,
     domainFilterId,
     competencyFilterId,
-    searchConnectedFilter,
   ]);
 
   const layout = useMemo(
@@ -718,6 +720,20 @@ const GraphDiagram = ({
     [overrideOptions]
   );
 
+  const matchedSearchSkillIds = useMemo(() => {
+    const trimmed = searchQuery.trim();
+    if (!trimmed) {
+      return [];
+    }
+    const normalized = trimmed.toLowerCase();
+    return overrideOptions.filtered
+      .filter((skill) => {
+        const haystack = `${skill.label} ${skill.id}`.toLowerCase();
+        return haystack.includes(normalized);
+      })
+      .map((skill) => skill.id);
+  }, [overrideOptions, searchQuery]);
+
   const handleSearchSubmit = useCallback(
     (event?: React.FormEvent<HTMLFormElement>) => {
       if (event) {
@@ -862,12 +878,18 @@ const GraphDiagram = ({
         </datalist>
         {searchSkillId && (
           <p style={{ fontSize: "0.8rem", color: "#475569", marginTop: "0.35rem" }}>
-            Showing network for{" "}
+            Highlighting{" "}
             <strong>
               {skillIndex.get(searchSkillId)?.label ?? searchSkillId} (
               {searchSkillId})
             </strong>
-            . The manual override dropdown below has been synced to this skill.
+            . The full graph remains visible and the manual override dropdown below has been synced to this skill.
+          </p>
+        )}
+        {!searchSkillId && matchedSearchSkillIds.length > 0 && (
+          <p style={{ fontSize: "0.8rem", color: "#475569", marginTop: "0.35rem" }}>
+            {matchedSearchSkillIds.length} matching skill
+            {matchedSearchSkillIds.length === 1 ? "" : "s"} highlighted in the graph.
           </p>
         )}
         {searchError && (
@@ -1013,8 +1035,9 @@ const GraphDiagram = ({
               const probability =
                 snapshot.snapshot.find((entry) => entry.skillId === pos.id)
                   ?.probability ?? 0;
-              const difficulty = skill?.difficulty ?? 0;
-              const isSearchFocus = searchSkillId === pos.id;
+              const isSearchFocus =
+                searchSkillId === pos.id ||
+                (!searchSkillId && matchedSearchSkillIds.includes(pos.id));
               const isOverrideFocus = overrideSkillId === pos.id;
               const circleStroke = isSearchFocus
                 ? "#f97316"
@@ -1040,40 +1063,21 @@ const GraphDiagram = ({
                   />
                   <text
                     x={pos.x}
-                    y={pos.y - 16}
+                    y={pos.y - 18}
                     textAnchor="middle"
-                    fontSize="12"
+                    fontSize="11"
                     fontWeight="600"
                     fill="#1f2937"
                   >
-                    {skill?.label ?? pos.id}
-                  </text>
-                  <text
-                    x={pos.x}
-                    y={pos.y + 4}
-                    textAnchor="middle"
-                    fontSize="11"
-                    fill="#4b5563"
-                  >
-                    {pos.id}
-                  </text>
-                  <text
-                    x={pos.x}
-                    y={pos.y + 24}
-                    textAnchor="middle"
-                    fontSize="11"
-                    fill="#0f172a"
-                  >
-                    {(probability * 100).toFixed(0)}%
-                  </text>
-                  <text
-                    x={pos.x}
-                    y={pos.y + 42}
-                    textAnchor="middle"
-                    fontSize="10"
-                    fill="#64748b"
-                  >
-                    diff {difficulty.toFixed(2)}
+                    {wrapLabel(skill?.label ?? pos.id).map((line, index) => (
+                      <tspan
+                        key={`${pos.id}-${index}`}
+                        x={pos.x}
+                        dy={index === 0 ? 0 : 13}
+                      >
+                        {line}
+                      </tspan>
+                    ))}
                   </text>
                 </g>
               );

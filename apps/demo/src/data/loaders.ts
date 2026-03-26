@@ -110,10 +110,11 @@ const parseGraphRows = (
       throw new Error("Graph rows must include non-empty IDs for all entities.");
     }
 
-    const difficulty = Number.parseFloat(difficultyText);
-    if (Number.isNaN(difficulty)) {
+    const normalizedDifficultyText = difficultyText.replace(",", ".").trim();
+    const difficulty = Number(normalizedDifficultyText);
+    if (!Number.isFinite(difficulty)) {
       throw new Error(
-        `Difficulty must be numeric. Check skill "${skillId}".`
+        `Difficulty must be numeric. Check skill "${skillId}" (received "${difficultyText}").`
       );
     }
 
