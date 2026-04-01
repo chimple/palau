@@ -11,6 +11,8 @@ import {
 
 import sampleGraphCsv from "./sample-graph.csv?raw";
 import samplePrerequisitesCsv from "./sample-prerequisites.csv?raw";
+import sampleMathGraphCsv from "./sample-graph-math.csv?raw";
+import sampleMathPrerequisitesCsv from "./sample-prerequisites-math.csv?raw";
 import sampleAbilitiesCsv from "./sample-abilities.csv?raw";
 import sampleConstantsCsv from "./sample-constants.csv?raw";
 
@@ -18,6 +20,189 @@ export interface DatasetBundle {
   graph: DependencyGraph;
   abilities: AbilityState;
 }
+
+export type BuiltInDatasetId = "english" | "math";
+
+export interface BuiltInDatasetOption {
+  id: BuiltInDatasetId;
+  label: string;
+}
+
+const BUILT_IN_DATASET_OPTIONS: BuiltInDatasetOption[] = [
+  { id: "english", label: "English" },
+  { id: "math", label: "Maths" },
+];
+
+const normalizeLookupValue = (value: string): string =>
+  value
+    .toLowerCase()
+    .replace(/[\u2010-\u2015]/g, "-")
+    .replace(/[\u2018\u2019\u201B]/g, "'")
+    .replace(/[\u201C\u201D\u201F]/g, '"')
+    .replace(/[^a-z0-9\s]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+const escapeCsvCell = (value: string): string => {
+  if (/[",\r\n]/.test(value)) {
+    return `"${value.replace(/"/g, '""')}"`;
+  }
+  return value;
+};
+
+const serializeCsv = (rows: string[][]): string =>
+  rows
+    .map((row) => row.map((cell) => escapeCsvCell(cell ?? "")).join(","))
+    .join("\n");
+
+const getColumnIndex = (header: CsvRow, labels: string[]): number => {
+  const normalizedHeader = header.map((cell) => normalizeLookupValue(cell));
+  return normalizedHeader.findIndex((value) =>
+    labels.some((label) => value === normalizeLookupValue(label))
+  );
+};
+
+const convertPalNumeracyGraphCsv = (rawCsv: string): string => {
+  const rows = trimEmptyRows(parseCsv(rawCsv));
+  if (rows.length <= 1) {
+    throw new Error("Math graph CSV is empty or missing data rows.");
+  }
+
+  const [header, ...dataRows] = rows;
+  const domainIdx = getColumnIndex(header, ["domain"]);
+  const competencyIdx = getColumnIndex(header, ["competency"]);
+  const outcomeIdx = getColumnIndex(header, ["outcome"]);
+  const skillIdx = getColumnIndex(header, ["skill"]);
+  const difficultyIdx = getColumnIndex(header, ["difficulty_score"]);
+
+  if (
+    domainIdx < 0 ||
+    competencyIdx < 0 ||
+    outcomeIdx < 0 ||
+    skillIdx < 0 ||
+    difficultyIdx < 0
+  ) {
+    throw new Error(
+      "Math graph CSV must include Domain, Competency, Outcome, Skill, and Difficulty_Score columns."
+    );
+  }
+
+  const bySkill = new Map<
+    string,
+    {
+      domainId: string;
+      competencyId: string;
+      outcomeId: string;
+      skillId: string;
+      difficulty: number;
+    }
+  >();
+
+  for (const row of dataRows) {
+    const domainId = (row[domainIdx] ?? "").trim();
+    const competencyId = (row[competencyIdx] ?? "").trim();
+    const outcomeId = (row[outcomeIdx] ?? "").trim();
+    const skillId = (row[skillIdx] ?? "").trim();
+    const difficultyText = (row[difficultyIdx] ?? "").trim();
+    if (!domainId || !competencyId || !outcomeId || !skillId) {
+      continue;
+    }
+    const difficulty = Number(difficultyText || "0");
+    const safeDifficulty = Number.isFinite(difficulty) ? difficulty : 0;
+    const existing = bySkill.get(skillId);
+    if (!existing) {
+      bySkill.set(skillId, {
+        domainId,
+        competencyId,
+        outcomeId,
+        skillId,
+        difficulty: safeDifficulty,
+      });
+      continue;
+    }
+    existing.difficulty = Math.max(existing.difficulty, safeDifficulty);
+  }
+
+  const internalRows: string[][] = [
+    [
+      "subjectId",
+      "subjectName",
+      "domainId",
+      "domainName",
+      "competencyId",
+      "competencyName",
+      "learningOutcomeId",
+      "learningOutcomeName",
+      "indicatorId",
+      "indicatorName",
+      "difficulty",
+    ],
+  ];
+
+  for (const item of bySkill.values()) {
+    internalRows.push([
+      "Mathematics",
+      "Mathematics",
+      item.domainId,
+      item.domainId,
+      item.competencyId,
+      item.competencyId,
+      item.outcomeId,
+      item.outcomeId,
+      item.skillId,
+      item.skillId,
+      String(item.difficulty),
+    ]);
+  }
+
+  return serializeCsv(internalRows);
+};
+
+const convertPalNumeracyPrerequisitesCsv = (rawCsv: string): string => {
+  const rows = trimEmptyRows(parseCsv(rawCsv));
+  if (rows.length <= 1) {
+    throw new Error("Math prerequisite CSV is empty or missing data rows.");
+  }
+
+  const [header, ...dataRows] = rows;
+  const sourceIdx = getColumnIndex(header, ["source"]);
+  const targetIdx = getColumnIndex(header, ["target"]);
+  if (sourceIdx < 0 || targetIdx < 0) {
+    throw new Error(
+      "Math prerequisite CSV must include Source and Target columns."
+    );
+  }
+
+  const internalRows: string[][] = [["sourceSkillId", "targetSkillId"]];
+  for (const row of dataRows) {
+    const sourceId = (row[sourceIdx] ?? "").trim();
+    const targetId = (row[targetIdx] ?? "").trim();
+    if (!sourceId || !targetId) {
+      continue;
+    }
+    internalRows.push([sourceId, targetId]);
+  }
+  return serializeCsv(internalRows);
+};
+
+const getBuiltInDatasetCsv = (id: BuiltInDatasetId) => {
+  switch (id) {
+    case "math":
+      return {
+        graphCsv: convertPalNumeracyGraphCsv(sampleMathGraphCsv),
+        prerequisitesCsv: convertPalNumeracyPrerequisitesCsv(
+          sampleMathPrerequisitesCsv
+        ),
+      };
+    case "english":
+    default:
+      return {
+        graphCsv: sampleGraphCsv,
+        prerequisitesCsv: samplePrerequisitesCsv,
+        abilityCsv: sampleAbilitiesCsv,
+      };
+  }
+};
 
 const createDefaultAbilitiesForGraph = (graph: DependencyGraph): AbilityState => {
   const state = createEmptyAbilityState();
@@ -175,6 +360,20 @@ const parseGraphRows = (
   if (prereqData.length === 0) {
     throw new Error("Prerequisite CSV must include a header row.");
   }
+  const resolveSkillId = (() => {
+    const byNormalized = new Map<string, string>();
+    for (const skill of skills) {
+      byNormalized.set(normalizeLookupValue(skill.id), skill.id);
+      byNormalized.set(normalizeLookupValue(skill.label ?? skill.id), skill.id);
+    }
+    return (rawId: string): string => {
+      const trimmed = rawId.trim();
+      if (skillIndex.has(trimmed)) {
+        return trimmed;
+      }
+      return byNormalized.get(normalizeLookupValue(trimmed)) ?? "";
+    };
+  })();
   const [, ...prereqRowsData] = prereqData;
   for (const row of prereqRowsData) {
     if (row.length < 2) {
@@ -182,12 +381,14 @@ const parseGraphRows = (
         "Prerequisite rows must contain sourceSkillId,targetSkillId."
       );
     }
-    const [sourceId, targetId] = row.map((cell) => cell.trim());
-    if (!sourceId || !targetId) {
+    const [rawSourceId, rawTargetId] = row.map((cell) => cell.trim());
+    if (!rawSourceId || !rawTargetId) {
       continue;
     }
+    const sourceId = resolveSkillId(rawSourceId);
+    const targetId = resolveSkillId(rawTargetId);
     const targetSkill = skillIndex.get(targetId);
-    if (!targetSkill) {
+    if (!sourceId || !targetSkill) {
       continue;
     }
     targetSkill.prerequisites = Array.from(
@@ -285,11 +486,15 @@ export const applyDefaultConstants = () => {
 
 export const getDefaultDataset = (): DatasetBundle => {
   applyDefaultConstants();
-  return loadDatasetFromCsv({
-    graphCsv: sampleGraphCsv,
-    prerequisitesCsv: samplePrerequisitesCsv,
-    abilityCsv: sampleAbilitiesCsv,
-  });
+  return loadDatasetFromCsv(getBuiltInDatasetCsv("english"));
+};
+
+export const getBuiltInDatasetOptions = (): BuiltInDatasetOption[] =>
+  BUILT_IN_DATASET_OPTIONS.slice();
+
+export const getBuiltInDataset = (id: BuiltInDatasetId): DatasetBundle => {
+  applyDefaultConstants();
+  return loadDatasetFromCsv(getBuiltInDatasetCsv(id));
 };
 
 export const cloneAbilities = (abilities: AbilityState): AbilityState => ({
