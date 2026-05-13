@@ -1,8 +1,13 @@
-import type { AbilityState, BlendWeights, DependencyGraph } from "./types";
+import type {
+  AbilityState,
+  BlendWeights,
+  DependencyGraph,
+  LayerWeightsInput,
+} from "./types";
 import {
-  DEFAULT_BLEND_WEIGHTS,
   DEFAULT_MASTERED_THRESHOLD,
   DEFAULT_ZPD_RANGE,
+  resolveBlendWeights,
 } from "./constants";
 import { getSkill } from "./utils";
 import { blendAbility, logistic } from "./utils";
@@ -24,16 +29,19 @@ export const getSkillProbability = (
   graph: DependencyGraph,
   abilities: AbilityState,
   skillId: string,
-  weights: BlendWeights = DEFAULT_BLEND_WEIGHTS
+  weights?: LayerWeightsInput<BlendWeights>
 ): number => {
   const skill = getSkill(graph, skillId);
-  return logistic(blendAbility(skill, abilities, weights) - skill.difficulty);
+  const resolvedWeights = resolveBlendWeights(weights, skill.subjectId);
+  return logistic(
+    blendAbility(skill, abilities, resolvedWeights) - skill.difficulty
+  );
 };
 
 export const buildGraphSnapshot = (
   graph: DependencyGraph,
   abilities: AbilityState,
-  weights: BlendWeights = DEFAULT_BLEND_WEIGHTS,
+  weights?: LayerWeightsInput<BlendWeights>,
   zpdRange: [number, number] = DEFAULT_ZPD_RANGE,
   masteredThreshold: number = DEFAULT_MASTERED_THRESHOLD
 ): GraphSnapshot => {

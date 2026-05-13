@@ -1,7 +1,7 @@
 import {
-  DEFAULT_BLEND_WEIGHTS,
   DEFAULT_MASTERED_THRESHOLD,
   DEFAULT_ZPD_RANGE,
+  resolveBlendWeights,
 } from "./constants";
 import type { RecommendationContext, RecommendationRequest } from "./types";
 import { blendAbility, indexGraphBySkill, logistic } from "./utils";
@@ -9,7 +9,7 @@ import { blendAbility, indexGraphBySkill, logistic } from "./utils";
 export const recommendNextSkill = (
   request: RecommendationRequest
 ): RecommendationContext => {
-  const weights = request.blendWeights ?? DEFAULT_BLEND_WEIGHTS;
+  const weights = resolveBlendWeights(request.blendWeights, request.subjectId);
   const [zpdMin, zpdMax] = request.zpdRange ?? DEFAULT_ZPD_RANGE;
   const masteredThreshold =
     request.masteredThreshold ?? DEFAULT_MASTERED_THRESHOLD;

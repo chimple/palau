@@ -68,6 +68,13 @@ export interface BlendWeights {
   subject: number;
 }
 
+export interface SubjectSpecific<T> {
+  default?: Partial<T>;
+  bySubject: Record<string, Partial<T>>;
+}
+
+export type LayerWeightsInput<T> = Partial<T> | SubjectSpecific<T>;
+
 export interface RecommendationContext {
   targetSubjectId: string;
   candidateId: string;
@@ -83,7 +90,7 @@ export interface RecommendationRequest {
   subjectId: string;
   targetSkillId?: string;
   zpdRange?: [number, number];
-  blendWeights?: BlendWeights;
+  blendWeights?: LayerWeightsInput<BlendWeights>;
   masteredThreshold?: number;
 }
 
@@ -103,8 +110,8 @@ export interface AbilityUpdateOptions {
   graph: DependencyGraph;
   abilities: AbilityState;
   events: OutcomeEvent[];
-  blendWeights?: BlendWeights;
-  learningRates?: LearningRates;
+  blendWeights?: LayerWeightsInput<BlendWeights>;
+  learningRates?: LayerWeightsInput<LearningRates>;
 }
 
 export interface AbilitySnapshot {
