@@ -1,6 +1,6 @@
 import {
-  DEFAULT_BLEND_WEIGHTS,
-  DEFAULT_LEARNING_RATES,
+  resolveBlendWeights,
+  resolveLearningRates,
 } from "./constants";
 import type { AbilityUpdateOptions, AbilityUpdateResult } from "./types";
 import { blendAbility, cloneAbilityState, getSkill, logistic } from "./utils";
@@ -19,9 +19,9 @@ export const updateAbilities = (
     }
   }
 
-  const weights = options.blendWeights ?? DEFAULT_BLEND_WEIGHTS;
-  const rates = options.learningRates ?? DEFAULT_LEARNING_RATES;
   const skill = getSkill(graph, skillId);
+  const weights = resolveBlendWeights(options.blendWeights, skill.subjectId);
+  const rates = resolveLearningRates(options.learningRates, skill.subjectId);
   const newState = cloneAbilityState(abilities);
 
   const abilityBefore = {

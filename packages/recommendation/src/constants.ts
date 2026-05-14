@@ -1,5 +1,11 @@
 import { parseCsv, trimEmptyRows } from "./csv";
-import type { AbilityState, BlendWeights, LearningRates } from "./types";
+import type {
+  AbilityState,
+  BlendWeights,
+  LayerWeightsInput,
+  LearningRates,
+  SubjectSpecific,
+} from "./types";
 
 export interface CoreConstants {
   blendWeights: BlendWeights;
@@ -106,6 +112,45 @@ const ensureFinite = (value: number, label: string): number => {
   }
   return value;
 };
+
+const isSubjectSpecific = <T>(
+  input: LayerWeightsInput<T>
+): input is SubjectSpecific<T> =>
+  typeof input === "object" && input !== null && "bySubject" in input;
+
+const resolveLayerWeights = <T extends object>(
+  defaults: T,
+  input: LayerWeightsInput<T> | undefined,
+  subjectId: string
+): T => {
+  if (!input) {
+    return { ...defaults };
+  }
+
+  if (!isSubjectSpecific(input)) {
+    return {
+      ...defaults,
+      ...input,
+    };
+  }
+
+  return {
+    ...defaults,
+    ...input.default,
+    ...input.bySubject[subjectId],
+  };
+};
+
+export const resolveBlendWeights = (
+  input: LayerWeightsInput<BlendWeights> | undefined,
+  subjectId: string
+): BlendWeights => resolveLayerWeights(DEFAULT_BLEND_WEIGHTS, input, subjectId);
+
+export const resolveLearningRates = (
+  input: LayerWeightsInput<LearningRates> | undefined,
+  subjectId: string
+): LearningRates =>
+  resolveLayerWeights(DEFAULT_LEARNING_RATES, input, subjectId);
 
 export const getCoreConstants = (): CoreConstants => ({
   blendWeights: cloneBlendWeights(currentCoreConstants.blendWeights),

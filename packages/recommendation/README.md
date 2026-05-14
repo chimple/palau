@@ -47,6 +47,40 @@ const snapshot = buildGraphSnapshot(graph, updated.abilities);
 const p = getSkillProbability(graph, updated.abilities, rec.candidateId);
 ```
 
+### Subject-specific constants
+
+`blendWeights` and `learningRates` can be passed per call. A flat object still
+works, or you can provide `bySubject` overrides with an optional `default`.
+
+```ts
+const blendWeights = {
+  default: { skill: 0.1, outcome: 0.1, competency: 0.6 },
+  bySubject: {
+    math: { skill: 0.2, competency: 0.5 },
+    english: { skill: 0.15, outcome: 0.2 },
+  },
+};
+
+const rec = recommendNextSkill({
+  graph,
+  abilities,
+  subjectId: "math",
+  blendWeights,
+});
+
+const updated = updateAbilities({
+  graph,
+  abilities,
+  events: [{ skillId: rec.candidateId, correct: true }],
+  blendWeights,
+  learningRates: {
+    bySubject: {
+      math: { skill: 0.5, outcome: 0.8 },
+    },
+  },
+});
+```
+
 ## Key APIs
 
 - `recommendNextSkill(request)`: subject-scoped recommendation with ZPD classification. If `targetSkillId` is omitted, the engine first selects a target using the `zpd-prereq-aware` policy, then evaluates from that target.
