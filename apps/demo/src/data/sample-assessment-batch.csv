@@ -1,0 +1,7 @@
+student_id,name,activities_scores,Order
+S-001,Identifies lowercase letters a-f using visual and audio cues,[1,1,1],1
+S-001,Identifies uppercase letters A-F using visual and audio cues.,[1,0],2
+S-001,Matches uppercase and lowercase letters by correctly pairing each letter with its corresponding form for A-F.,[0,1],3
+S-002,Identifies lowercase letters a-f using visual and audio cues,[0,0,1],1
+S-002,Learns the phonetic sounds of letters A-Z by recognizing them through visual and auditory cues.,[0,1],2
+S-003,Identifies and writes the five vowels and distinguishes between their short and long phonetic sounds.,[1,1],1

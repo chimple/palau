@@ -1,278 +1,236 @@
-sourceSkillId,targetSkillId
-1.1,2.1
-1.1,6.26
-1.1,6.27
-1.1,6.28
-1.1,6.29
-1.11,2.11
-1.11,1.13
-1.13,2.14
-1.2,2.2
-1.21,2.21
-1.22,2.22
-1.23,2.23
-1.25,2.25
-1.27,6.28
-1.27,6.29
-1.28,6.28
-1.28,6.29
-1.29,6.29
-1.4,2.4
-1.4,1.5
-1.4,1.9
-1.4,6.26
-1.4,6.27
-1.5,2.5
-1.5,1.6
-1.5,2.21
-1.5,3.22
-1.5,2.23
-1.5,5.24
-1.5,6.26
-1.5,6.27
-1.6,2.6
-1.6,1.9
-1.6,1.13
-1.6,2.14
-1.6,2.21
-1.6,3.22
-1.6,2.23
-1.6,5.24
-1.6,6.26
-1.7,2.7
-1.7,6.26
-1.9,2.12
-1.9,2.9
-1.9,1.20
-2.1,3.1
-2.1,6.26
-2.1,6.28
-2.1,6.29
-2.11,2.12
-2.12,2.9
-2.12,3.11
-2.13,2.14
-2.13,6.26
-2.14,5.9
-2.14,3.14
-2.14,2.15
-2.15,5.9
-2.15,3.15
-2.15,3.14
-2.15,3.10
-2.2,3.2
-2.21,3.21
-2.22,3.22
-2.23,3.23
-2.25,3.25
-2.27,6.27
-2.27,6.28
-2.27,6.29
-2.28,6.28
-2.28,6.29
-2.29,6.29
-2.4,3.4
-2.4,2.5
-2.4,2.9
-2.5,3.5
-2.5,2.6
-2.5,3.21
-2.5,3.22
-2.5,3.23
-2.5,5.24
-2.6,3.6
-2.6,2.9
-2.6,2.13
-2.6,3.21
-2.6,3.22
-2.6,3.23
-2.6,5.24
-2.7,3.7
-2.9,3.9
-2.9,2.10
-2.9,2.14
-2.9,2.20
-3.1,4.1
-3.1,6.26
-3.1,6.27
-3.11,3.12
-3.12,4.12
-3.14,4.14
-3.14,3.15
-3.14,4.17
-3.15,4.15
-3.15,4.14
-3.15,4.10
-3.2,4.2a
-3.21,4.21
-3.22,4.22
-3.23,4.23
-3.25,4.25
-3.26,6.26
-3.26,6.27
-3.27,6.27
-3.27,6.28
-3.27,6.29
-3.28,6.28
-3.28,6.29
-3.29,6.29
-3.4,4.3b
-3.4,3.5
-3.5,4.5
-3.5,3.6
-3.6,4.6
-3.6,3.10
-3.6,3.13
-3.7,4.7
-3.7,6.26
-3.7,6.27
-3.9,4.9
-4.1,5.1
-4.11,5.12
-4.12,4.11
-4.14,5.14
-4.14,4.15
-4.15,5.15
-4.15,4.16
-4.15,5.10
-4.16,5.14
-4.16,4.20
-4.17,5.17
-4.21,5.21
-4.22,5.22
-4.23,5.23
-4.24,5.24
-4.25,5.25
-4.25,6.26
-4.25,6.27
-4.26,6.26
-4.26,6.27
-4.27,6.27
-4.27,6.28
-4.27,6.29
-4.28,6.28
-4.28,6.29
-4.29,6.29
-4.5,5.5
-4.5,4.6
-4.6,5.6
-4.6,4.13
-4.7,5.7
-4.9,2.14
-4.9,2.15
-5.1,6.1
-5.11,6.11
-5.11,6.15
-5.12,5.11
-5.14,6.14
-5.14,5.15
-5.15,6.15
-5.15,5.16
-5.15,5.18
-5.16,6.14
-5.16,6.15
-5.16,5.9
-5.17,6.17
-5.17,5.18
-5.18,6.10
-5.19,6.9
-5.21,6.21
-5.22,6.22
-5.23,6.23
-5.24,6.24
-5.25,6.25
-5.25,6.26
-5.25,6.27
-5.26,6.26
-5.26,6.27
-5.27,6.27
-5.27,6.28
-5.27,6.29
-5.28,6.28
-5.28,6.29
-5.29,6.29
-5.3,6.27
-5.5,6.5
-5.5,5.6
-5.6,6.6
-5.6,5.10
-5.6,5.13
-5.7,6.7
-5.9,5.19
-5.9,5.20
-6.11,6.12
-6.11,6.15
-6.14,6.15
-6.15,6.16
-6.15,6.18
-6.16,6.9
-6.26,6.27
-6.27,6.28
-6.27,6.29
-6.28,6.29
-6.5,6.6
-6.5,6.27
-6.5,6.28
-6.5,6.29
-6.6,6.13
-6.6,6.27
-6.9,6.20
-1.10,1.9
-1.10,2.6
-1.10,1.11
-1.11,1.9
-1.30,2.30
-1.3a,1.4
-1.3b,2.3b
-1.8a,2.8a
-1.8b,2.8b
-1.8c,2.8c
-2.10,3.6
-2.10,3.10
-2.10,2.15
-2.20,3.20
-2.30,3.30
-2.3b,3.3b
-2.8b,3.8b
-2.8c,3.8c
-3.10,4.10
-3.10,3.14
-3.10,3.15
-3.20,4.16
-3.30,4.30
-3.3b,4.3a
-3.8a,4.8a
-3.8b,4.8b
-3.8c,4.8c
-4.10,5.6
-4.10,4.15
-4.20,5.16
-4.2a,5.2a
-4.30,5.30
-4.3b,5.3b
-4.3b,4.5
-4.8a,5.8a
-4.8b,5.8b
-4.8c,5.8c
-5.10,6.10
-5.10,6.15
-5.10,5.15
-5.20,6.16
-5.2a,6.2a
-5.2b,6.2b
-5.30,6.30
-5.3b,6.3b
-5.3b,5.5
-5.8a,6.8a
-5.8b,6.8b
-5.8c,6.8c
-6.10,6.15
-6.3b,1.10
-6.3b,1.11
-6.3b,6.5
-2.3a,3.3a
-1.3a,2.3a
-3.3a,4.2b
-1.3a,1.4
-4.2b,5.2b
-2.8a,3.8a
+sourceSkillId	targetSkillId
+Identifies lowercase letters a-f using visual and audio cues	Identifies uppercase letters A-F using visual and audio cues.
+Identifies lowercase letters a-f using visual and audio cues	Traces and writes uppercase letters A to F, saying their names aloud, and follows the conventional pattern of letter formation.
+Identifies lowercase letters a-f using visual and audio cues	Traces and writes the lowercase letters a - f follows the conventional flow of writing, and listens to words that begin with the same initial sound (e. g., ant, axe, apple).
+Identifies lowercase letters a-f using visual and audio cues	Matches uppercase and lowercase letters by correctly pairing each letter with its corresponding form for A-F.
+Identifies lowercase letters a-f using visual and audio cues	Learns the phonetic sounds of letters A-Z by recognizing them through visual and auditory cues.
+Identifies lowercase letters g-l using visual and audio cues.	Identifies uppercase letters G-L using visual and audio cues.
+Identifies lowercase letters g-l using visual and audio cues.	Traces and writes uppercase letters G to L, saying their names aloud, and follows the conventional pattern of letter formation.
+Identifies lowercase letters g-l using visual and audio cues.	Traces and writes the lowercase letters g - l follows the conventional flow of writing, and listens to words that begin with the same initial sound.
+Identifies lowercase letters g-l using visual and audio cues.	Matches uppercase and lowercase letters by correctly pairing each letter with its corresponding form for G-L.
+Identifies lowercase letters g-l using visual and audio cues.	Learns the phonetic sounds of letters A-Z by recognizing them through visual and auditory cues.
+Identifies lowercase letters m-s using visual and audio cues.	Identifies uppercase letters M-S using visual and audio cues.
+Identifies lowercase letters m-s using visual and audio cues.	Traces and writes uppercase letters M to S, saying their names aloud, and follows the conventional pattern of letter formation.
+Identifies lowercase letters m-s using visual and audio cues.	Traces and writes the lowercase letters m - s follows the conventional flow of writing, and listens to words that begin with the same initial sound.
+Identifies lowercase letters m-s using visual and audio cues.	Matches uppercase and lowercase letters by correctly pairing each letter with its corresponding form for M-S.
+Identifies lowercase letters m-s using visual and audio cues.	Learns the phonetic sounds of letters A-Z by recognizing them through visual and auditory cues.
+Identifies lowercase letters t-z using visual and audio cues.	Identifies uppercase letters T-Z using visual and audio cues.
+Identifies lowercase letters t-z using visual and audio cues.	Traces and writes uppercase letters T to Z, saying their names aloud, and follows the conventional pattern of letter formation.
+Identifies lowercase letters t-z using visual and audio cues.	Traces and writes the lowercase letters t - z follows the conventional flow of writing, and listens to words that begin with the same initial sound.
+Identifies lowercase letters t-z using visual and audio cues.	Matches uppercase and lowercase letters by correctly pairing each letter with its corresponding form for T-Z.
+Identifies lowercase letters t-z using visual and audio cues.	Learns the phonetic sounds of letters A-Z by recognizing them through visual and auditory cues.
+Identifies uppercase letters A-F using visual and audio cues.	Draws basic lines and shapes with control.
+Identifies uppercase letters A-F using visual and audio cues.	Traces and writes uppercase letters A to F, saying their names aloud, and follows the conventional pattern of letter formation.
+Identifies uppercase letters A-F using visual and audio cues.	Matches uppercase and lowercase letters by correctly pairing each letter with its corresponding form for A-F.
+Identifies uppercase letters A-F using visual and audio cues.	Matches uppercase and lowercase letters by correctly pairing each letter with its corresponding form for Aa-Zz.
+Identifies uppercase letters G-L using visual and audio cues.	Draws basic lines and shapes with control.
+Identifies uppercase letters G-L using visual and audio cues.	Traces and writes uppercase letters G to L, saying their names aloud, and follows the conventional pattern of letter formation.
+Identifies uppercase letters G-L using visual and audio cues.	Matches uppercase and lowercase letters by correctly pairing each letter with its corresponding form for G-L.
+Identifies uppercase letters G-L using visual and audio cues.	Matches uppercase and lowercase letters by correctly pairing each letter with its corresponding form for Aa-Zz.
+Identifies uppercase letters M-S using visual and audio cues.	Draws basic lines and shapes with control.
+Identifies uppercase letters M-S using visual and audio cues.	Traces and writes uppercase letters M to S, saying their names aloud, and follows the conventional pattern of letter formation.
+Identifies uppercase letters M-S using visual and audio cues.	Matches uppercase and lowercase letters by correctly pairing each letter with its corresponding form for M-S.
+Identifies uppercase letters M-S using visual and audio cues.	Matches uppercase and lowercase letters by correctly pairing each letter with its corresponding form for Aa-Zz.
+Identifies uppercase letters T-Z using visual and audio cues.	Draws basic lines and shapes with control.
+Identifies uppercase letters T-Z using visual and audio cues.	Traces and writes uppercase letters T to Z, saying their names aloud, and follows the conventional pattern of letter formation.
+Identifies uppercase letters T-Z using visual and audio cues.	Matches uppercase and lowercase letters by correctly pairing each letter with its corresponding form for T-Z.
+Identifies uppercase letters T-Z using visual and audio cues.	Matches uppercase and lowercase letters by correctly pairing each letter with its corresponding form for Aa-Zz.
+Draws basic lines and shapes with control.	Traces and writes uppercase letters A to F, saying their names aloud, and follows the conventional pattern of letter formation.
+Draws basic lines and shapes with control.	Traces and writes uppercase letters G to L, saying their names aloud, and follows the conventional pattern of letter formation.
+Draws basic lines and shapes with control.	Traces and writes uppercase letters M to S, saying their names aloud, and follows the conventional pattern of letter formation.
+Draws basic lines and shapes with control.	Traces and writes uppercase letters T to Z, saying their names aloud, and follows the conventional pattern of letter formation.
+Draws basic lines and shapes with control.	Traces and writes the lowercase letters a - f follows the conventional flow of writing, and listens to words that begin with the same initial sound (e. g., ant, axe, apple).
+Draws basic lines and shapes with control.	Traces and writes the lowercase letters g - l follows the conventional flow of writing, and listens to words that begin with the same initial sound.
+Draws basic lines and shapes with control.	Traces and writes the lowercase letters m - s follows the conventional flow of writing, and listens to words that begin with the same initial sound.
+Draws basic lines and shapes with control.	Traces and writes the lowercase letters t - z follows the conventional flow of writing, and listens to words that begin with the same initial sound.
+Draws basic lines and shapes with control.	Traces and writes words by following correct letter formation and writing sequence, while decoding individual letters to understand and reinforce correct spelling.
+Traces and writes uppercase letters A to F, saying their names aloud, and follows the conventional pattern of letter formation.	Matches uppercase and lowercase letters by correctly pairing each letter with its corresponding form for A-F.
+Traces and writes uppercase letters A to F, saying their names aloud, and follows the conventional pattern of letter formation.	Matches uppercase and lowercase letters by correctly pairing each letter with its corresponding form for Aa-Zz.
+Traces and writes uppercase letters G to L, saying their names aloud, and follows the conventional pattern of letter formation.	Matches uppercase and lowercase letters by correctly pairing each letter with its corresponding form for G-L.
+Traces and writes uppercase letters G to L, saying their names aloud, and follows the conventional pattern of letter formation.	Matches uppercase and lowercase letters by correctly pairing each letter with its corresponding form for Aa-Zz.
+Traces and writes uppercase letters M to S, saying their names aloud, and follows the conventional pattern of letter formation.	Matches uppercase and lowercase letters by correctly pairing each letter with its corresponding form for M-S.
+Traces and writes uppercase letters M to S, saying their names aloud, and follows the conventional pattern of letter formation.	Matches uppercase and lowercase letters by correctly pairing each letter with its corresponding form for Aa-Zz.
+Traces and writes uppercase letters T to Z, saying their names aloud, and follows the conventional pattern of letter formation.	Matches uppercase and lowercase letters by correctly pairing each letter with its corresponding form for T-Z.
+Traces and writes uppercase letters T to Z, saying their names aloud, and follows the conventional pattern of letter formation.	Matches uppercase and lowercase letters by correctly pairing each letter with its corresponding form for Aa-Zz.
+Traces and writes the lowercase letters a - f follows the conventional flow of writing, and listens to words that begin with the same initial sound (e. g., ant, axe, apple).	Matches uppercase and lowercase letters by correctly pairing each letter with its corresponding form for A-F.
+Traces and writes the lowercase letters a - f follows the conventional flow of writing, and listens to words that begin with the same initial sound (e. g., ant, axe, apple).	Matches uppercase and lowercase letters by correctly pairing each letter with its corresponding form for Aa-Zz.
+Traces and writes the lowercase letters a - f follows the conventional flow of writing, and listens to words that begin with the same initial sound (e. g., ant, axe, apple).	Learns the phonetic sounds of letters A-Z by recognizing them through visual and auditory cues.
+Traces and writes the lowercase letters a - f follows the conventional flow of writing, and listens to words that begin with the same initial sound (e. g., ant, axe, apple).	Identifies and writes the five vowels and distinguishes between their short and long phonetic sounds.
+Traces and writes the lowercase letters a - f follows the conventional flow of writing, and listens to words that begin with the same initial sound (e. g., ant, axe, apple).	Identifies ending vowel sounds in words by recognizing the vowel sound at the end of a word.
+Traces and writes the lowercase letters a - f follows the conventional flow of writing, and listens to words that begin with the same initial sound (e. g., ant, axe, apple).	Identifies medial vowel sounds in words by recognizing the vowel sound in the middle of a word.
+Traces and writes the lowercase letters a - f follows the conventional flow of writing, and listens to words that begin with the same initial sound (e. g., ant, axe, apple).	Identifies beginning vowel sounds in words by recognizing the vowel sound at the start of a word.
+Traces and writes the lowercase letters a - f follows the conventional flow of writing, and listens to words that begin with the same initial sound (e. g., ant, axe, apple).	Identifies and reads word family 'a' by recognizing onset-rime patterns and manipulating sounds to form related words
+Traces and writes the lowercase letters a - f follows the conventional flow of writing, and listens to words that begin with the same initial sound (e. g., ant, axe, apple).	Identifies and reads words with vowel blends.
+Traces and writes the lowercase letters a - f follows the conventional flow of writing, and listens to words that begin with the same initial sound (e. g., ant, axe, apple).	Recognizes high-frequency sight words of 2-4 letters by sight, understands their meaning, and reads them accurately in isolation and simple sentences.
+Traces and writes the lowercase letters g - l follows the conventional flow of writing, and listens to words that begin with the same initial sound.	Matches uppercase and lowercase letters by correctly pairing each letter with its corresponding form for G-L.
+Traces and writes the lowercase letters g - l follows the conventional flow of writing, and listens to words that begin with the same initial sound.	Matches uppercase and lowercase letters by correctly pairing each letter with its corresponding form for Aa-Zz.
+Traces and writes the lowercase letters g - l follows the conventional flow of writing, and listens to words that begin with the same initial sound.	Learns the phonetic sounds of letters A-Z by recognizing them through visual and auditory cues.
+Traces and writes the lowercase letters g - l follows the conventional flow of writing, and listens to words that begin with the same initial sound.	Identifies and writes the five vowels and distinguishes between their short and long phonetic sounds.
+Traces and writes the lowercase letters g - l follows the conventional flow of writing, and listens to words that begin with the same initial sound.	Identifies ending vowel sounds in words by recognizing the vowel sound at the end of a word.
+Traces and writes the lowercase letters g - l follows the conventional flow of writing, and listens to words that begin with the same initial sound.	Identifies medial vowel sounds in words by recognizing the vowel sound in the middle of a word.
+Traces and writes the lowercase letters g - l follows the conventional flow of writing, and listens to words that begin with the same initial sound.	Identifies beginning vowel sounds in words by recognizing the vowel sound at the start of a word.
+Traces and writes the lowercase letters g - l follows the conventional flow of writing, and listens to words that begin with the same initial sound.	Identifies and reads word family 'e' by recognizing onset-rime patterns and manipulating sounds to form related words.
+Traces and writes the lowercase letters g - l follows the conventional flow of writing, and listens to words that begin with the same initial sound.	Identifies and reads words with vowel blends.
+Traces and writes the lowercase letters g - l follows the conventional flow of writing, and listens to words that begin with the same initial sound.	Recognizes high-frequency sight words of 2-4 letters by sight, understands their meaning, and reads them accurately in isolation and simple sentences.
+Traces and writes the lowercase letters m - s follows the conventional flow of writing, and listens to words that begin with the same initial sound.	Matches uppercase and lowercase letters by correctly pairing each letter with its corresponding form for M-S.
+Traces and writes the lowercase letters m - s follows the conventional flow of writing, and listens to words that begin with the same initial sound.	Matches uppercase and lowercase letters by correctly pairing each letter with its corresponding form for Aa-Zz.
+Traces and writes the lowercase letters m - s follows the conventional flow of writing, and listens to words that begin with the same initial sound.	Learns the phonetic sounds of letters A-Z by recognizing them through visual and auditory cues.
+Traces and writes the lowercase letters m - s follows the conventional flow of writing, and listens to words that begin with the same initial sound.	Identifies and writes the five vowels and distinguishes between their short and long phonetic sounds.
+Traces and writes the lowercase letters m - s follows the conventional flow of writing, and listens to words that begin with the same initial sound.	Identifies ending vowel sounds in words by recognizing the vowel sound at the end of a word.
+Traces and writes the lowercase letters m - s follows the conventional flow of writing, and listens to words that begin with the same initial sound.	Identifies medial vowel sounds in words by recognizing the vowel sound in the middle of a word.
+Traces and writes the lowercase letters m - s follows the conventional flow of writing, and listens to words that begin with the same initial sound.	Identifies beginning vowel sounds in words by recognizing the vowel sound at the start of a word.
+Traces and writes the lowercase letters m - s follows the conventional flow of writing, and listens to words that begin with the same initial sound.	Identifies and reads word family 'i' by recognizing onset-rime patterns and manipulating sounds to form related words.
+Traces and writes the lowercase letters m - s follows the conventional flow of writing, and listens to words that begin with the same initial sound.	Identifies and reads words with vowel blends.
+Traces and writes the lowercase letters m - s follows the conventional flow of writing, and listens to words that begin with the same initial sound.	Recognizes high-frequency sight words of 2-4 letters by sight, understands their meaning, and reads them accurately in isolation and simple sentences.
+Traces and writes the lowercase letters t - z follows the conventional flow of writing, and listens to words that begin with the same initial sound.	Matches uppercase and lowercase letters by correctly pairing each letter with its corresponding form for T-Z.
+Traces and writes the lowercase letters t - z follows the conventional flow of writing, and listens to words that begin with the same initial sound.	Matches uppercase and lowercase letters by correctly pairing each letter with its corresponding form for Aa-Zz.
+Traces and writes the lowercase letters t - z follows the conventional flow of writing, and listens to words that begin with the same initial sound.	Learns the phonetic sounds of letters A-Z by recognizing them through visual and auditory cues.
+Traces and writes the lowercase letters t - z follows the conventional flow of writing, and listens to words that begin with the same initial sound.	Identifies and writes the five vowels and distinguishes between their short and long phonetic sounds.
+Traces and writes the lowercase letters t - z follows the conventional flow of writing, and listens to words that begin with the same initial sound.	Identifies ending vowel sounds in words by recognizing the vowel sound at the end of a word.
+Traces and writes the lowercase letters t - z follows the conventional flow of writing, and listens to words that begin with the same initial sound.	Identifies medial vowel sounds in words by recognizing the vowel sound in the middle of a word.
+Traces and writes the lowercase letters t - z follows the conventional flow of writing, and listens to words that begin with the same initial sound.	Identifies beginning vowel sounds in words by recognizing the vowel sound at the start of a word.
+Traces and writes the lowercase letters t - z follows the conventional flow of writing, and listens to words that begin with the same initial sound.	Identifies and reads words with vowel blends.
+Traces and writes the lowercase letters t - z follows the conventional flow of writing, and listens to words that begin with the same initial sound.	Recognizes high-frequency sight words of 2-4 letters by sight, understands their meaning, and reads them accurately in isolation and simple sentences.
+Matches uppercase and lowercase letters by correctly pairing each letter with its corresponding form for A-F.	Identifies naming words (nouns) in isolation and in simple sentences.
+Matches uppercase and lowercase letters by correctly pairing each letter with its corresponding form for A-F.	Identifies and uses basic punctuations correctly in sentences.
+Matches uppercase and lowercase letters by correctly pairing each letter with its corresponding form for G-L.	Identifies naming words (nouns) in isolation and in simple sentences.
+Matches uppercase and lowercase letters by correctly pairing each letter with its corresponding form for G-L.	Identifies and uses basic punctuations correctly in sentences.
+Matches uppercase and lowercase letters by correctly pairing each letter with its corresponding form for M-S.	Identifies naming words (nouns) in isolation and in simple sentences.
+Matches uppercase and lowercase letters by correctly pairing each letter with its corresponding form for M-S.	Identifies and uses basic punctuations correctly in sentences.
+Matches uppercase and lowercase letters by correctly pairing each letter with its corresponding form for T-Z.	Identifies naming words (nouns) in isolation and in simple sentences.
+Matches uppercase and lowercase letters by correctly pairing each letter with its corresponding form for T-Z.	Identifies and uses basic punctuations correctly in sentences.
+Matches uppercase and lowercase letters by correctly pairing each letter with its corresponding form for Aa-Zz.	Identifies naming words (nouns) in isolation and in simple sentences.
+Matches uppercase and lowercase letters by correctly pairing each letter with its corresponding form for Aa-Zz.	Identifies and uses basic punctuations correctly in sentences.
+Learns the phonetic sounds of letters A-Z by recognizing them through visual and auditory cues.	Identifies ending vowel sounds in words by recognizing the vowel sound at the end of a word.
+Learns the phonetic sounds of letters A-Z by recognizing them through visual and auditory cues.	Identifies medial vowel sounds in words by recognizing the vowel sound in the middle of a word.
+Learns the phonetic sounds of letters A-Z by recognizing them through visual and auditory cues.	Identifies beginning vowel sounds in words by recognizing the vowel sound at the start of a word.
+Identifies and writes the five vowels and distinguishes between their short and long phonetic sounds.	Identifies ending vowel sounds in words by recognizing the vowel sound at the end of a word.
+Identifies and writes the five vowels and distinguishes between their short and long phonetic sounds.	Identifies medial vowel sounds in words by recognizing the vowel sound in the middle of a word.
+Identifies and writes the five vowels and distinguishes between their short and long phonetic sounds.	Identifies beginning vowel sounds in words by recognizing the vowel sound at the start of a word.
+Identifies and writes the five vowels and distinguishes between their short and long phonetic sounds.	Identifies and reads word family 'a' by recognizing onset-rime patterns and manipulating sounds to form related words
+Identifies and writes the five vowels and distinguishes between their short and long phonetic sounds.	Identifies and reads word family 'e' by recognizing onset-rime patterns and manipulating sounds to form related words.
+Identifies and writes the five vowels and distinguishes between their short and long phonetic sounds.	Identifies and reads word family 'i' by recognizing onset-rime patterns and manipulating sounds to form related words.
+Identifies and writes the five vowels and distinguishes between their short and long phonetic sounds.	Identifies and reads word family 'o' by recognizing onset-rime patterns and manipulating sounds to form related words.
+Identifies and writes the five vowels and distinguishes between their short and long phonetic sounds.	Identifies and reads word family 'u' by recognizing onset-rime patterns and manipulating sounds to form related words.
+Identifies ending vowel sounds in words by recognizing the vowel sound at the end of a word.	Identifies and reads word family 'a' by recognizing onset-rime patterns and manipulating sounds to form related words
+Identifies ending vowel sounds in words by recognizing the vowel sound at the end of a word.	Identifies and reads word family 'e' by recognizing onset-rime patterns and manipulating sounds to form related words.
+Identifies ending vowel sounds in words by recognizing the vowel sound at the end of a word.	Identifies and reads word family 'i' by recognizing onset-rime patterns and manipulating sounds to form related words.
+Identifies ending vowel sounds in words by recognizing the vowel sound at the end of a word.	Identifies and reads word family 'o' by recognizing onset-rime patterns and manipulating sounds to form related words.
+Identifies ending vowel sounds in words by recognizing the vowel sound at the end of a word.	Identifies and reads word family 'u' by recognizing onset-rime patterns and manipulating sounds to form related words.
+Identifies beginning vowel sounds in words by recognizing the vowel sound at the start of a word.	Identifies and reads word family 'a' by recognizing onset-rime patterns and manipulating sounds to form related words
+Identifies beginning vowel sounds in words by recognizing the vowel sound at the start of a word.	Identifies and reads word family 'e' by recognizing onset-rime patterns and manipulating sounds to form related words.
+Identifies beginning vowel sounds in words by recognizing the vowel sound at the start of a word.	Identifies and reads word family 'i' by recognizing onset-rime patterns and manipulating sounds to form related words.
+Identifies beginning vowel sounds in words by recognizing the vowel sound at the start of a word.	Identifies and reads word family 'o' by recognizing onset-rime patterns and manipulating sounds to form related words.
+Identifies beginning vowel sounds in words by recognizing the vowel sound at the start of a word.	Identifies and reads word family 'u' by recognizing onset-rime patterns and manipulating sounds to form related words.
+Identifies images corresponding to common nouns using both reading and auditory cues.	Reads and understands simple sentences related to everyday life.
+Identifies images corresponding to common nouns using both reading and auditory cues.	Identifies naming words (nouns) in isolation and in simple sentences.
+Identifies images corresponding to common nouns using both reading and auditory cues.	Identifies and uses the pronoun in simple sentences by recognizing words used in place of naming words.
+Identifies images corresponding to common nouns using both reading and auditory cues.	Identifies action words (verbs) in simple sentences by recognizing words that show actions.
+Identifies images corresponding to common nouns using both reading and auditory cues.	Identifies and uses adjectives in simple sentences by recognizing words that describe nouns, such as size, color, number, or quality.
+Identifies images corresponding to community helpers using both reading and auditory cues.	Recognizes high-frequency sight words of 2-4 letters by sight, understands their meaning, and reads them accurately in isolation and simple sentences.
+Identifies images corresponding to community helpers using both reading and auditory cues.	Recognizes longer, high-frequency sight words by sight without relying on phonetic decoding, understands their meaning through printed text, and accurately reads them both in isolation and within meaningful sentences.
+Identifies images corresponding to community helpers using both reading and auditory cues.	Identifies and names key details in pictures by observing and labeling specific features shown.
+Identifies images corresponding to community helpers using both reading and auditory cues.	Identifies naming words (nouns) in isolation and in simple sentences.
+Identifies and reads words with the letter sound and uses them meaningfully in simple sentences.	Identifies and reads words with consonant digraphs
+Identifies and reads words with the letter sound and uses them meaningfully in simple sentences.	Identifies and reads words with consonant blends.
+Identifies and reads words with the letter sound and uses them meaningfully in simple sentences.	Identifies and reads words with vowel blends.
+Identifies and reads words with the letter sound and uses them meaningfully in simple sentences.	Recognizes high-frequency sight words of 2-4 letters by sight, understands their meaning, and reads them accurately in isolation and simple sentences.
+Identifies and reads words with the letter sound and uses them meaningfully in simple sentences.	Recognizes longer, high-frequency sight words by sight without relying on phonetic decoding, understands their meaning through printed text, and accurately reads them both in isolation and within meaningful sentences.
+Identifies and reads words with the letter sound and uses them meaningfully in simple sentences.	Identifies the beginning, middle, and ending sounds in words through auditory discrimination.
+Identifies and reads words with the letter sound and uses them meaningfully in simple sentences.	Decodes words by identifying the individual phonetic sounds of each lettersnd blends these sounds together to accurately read the complete word (e.g., /c/-/a/-/t/ -> cat).
+Identifies and reads words with the letter sound and uses them meaningfully in simple sentences.	Reads longer and more complex words by applying phonics knowledge, breaking words into smaller sound units or chunks, and blending them smoothly to read the whole word with accuracy and understanding.
+Identifies and reads word family 'a' by recognizing onset-rime patterns and manipulating sounds to form related words	Identifies and reads words with vowel blends.
+Identifies and reads word family 'a' by recognizing onset-rime patterns and manipulating sounds to form related words	Recognizes high-frequency sight words of 2-4 letters by sight, understands their meaning, and reads them accurately in isolation and simple sentences.
+Identifies and reads word family 'a' by recognizing onset-rime patterns and manipulating sounds to form related words	Recognizes longer, high-frequency sight words by sight without relying on phonetic decoding, understands their meaning through printed text, and accurately reads them both in isolation and within meaningful sentences.
+Identifies and reads word family 'a' by recognizing onset-rime patterns and manipulating sounds to form related words	Identifies the beginning, middle, and ending sounds in words through auditory discrimination.
+Identifies and reads word family 'a' by recognizing onset-rime patterns and manipulating sounds to form related words	Decodes words by identifying the individual phonetic sounds of each lettersnd blends these sounds together to accurately read the complete word (e.g., /c/-/a/-/t/ -> cat).
+Identifies and reads word family 'a' by recognizing onset-rime patterns and manipulating sounds to form related words	Reads longer and more complex words by applying phonics knowledge, breaking words into smaller sound units or chunks, and blending them smoothly to read the whole word with accuracy and understanding.
+Identifies and reads word family 'e' by recognizing onset-rime patterns and manipulating sounds to form related words.	Identifies and reads words with vowel blends.
+Identifies and reads word family 'e' by recognizing onset-rime patterns and manipulating sounds to form related words.	Recognizes high-frequency sight words of 2-4 letters by sight, understands their meaning, and reads them accurately in isolation and simple sentences.
+Identifies and reads word family 'e' by recognizing onset-rime patterns and manipulating sounds to form related words.	Recognizes longer, high-frequency sight words by sight without relying on phonetic decoding, understands their meaning through printed text, and accurately reads them both in isolation and within meaningful sentences.
+Identifies and reads word family 'e' by recognizing onset-rime patterns and manipulating sounds to form related words.	Identifies the beginning, middle, and ending sounds in words through auditory discrimination.
+Identifies and reads word family 'e' by recognizing onset-rime patterns and manipulating sounds to form related words.	Decodes words by identifying the individual phonetic sounds of each lettersnd blends these sounds together to accurately read the complete word (e.g., /c/-/a/-/t/ -> cat).
+Identifies and reads word family 'e' by recognizing onset-rime patterns and manipulating sounds to form related words.	Reads longer and more complex words by applying phonics knowledge, breaking words into smaller sound units or chunks, and blending them smoothly to read the whole word with accuracy and understanding.
+Identifies and reads word family 'i' by recognizing onset-rime patterns and manipulating sounds to form related words.	Identifies and reads words with vowel blends.
+Identifies and reads word family 'i' by recognizing onset-rime patterns and manipulating sounds to form related words.	Recognizes high-frequency sight words of 2-4 letters by sight, understands their meaning, and reads them accurately in isolation and simple sentences.
+Identifies and reads word family 'i' by recognizing onset-rime patterns and manipulating sounds to form related words.	Recognizes longer, high-frequency sight words by sight without relying on phonetic decoding, understands their meaning through printed text, and accurately reads them both in isolation and within meaningful sentences.
+Identifies and reads word family 'i' by recognizing onset-rime patterns and manipulating sounds to form related words.	Identifies the beginning, middle, and ending sounds in words through auditory discrimination.
+Identifies and reads word family 'i' by recognizing onset-rime patterns and manipulating sounds to form related words.	Decodes words by identifying the individual phonetic sounds of each lettersnd blends these sounds together to accurately read the complete word (e.g., /c/-/a/-/t/ -> cat).
+Identifies and reads word family 'i' by recognizing onset-rime patterns and manipulating sounds to form related words.	Reads longer and more complex words by applying phonics knowledge, breaking words into smaller sound units or chunks, and blending them smoothly to read the whole word with accuracy and understanding.
+Identifies and reads word family 'o' by recognizing onset-rime patterns and manipulating sounds to form related words.	Identifies and reads words with vowel blends.
+Identifies and reads word family 'o' by recognizing onset-rime patterns and manipulating sounds to form related words.	Recognizes high-frequency sight words of 2-4 letters by sight, understands their meaning, and reads them accurately in isolation and simple sentences.
+Identifies and reads word family 'o' by recognizing onset-rime patterns and manipulating sounds to form related words.	Recognizes longer, high-frequency sight words by sight without relying on phonetic decoding, understands their meaning through printed text, and accurately reads them both in isolation and within meaningful sentences.
+Identifies and reads word family 'o' by recognizing onset-rime patterns and manipulating sounds to form related words.	Identifies the beginning, middle, and ending sounds in words through auditory discrimination.
+Identifies and reads word family 'o' by recognizing onset-rime patterns and manipulating sounds to form related words.	Decodes words by identifying the individual phonetic sounds of each lettersnd blends these sounds together to accurately read the complete word (e.g., /c/-/a/-/t/ -> cat).
+Identifies and reads word family 'o' by recognizing onset-rime patterns and manipulating sounds to form related words.	Reads longer and more complex words by applying phonics knowledge, breaking words into smaller sound units or chunks, and blending them smoothly to read the whole word with accuracy and understanding.
+Identifies and reads word family 'u' by recognizing onset-rime patterns and manipulating sounds to form related words.	Identifies and reads words with vowel blends.
+Identifies and reads word family 'u' by recognizing onset-rime patterns and manipulating sounds to form related words.	Recognizes high-frequency sight words of 2-4 letters by sight, understands their meaning, and reads them accurately in isolation and simple sentences.
+Identifies and reads word family 'u' by recognizing onset-rime patterns and manipulating sounds to form related words.	Recognizes longer, high-frequency sight words by sight without relying on phonetic decoding, understands their meaning through printed text, and accurately reads them both in isolation and within meaningful sentences.
+Identifies and reads word family 'u' by recognizing onset-rime patterns and manipulating sounds to form related words.	Identifies the beginning, middle, and ending sounds in words through auditory discrimination.
+Identifies and reads word family 'u' by recognizing onset-rime patterns and manipulating sounds to form related words.	Decodes words by identifying the individual phonetic sounds of each lettersnd blends these sounds together to accurately read the complete word (e.g., /c/-/a/-/t/ -> cat).
+Identifies and reads word family 'u' by recognizing onset-rime patterns and manipulating sounds to form related words.	Reads longer and more complex words by applying phonics knowledge, breaking words into smaller sound units or chunks, and blending them smoothly to read the whole word with accuracy and understanding.
+Identifies and reads words with consonant digraphs	Recognizes high-frequency sight words of 2-4 letters by sight, understands their meaning, and reads them accurately in isolation and simple sentences.
+Identifies and reads words with consonant digraphs	Recognizes longer, high-frequency sight words by sight without relying on phonetic decoding, understands their meaning through printed text, and accurately reads them both in isolation and within meaningful sentences.
+Identifies and reads words with consonant digraphs	Identifies the beginning, middle, and ending sounds in words through auditory discrimination.
+Identifies and reads words with consonant digraphs	Reads longer and more complex words by applying phonics knowledge, breaking words into smaller sound units or chunks, and blending them smoothly to read the whole word with accuracy and understanding.
+Identifies and reads words with consonant digraphs	Identifies the correct spelling of words.
+Identifies and reads words with consonant digraphs	Reads and understands simple sentences related to everyday life.
+Identifies and reads words with consonant blends.	Recognizes high-frequency sight words of 2-4 letters by sight, understands their meaning, and reads them accurately in isolation and simple sentences.
+Identifies and reads words with consonant blends.	Recognizes longer, high-frequency sight words by sight without relying on phonetic decoding, understands their meaning through printed text, and accurately reads them both in isolation and within meaningful sentences.
+Identifies and reads words with consonant blends.	Identifies the beginning, middle, and ending sounds in words through auditory discrimination.
+Identifies and reads words with consonant blends.	Reads longer and more complex words by applying phonics knowledge, breaking words into smaller sound units or chunks, and blending them smoothly to read the whole word with accuracy and understanding.
+Identifies and reads words with consonant blends.	Identifies the correct spelling of words.
+Identifies and reads words with consonant blends.	Reads and understands simple sentences related to everyday life.
+Identifies and reads words with vowel blends.	Recognizes high-frequency sight words of 2-4 letters by sight, understands their meaning, and reads them accurately in isolation and simple sentences.
+Identifies and reads words with vowel blends.	Recognizes longer, high-frequency sight words by sight without relying on phonetic decoding, understands their meaning through printed text, and accurately reads them both in isolation and within meaningful sentences.
+Identifies and reads words with vowel blends.	Identifies the beginning, middle, and ending sounds in words through auditory discrimination.
+Identifies and reads words with vowel blends.	Reads longer and more complex words by applying phonics knowledge, breaking words into smaller sound units or chunks, and blending them smoothly to read the whole word with accuracy and understanding.
+Identifies and reads words with vowel blends.	Identifies the correct spelling of words.
+Identifies and reads words with vowel blends.	Reads and understands simple sentences related to everyday life.
+Recognizes high-frequency sight words of 2-4 letters by sight, understands their meaning, and reads them accurately in isolation and simple sentences.	Recognizes longer, high-frequency sight words by sight without relying on phonetic decoding, understands their meaning through printed text, and accurately reads them both in isolation and within meaningful sentences.
+Recognizes high-frequency sight words of 2-4 letters by sight, understands their meaning, and reads them accurately in isolation and simple sentences.	Identifies the correct spelling of words.
+Recognizes high-frequency sight words of 2-4 letters by sight, understands their meaning, and reads them accurately in isolation and simple sentences.	Reads and understands simple sentences related to everyday life.
+Recognizes high-frequency sight words of 2-4 letters by sight, understands their meaning, and reads them accurately in isolation and simple sentences.	Reads and understands/creates longer and more complex sentences.
+Recognizes longer, high-frequency sight words by sight without relying on phonetic decoding, understands their meaning through printed text, and accurately reads them both in isolation and within meaningful sentences.	Identifies the correct spelling of words.
+Recognizes longer, high-frequency sight words by sight without relying on phonetic decoding, understands their meaning through printed text, and accurately reads them both in isolation and within meaningful sentences.	Reads and understands simple sentences related to everyday life.
+Recognizes longer, high-frequency sight words by sight without relying on phonetic decoding, understands their meaning through printed text, and accurately reads them both in isolation and within meaningful sentences.	Reads and understands/creates longer and more complex sentences.
+Identifies the beginning, middle, and ending sounds in words through auditory discrimination.	Decodes words by identifying the individual phonetic sounds of each lettersnd blends these sounds together to accurately read the complete word (e.g., /c/-/a/-/t/ -> cat).
+Identifies the beginning, middle, and ending sounds in words through auditory discrimination.	Reads longer and more complex words by applying phonics knowledge, breaking words into smaller sound units or chunks, and blending them smoothly to read the whole word with accuracy and understanding.
+Identifies the beginning, middle, and ending sounds in words through auditory discrimination.	Traces and writes words by following correct letter formation and writing sequence, while decoding individual letters to understand and reinforce correct spelling.
+Identifies the beginning, middle, and ending sounds in words through auditory discrimination.	Identifies the correct spelling of words.
+Identifies the beginning, middle, and ending sounds in words through auditory discrimination.	Reads and understands simple sentences related to everyday life.
+Identifies the beginning, middle, and ending sounds in words through auditory discrimination.	Identifies and distinguishes between singular and plural forms when presented in isolation and sentences by recognizing whether a word or object refers to one or more than one.
+Identifies the beginning, middle, and ending sounds in words through auditory discrimination.	Reads and understands/creates longer and more complex sentences.
+Decodes words by identifying the individual phonetic sounds of each lettersnd blends these sounds together to accurately read the complete word (e.g., /c/-/a/-/t/ -> cat).	Reads longer and more complex words by applying phonics knowledge, breaking words into smaller sound units or chunks, and blending them smoothly to read the whole word with accuracy and understanding.
+Decodes words by identifying the individual phonetic sounds of each lettersnd blends these sounds together to accurately read the complete word (e.g., /c/-/a/-/t/ -> cat).	Traces and writes words by following correct letter formation and writing sequence, while decoding individual letters to understand and reinforce correct spelling.
+Decodes words by identifying the individual phonetic sounds of each lettersnd blends these sounds together to accurately read the complete word (e.g., /c/-/a/-/t/ -> cat).	Identifies the correct spelling of words.
+Decodes words by identifying the individual phonetic sounds of each lettersnd blends these sounds together to accurately read the complete word (e.g., /c/-/a/-/t/ -> cat).	Reads and understands simple sentences related to everyday life.
+Decodes words by identifying the individual phonetic sounds of each lettersnd blends these sounds together to accurately read the complete word (e.g., /c/-/a/-/t/ -> cat).	Identifies and distinguishes between singular and plural forms when presented in isolation and sentences by recognizing whether a word or object refers to one or more than one.
+Decodes words by identifying the individual phonetic sounds of each lettersnd blends these sounds together to accurately read the complete word (e.g., /c/-/a/-/t/ -> cat).	Reads and understands/creates longer and more complex sentences.
+Reads longer and more complex words by applying phonics knowledge, breaking words into smaller sound units or chunks, and blending them smoothly to read the whole word with accuracy and understanding.	Reads and understands simple sentences related to everyday life.
+Reads longer and more complex words by applying phonics knowledge, breaking words into smaller sound units or chunks, and blending them smoothly to read the whole word with accuracy and understanding.	Reads and understands/creates longer and more complex sentences.
+Identifies and names key details in pictures by observing and labeling specific features shown.	Identifies naming words (nouns) in isolation and in simple sentences.
+Traces and writes words by following correct letter formation and writing sequence, while decoding individual letters to understand and reinforce correct spelling.	Identifies the correct spelling of words.
+Traces and writes words by following correct letter formation and writing sequence, while decoding individual letters to understand and reinforce correct spelling.	Recognizes longer and more complex high-frequency sight words by sight without relying on phonetic decoding, understands their meaning through printed text, and accurately reads them both in isolation and within meaningful sentences.
+Traces and writes words by following correct letter formation and writing sequence, while decoding individual letters to understand and reinforce correct spelling.	Reads and understands simple sentences related to everyday life.
+Traces and writes words by following correct letter formation and writing sequence, while decoding individual letters to understand and reinforce correct spelling.	Reads and understands/creates longer and more complex sentences.
+Identifies the correct spelling of words.	Recognizes longer and more complex high-frequency sight words by sight without relying on phonetic decoding, understands their meaning through printed text, and accurately reads them both in isolation and within meaningful sentences.
+Identifies the correct spelling of words.	Identifies and distinguishes between singular and plural forms when presented in isolation and sentences by recognizing whether a word or object refers to one or more than one.
+Reads and understands simple sentences related to everyday life.	Reads and understands/creates longer and more complex sentences.
+Identifies naming words (nouns) in isolation and in simple sentences.	Identifies and uses the pronoun in simple sentences by recognizing words used in place of naming words.
+Identifies naming words (nouns) in isolation and in simple sentences.	Identifies action words (verbs) in simple sentences by recognizing words that show actions.
+Identifies naming words (nouns) in isolation and in simple sentences.	Identifies and uses articles correctly in simple sentences by recognizing it as a word used to refer to a specific noun.
+Identifies naming words (nouns) in isolation and in simple sentences.	Identifies and uses different grammar words and sentence structures to form meaningful sentences.
+Identifies naming words (nouns) in isolation and in simple sentences.	Identifies and uses prepositions to show position, place, or direction in simple sentences.
+Identifies naming words (nouns) in isolation and in simple sentences.	Identifies and uses adjectives in simple sentences by recognizing words that describe nouns, such as size, color, number, or quality.
+Identifies naming words (nouns) in isolation and in simple sentences.	Identifies and distinguishes between singular and plural forms when presented in isolation and sentences by recognizing whether a word or object refers to one or more than one.
+Identifies naming words (nouns) in isolation and in simple sentences.	Reads and understands/creates longer and more complex sentences.
+Identifies and uses the pronoun in simple sentences by recognizing words used in place of naming words.	Identifies action words (verbs) in simple sentences by recognizing words that show actions.
+Identifies and uses the pronoun in simple sentences by recognizing words used in place of naming words.	Identifies and uses adjectives in simple sentences by recognizing words that describe nouns, such as size, color, number, or quality.
+Identifies and uses the pronoun in simple sentences by recognizing words used in place of naming words.	Reads and understands/creates longer and more complex sentences.
+Identifies action words (verbs) in simple sentences by recognizing words that show actions.	Identifies and uses different grammar words and sentence structures to form meaningful sentences.
+Identifies action words (verbs) in simple sentences by recognizing words that show actions.	Reads and understands/creates longer and more complex sentences.
+Identifies and uses prepositions to show position, place, or direction in simple sentences.	Reads and understands/creates longer and more complex sentences.
+Identifies and uses basic punctuations correctly in sentences.	Reads and understands/creates longer and more complex sentences.
+Identifies and uses adjectives in simple sentences by recognizing words that describe nouns, such as size, color, number, or quality.	Reads and understands/creates longer and more complex sentences.
+Identifies and distinguishes between singular and plural forms when presented in isolation and sentences by recognizing whether a word or object refers to one or more than one.	Reads and understands/creates longer and more complex sentences.

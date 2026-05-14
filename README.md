@@ -63,8 +63,32 @@ import {
 | `sample-graph.csv` | Yes | `subjectId, subjectName, domainId, domainName, competencyId, competencyName, outcomeId, outcomeName, skillId, skillName, difficulty` |
 | `sample-prerequisites.csv` | Yes | `sourceSkillId, targetSkillId` (edge points from prerequisite → dependent) |
 | `sample-abilities.csv` | Optional | `type, id, ability` where `type ∈ {competency, domain, subject, outcome, skill}` |
+| `sample-assessment-batch.csv` | Optional demo input | `student_id, name, activities_scores, Order` where `name` resolves to a skill label/id and `activities_scores` is a sequence containing `0/1` outcomes |
 
 Drop-in replacements following the same schema will update the demo without rebuilding.
+
+### Assessment Batch Flow
+
+The demo includes a batch replay panel that turns uploaded assessment rows into recommendations.
+
+Input row semantics:
+
+- `student_id`: groups all rows for one learner.
+- `name`: matched against the graph skill id/label; this identifies which skill the learner was assessed on.
+- `activities_scores`: every `0` or `1` becomes one outcome event for that skill.
+- `Order`: controls the replay order across rows for the same learner.
+
+Runtime flow:
+
+1. The demo parses the uploaded CSV/TSV into rows.
+2. For each learner, it replays every `0/1` score as an `updateAbilities(...)` call on the same graph.
+3. After all rows for that learner are applied, it computes a target skill using the active selection policy.
+4. It calls `recommendNextSkill(...)` with the learner's final ability state and emits one output row per learner.
+
+That means the npm package is not doing batch ingestion directly. The demo is the orchestration layer, and the package provides the two core primitives:
+
+- `updateAbilities(...)`: updates latent ability across skill, outcome, competency, domain, and subject after each outcome.
+- `recommendNextSkill(...)`: traverses the dependency graph and returns the best next skill for the learner's current state.
 
 ## Next Steps
 
